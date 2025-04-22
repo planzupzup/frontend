@@ -1,0 +1,118 @@
+// blind 
+
+.blind {
+position: absolute;
+clip: rect(0 0 0 0);
+width: 1px;
+height: 1px;
+margin: -1px;
+overflow: hidden;
+}
+
+// reset css
+
+html,
+body {
+  height: 100%;
+}
+
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+dl,
+dt,
+dd,
+table,
+th,
+td,
+form,
+fieldset,
+legend,
+input,
+textarea,
+button,
+select {
+  margin: 0;
+  padding: 0;
+}
+
+body,
+input,
+textarea,
+select,
+button,
+table {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+body {
+  position: relative;
+  -webkit-text-size-adjust: none;
+  overflow-y: auto; //https://bts4.navercorp.com/nhnbts/browse/BLOG-10131
+
+  &[data-mode='dimmed'] {
+    overflow: hidden;
+  }
+}
+
+img,
+fieldset {
+  border: 0;
+}
+
+img {
+  vertical-align: top;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+em,
+address {
+  font-style: normal;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+button {
+  border: 0;
+  background-color: initial;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+i {
+  font-style: normal;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block;
+}

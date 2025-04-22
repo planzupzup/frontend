@@ -1,0 +1,45 @@
+.header_wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 80px;
+    height: 80px;
+    border-bottom: 1px solid #e6e6e6;
+
+    @media (max-width: 768px) {
+        padding: 0 20px;
+    }
+}
+
+.center_btn {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.profile_area {
+    display: inline-flex;
+    align-items: center;
+    gap: 17px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+
+    .svg1 {
+        display: block;
+        fill: none;
+        height: 16px;
+        width: 16px;
+        margin-left: 10px;
+        stroke: #6a6a6a;
+        stroke-width: 3;
+        overflow: visible;
+    }
+
+    .svg2 {
+        display: block; 
+        height: 100%; 
+        width: 32px; 
+        color: #6a6a6a;
+        fill: #6a6a6a;
+    }
+}

@@ -1,0 +1,42 @@
+.modal_wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.modal_area {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 500px;
+    background-color: #fff;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.header {
+    line-height: 50px;
+    border-bottom: #e6e6e6;
+    font-size: 15sx;
+}
+
+.close_btn {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 5px;
+    top: 5px;
+    width: 40px;
+    height: 40px;
+    color: #222;
+
+    .svg {
+        display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3; overflow: visible;
+    }
+}
