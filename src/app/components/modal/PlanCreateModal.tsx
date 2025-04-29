@@ -25,7 +25,7 @@ const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ open, destination, on
     };
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/plan`, newPlan);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan`, newPlan);
       console.log("Plan created:", response.data);
 
       onCreatePlan?.(newPlan);

@@ -17,12 +17,6 @@ interface Plan {
   placeList: Place[];
 }
 
-interface PlanCreateModalProps {
-  visible: boolean;
-  destination: string;
-  onClose: () => void;
-}
-
 // 🔹 메인 컴포넌트
 const PlanList: React.FC = () => {
   const { destination } = useParams<{ destination: string }>();
