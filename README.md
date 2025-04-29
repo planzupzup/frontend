@@ -1,4 +1,4 @@
-# Airbnb 클론 프로젝트
+# TripTale
 
 ## 프로젝트 소개
 TripTale
