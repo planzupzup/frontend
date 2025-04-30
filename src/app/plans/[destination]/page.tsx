@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState} from "react";
-import { useParams } from "react-router-dom";
-import PlanCreateModal from "../components/modal/PlanCreateModal";
+import { useParams } from "next/navigation";
+import PlanCreateModal from "../../components/modal/PlanCreateModal";
 
 interface Place {
   name: string;

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 interface PlanCreateModalProps {
@@ -15,6 +15,24 @@ const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ open, destination, on
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [title, setTitle] = useState<string>("");
+
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if(open) {
+      const handleClickOutside = (event : MouseEvent) => {
+        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+          onClose();
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [open, onClose]);
 
   const createPlan = async () => {
     const newPlan = {
@@ -39,8 +57,10 @@ const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ open, destination, on
   if (!open) return null;
 
   return (
-    <div style={styles.overlay}>
-      <div style={styles.modal}>
+    <div style={styles.overlay} onClick={(e) => {
+      e.stopPropagation();
+    }}>
+      <div style={styles.modal} ref={modalRef}>
         <div style={styles.spacer} />
         <div style={styles.title}>여행 기간이 어떻게 되시나요?</div>
 
