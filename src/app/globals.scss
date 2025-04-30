@@ -54,10 +54,16 @@ table {
   line-height: 1.2;
 }
 
+main {
+  flex: 1;
+  overflow: auto;
+}
+
 body {
   position: relative;
   -webkit-text-size-adjust: none;
-  overflow-y: auto; //https://bts4.navercorp.com/nhnbts/browse/BLOG-10131
+  display: flex;
+  flex-direction: column;
 
   &[data-mode='dimmed'] {
     overflow: hidden;

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import EditSchedule from '../components/EditSchedule';
 import axios from 'axios';
+import style from "./Plan.module.scss";
 
 interface Location {
   id: number;
@@ -82,14 +83,14 @@ const PlanDetail: React.FC = () => {
     locationList.filter(location => location.day === day);
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: 'flex' }} className={style.list_wrap}>
       {/* Sidebar */}
-      <div style={{ width: '200px' }}>
-        <div onClick={() => setSelectedDay('전체 일정')} style={{ fontWeight: selectedDay === '전체 일정' ? 'bold' : 'normal' }}>
+      <div style={{ width: '200px' }} className={style.list}>
+        <div onClick={() => setSelectedDay('전체 일정')} style={{ fontWeight: selectedDay === '전체 일정' ? 'bold' : 'normal' }} className={style.item}>
           전체 일정
         </div>
         {days.map(day => (
-          <div key={day.value} onClick={() => setSelectedDay(day.value)} style={{ fontWeight: selectedDay === day.value ? 'bold' : 'normal' }}>
+          <div key={day.value} onClick={() => setSelectedDay(day.value)} style={{ fontWeight: selectedDay === day.value ? 'bold' : 'normal' }} className={style.item}>
             {day.label}
           </div>
         ))}
