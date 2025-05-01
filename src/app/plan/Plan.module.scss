@@ -42,6 +42,8 @@
 }
 
 .contents {
+    display: flex;
+    flex-direction: column;
     margin: 50px 0 0 70px;
 
     .title {
@@ -76,19 +78,33 @@
     }
 }
 
+.schedule_wrap {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin-bottom: 20px;
+    padding: 16px;
+}
+
 .schedule_order {
-    font-size: 32px;
-    margin-top: 20px;
+    font-size: 18px;
 }
 
 .location_list_wrap {
     display: flex;
-    
+    flex: 1;
+    min-height: 0;
+    margin-top: 15px;
 }
 
 .location_list {
-    margin: 20px 20px 0 0;
     width: 300px;
+    overflow-y: auto;
+    margin: 0 20px 0 0;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 10px;
 }
 
 .location_item {
@@ -100,16 +116,17 @@
 
     .order {
         position: absolute;
-        top: -5px;
-        left: -5px;
-        width: 30px;
-        height: 30px;
+        top: 50%;
+        left: 10px;
+        width: 15px;
+        height: 15px;
+        transform: translateY(-50%);
         background-color: red;
         border-radius: 50%;
         color: #fff;
-        font-size: 20px;
+        font-size: 15px;
         text-align: center;
-        line-height: 30px;
+        line-height: 20px;
     }
 
     .name_wrap {
@@ -120,7 +137,6 @@
     }
 
     .name {
-        margin-bottom: 10px;
         font-size: 25px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -128,7 +144,7 @@
     }
 
     .category {
-        margin-top: 10px;
+        margin-top: 5px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -150,6 +166,7 @@
             left: 0;
             border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: inherit;
+            content: "";
         }
     }
 
@@ -169,4 +186,15 @@
     & + .location_item {
         margin-top: 15px;
     }
+
+    &:hover {
+        cursor: pointer;
+        background-color: #eee;
+    }
+}
+
+.kakao_map {
+    flex: 1;
+    border: 1px solid #eee;
+    border-radius: 6px;
 }

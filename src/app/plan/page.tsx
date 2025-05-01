@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import EditSchedule from '../components/EditSchedule';
 import axios from 'axios';
 import style from "./Plan.module.scss";
 import classNames from 'classnames';
+import { useKakaoMapService } from '../components/openApi/kakaoMapService';
 
 interface Location {
   id: number;
@@ -12,6 +13,12 @@ interface Location {
   category: string;
   scheduleOrder: number;
   day: string;
+  image?: {
+    imageId: number,
+    imageUrl: string
+  }
+  latitude: number;
+  longitude: number;
 }
 
 interface Plan {
@@ -31,9 +38,27 @@ const PlanDetail: React.FC = () => {
   const planId = "3";
   const [plan, setPlan] = useState<Plan | null>(null);
   const [locationList, setLocationList] = useState<Location[]>([]);
+  const [location, setLocation] = useState<Location>();
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>('전체 일정');
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [kakaoMap, setKakaoMap] = useState<any>(null);
+  const [markers, setMarkers] = useState<any[]>([]);
+
+  const kakaoMapService = useKakaoMapService(mapRef, {
+    kakaoMap,
+    setKakaoMap,
+    markers,
+    setMarkers,
+  });
+
+  useEffect(() => {
+    console.log(location?.latitude, location?.longitude);
+    kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
+  },[kakaoMapService.loadKakaoMapScript, selectedDay, location]);
+
+  //TODO: 지도 렌더링 없이 마커, 중심좌표만 변하게하기
 
   useEffect(() => {
     loadPlan();
@@ -118,23 +143,24 @@ const PlanDetail: React.FC = () => {
         ) : isEditing ? (
           <EditSchedule day={selectedDay} planId={planId!} onSave={() => loadLocationList()} />
         ) : (
-          <div>
+          <div className={style.schedule_wrap}>
             <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
             <div className={style.location_list_wrap}>
               <div className={style.location_list}>
                 {getLocationsForDay(selectedDay).map(location => (
-                  <div key={location.id} className={style.location_item}>
+                  <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
                     <div className={style.order}>{location.scheduleOrder}</div>
                     <div className={style.name_wrap}>
                       <div className={style.name}>{location.locationName}</div>
                       <div className={style.category}>{location.category}</div>
                     </div>
                     <div className={style.img_wrap}>
-                      <img src="https://placehold.co/400x400" className={style.img}/>
+                      <img src={location.image?.imageUrl} className={style.img}/>
                     </div>
                   </div>
                 ))}
               </div>
+              <div className={style.kakao_map} ref={mapRef}></div>
             </div>
           </div>
         )}

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import style from "./EditSchedule.module.scss";
+import { useKakaoMapService } from './openApi/kakaoMapService';
 
 interface Place {
   place_name: string;
@@ -37,102 +38,22 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   const [file, setFile] = useState<File | null>(null);
   const [category, setCategory] = useState("카페");
 
+  const kakaoMapService = useKakaoMapService(mapRef, {
+    kakaoMap,
+    setKakaoMap,
+    placesService,
+    setPlacesService,
+    markers,
+    setMarkers,
+    searchInput,
+    setSearchInput,
+    places,
+    setPlaces,
+  })
+
   useEffect(() => {
-    loadKakaoMapScript();
-  }, []);
-
-  const loadKakaoMapScript = () => {
-    const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_APP_KEY;
-  
-    if (!kakaoKey) {
-      console.error("❌ Kakao Map API Key가 설정되지 않았습니다.");
-      return;
-    }
-  
-    // 기존 스크립트가 있는지 확인
-    const existingScript = document.querySelector(`script[src*="dapi.kakao.com"]`);
-    if (existingScript) {
-      console.warn("⚠️ 기존 Kakao 스크립트가 이미 있습니다. 제거 후 재삽입합니다.");
-      existingScript.remove();
-    }
-  
-    // 스크립트 생성
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services`;
-    script.async = true;
-    script.defer = true;
-  
-    // 성공 시
-    script.onload = () => {
-      console.log("✅ Kakao Map 스크립트 로드 완료");
-      if ((window as any).kakao && (window as any).kakao.maps) {
-        (window as any).kakao.maps.load(() => {
-          console.log("✅ Kakao Map API 로딩 완료 (maps.load)");
-  
-          const container = mapRef.current;
-          if (!container) {
-            console.error("❌ mapRef가 유효하지 않습니다.");
-            return;
-          }
-  
-          const options = {
-            center: new (window as any).kakao.maps.LatLng(33.450701, 126.570667),
-            level: 3,
-          };
-          const map = new (window as any).kakao.maps.Map(container, options);
-          const places = new (window as any).kakao.maps.services.Places();
-  
-          setKakaoMap(map);
-          setPlacesService(places);
-          console.log("✅ 지도 및 장소 서비스 초기화 완료");
-        });
-      } else {
-        console.error("❌ window.kakao 또는 kakao.maps가 존재하지 않습니다.");
-      }
-    };
-  
-    // 실패 시
-    script.onerror = () => {
-      console.error("❌ Kakao Map 스크립트 로드 실패");
-    };
-  
-    document.head.appendChild(script);
-  };
-
-  const searchPlace = () => {
-    if (placesService) {
-      placesService.keywordSearch(searchInput, placesSearchCB);
-    }
-  };
-
-  const placesSearchCB = (data: Place[], status: string, pagination: any) => {
-    const kakao = (window as any).kakao;
-    if (status === kakao.maps.services.Status.OK) {
-      setPlaces(data);
-      displayMarkers(data);
-    } else {
-      alert("검색 결과가 존재하지 않거나 오류가 발생했습니다.");
-    }
-  };
-
-  const displayMarkers = (places: Place[]) => {
-    if (!kakaoMap) return;
-
-    markers.forEach(marker => marker.setMap(null));
-    const newMarkers = places.map(place => {
-      const marker = new (window as any).kakao.maps.Marker({
-        map: kakaoMap,
-        position: new (window as any).kakao.maps.LatLng(place.y, place.x),
-      });
-      return marker;
-    });
-    setMarkers(newMarkers);
-
-    if (places.length > 0) {
-      const first = new (window as any).kakao.maps.LatLng(places[0].y, places[0].x);
-      kakaoMap.panTo(first);
-    }
-  };
+    kakaoMapService.loadKakaoMapScript();
+  }, [kakaoMapService.loadKakaoMapScript]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -199,7 +120,7 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
           type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && searchPlace()}
+          onKeyDown={(e) => e.key === 'Enter' && kakaoMapService.searchPlace()}
           className={style.searchInput}
           placeholder="상호명 또는 주소를 입력하세요"
         />
