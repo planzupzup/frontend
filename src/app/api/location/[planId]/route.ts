@@ -15,7 +15,7 @@ export async function GET(
         latitude: 12.4,
         longitude: 12.5,
         address: null,
-        day: "2025-03-21",
+        day: "2025-07-01",
         scheduleOrder: 1,
         category: "카페",
         image: {
@@ -30,7 +30,7 @@ export async function GET(
         latitude: 12.4,
         longitude: 12.9,
         address: null,
-        day: "2025-03-21",
+        day: "2025-07-01",
         scheduleOrder: 2,
         category: "식당",
         image: {
@@ -45,7 +45,7 @@ export async function GET(
         latitude: 12.4,
         longitude: 12.9,
         address: null,
-        day: "2025-03-21",
+        day: "2025-07-01",
         scheduleOrder: 3,
         category: "식당",
         image: {
@@ -60,7 +60,7 @@ export async function GET(
         latitude: 12.4,
         longitude: 12.9,
         address: null,
-        day: "2025-03-25",
+        day: "2025-07-01",
         scheduleOrder: 1,
         category: "식당",
         image: {

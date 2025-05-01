@@ -59,7 +59,6 @@ const PlanDetail: React.FC = () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/3`);
       // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}`);
       setLocationList(response.data.result);
-      console.log(locationList);
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
     }
@@ -83,8 +82,7 @@ const PlanDetail: React.FC = () => {
     setDays(result);
   };
 
-  const getLocationsForDay = (day: string) =>
-    locationList.filter(location => location.day === day);
+  const getLocationsForDay = (day: string) => locationList.filter(location => location.day === day);
 
   return (
     <div style={{ display: 'flex' }} className={style.list_wrap}>
@@ -121,15 +119,22 @@ const PlanDetail: React.FC = () => {
           <EditSchedule day={selectedDay} planId={planId!} onSave={() => loadLocationList()} />
         ) : (
           <div>
-            <h3>{days.find(day => day.value === selectedDay)?.label}</h3>
-            <div style={{ display: 'flex', gap: '20px' }}>
-              {getLocationsForDay(selectedDay).map(location => (
-                <div key={location.id}>
-                  <div>{location.scheduleOrder}</div>
-                  <div>{location.locationName}</div>
-                  <div>{location.category}</div>
-                </div>
-              ))}
+            <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
+            <div className={style.location_list_wrap}>
+              <div className={style.location_list}>
+                {getLocationsForDay(selectedDay).map(location => (
+                  <div key={location.id} className={style.location_item}>
+                    <div className={style.order}>{location.scheduleOrder}</div>
+                    <div className={style.name_wrap}>
+                      <div className={style.name}>{location.locationName}</div>
+                      <div className={style.category}>{location.category}</div>
+                    </div>
+                    <div className={style.img_wrap}>
+                      <img src="https://placehold.co/400x400" className={style.img}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
