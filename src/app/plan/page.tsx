@@ -54,11 +54,8 @@ const PlanDetail: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log(location?.latitude, location?.longitude);
     kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
-  },[kakaoMapService.loadKakaoMapScript, selectedDay, location]);
-
-  //TODO: 지도 렌더링 없이 마커, 중심좌표만 변하게하기
+  },[kakaoMapService.loadKakaoMapScript, location]);
 
   useEffect(() => {
     loadPlan();

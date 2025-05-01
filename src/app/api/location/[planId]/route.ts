@@ -60,7 +60,7 @@ export async function GET(
         latitude: 37,
         longitude: 131,
         address: null,
-        day: "2025-07-01",
+        day: "2025-07-02",
         scheduleOrder: 1,
         category: "식당",
         image: {
