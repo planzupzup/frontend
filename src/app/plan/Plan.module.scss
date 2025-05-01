@@ -1,22 +1,76 @@
 .list_wrap {
     margin-right: 10px;
+    min-height: 0;
 }
 
 .list {
+    display: flex;
+    flex-direction: column;
     border-right: 1px solid #eee;
 }
 
-.item {
-    line-height: 50px;
-    padding-left: 20px;
+.scroll_area {
+    flex: 1;
+    overflow: auto;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
 
-    & + .item {
-        border-top: 1px solid #eee;
-    }
+.item {
+    line-height: 60px;
+    text-align: center;
+    font-size: 15px;
 
     &:hover {
+        background-color: #eee;
         cursor: pointer;
-        font-weight: 700 !important;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    &.type_edit {
+        margin: 20px;
+        line-height: 40px;
+        border-radius: 5px;
+        border: 2px solid skyblue;
+
+        &:hover {
+            background-color: skyblue;
+            border-radius: 5px;
+            color: #fff;
+        }
+    }
+}
+
+.contents {
+    margin: 50px 0 0 70px;
+
+    .title {
+        font-size: 40px;
+    }
+
+    .date_wrap {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .date {
+        color: gray;
+        font-size: 20px;
+    }
+
+    .change_date_btn {
+        margin-left: 20px;
+        padding: 0 15px;
+        border: 2px solid skyblue;
+        color: skyblue;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 40px;
+        border-radius: 20px;
+
+        &:hover {
+            background-color: skyblue;
+            color: #fff;
+        }
     }
 }
