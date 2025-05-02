@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import style from "./EditSchedule.module.scss";
-import { useKakaoMapService } from './openApi/kakaoMapService';
+import { useKakaoMapService } from '../hooks/useKakaoMapService';
 
 interface Place {
   place_name: string;

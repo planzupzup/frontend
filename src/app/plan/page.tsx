@@ -5,8 +5,9 @@ import EditSchedule from '../components/EditSchedule';
 import axios from 'axios';
 import style from "./Plan.module.scss";
 import classNames from 'classnames';
-import { useKakaoMapService } from '../components/openApi/kakaoMapService';
+import { useKakaoMapService } from '../hooks/useKakaoMapService';
 import { useParams } from 'next/navigation';
+import useDidMountEffect from '../hooks/useDidMountEffect';
 
 interface Location {
   id: number;
@@ -46,6 +47,7 @@ const PlanDetail: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
+  const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
 
   const kakaoMapService = useKakaoMapService(mapRef, {
     kakaoMap,
@@ -54,8 +56,9 @@ const PlanDetail: React.FC = () => {
     setMarkers,
   });
 
-  useEffect(() => {
+  useDidMountEffect(() => {
     kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
+    setIsMapOpen
   },[location]);
 
   useEffect(() => {
