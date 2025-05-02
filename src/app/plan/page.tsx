@@ -6,6 +6,7 @@ import axios from 'axios';
 import style from "./Plan.module.scss";
 import classNames from 'classnames';
 import { useKakaoMapService } from '../components/openApi/kakaoMapService';
+import { useParams } from 'next/navigation';
 
 interface Location {
   id: number;
@@ -35,7 +36,7 @@ interface Day {
 }
 
 const PlanDetail: React.FC = () => {
-  const planId = "3";
+  const { planId } = useParams<{ planId: string }>();
   const [plan, setPlan] = useState<Plan | null>(null);
   const [locationList, setLocationList] = useState<Location[]>([]);
   const [location, setLocation] = useState<Location>();
@@ -55,7 +56,11 @@ const PlanDetail: React.FC = () => {
 
   useEffect(() => {
     kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
-  },[kakaoMapService.loadKakaoMapScript, location]);
+  },[location]);
+
+  useEffect(() => {
+    if(locationList.length > 0) setLocation(locationList[0]);
+  },[selectedDay]);
 
   useEffect(() => {
     loadPlan();
@@ -115,7 +120,7 @@ const PlanDetail: React.FC = () => {
         </div>
         <div className={style.scroll_area}>
           {days.map(day => (
-            <div key={day.value} onClick={() => setSelectedDay(day.value)} style={{ fontWeight: selectedDay === day.value ? 'bold' : 'normal' }} className={style.item}>
+            <div key={day.value} onClick={() => {setSelectedDay(day.value); }} style={{ fontWeight: selectedDay === day.value ? 'bold' : 'normal' }} className={style.item}>
               {day.label}
             </div>
           ))}

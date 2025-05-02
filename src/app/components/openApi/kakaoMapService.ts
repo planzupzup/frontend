@@ -37,7 +37,7 @@ export const useKakaoMapService = (mapRef: React.RefObject<HTMLDivElement | null
     setPlaces,
   } = state;
 
-  const loadKakaoMapScript = useCallback((latitude?:number, longitude?:number) => {
+  const loadKakaoMapScript = (latitude?:number, longitude?:number) => {
     const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_APP_KEY;
 
     if (!kakaoKey) {
@@ -85,17 +85,16 @@ export const useKakaoMapService = (mapRef: React.RefObject<HTMLDivElement | null
           const map = new (window as any).kakao.maps.Map(container, options);
           const places = new (window as any).kakao.maps.services.Places();
 
-          setKakaoMap(map);
           if(setPlacesService) setPlacesService(places);
           console.log("✅ 지도 및 장소 서비스 초기화 완료");
 
           const newMarker = new (window as any).kakao.maps.Marker({
-            map: kakaoMap,
+            map: map,
             position: new (window as any).kakao.maps.LatLng(latitude, longitude),
           });
           setMarkers([newMarker]);
 
-          console.log(markers);
+          setKakaoMap(map);
       
           if (latitude && longitude) {
             const first = new (window as any).kakao.maps.LatLng(latitude, longitude);
@@ -113,22 +112,11 @@ export const useKakaoMapService = (mapRef: React.RefObject<HTMLDivElement | null
     };
 
     document.head.appendChild(script);
-  },[]);
+  };
 
   const searchPlace = () => {
     if (placesService) {
       placesService.keywordSearch(searchInput, placesSearchCB);
-    }
-  };
-
-  const placesSearchCB = (data: Place[], status: string, pagination: any) => {
-    const kakao = (window as any).kakao;
-    if (status === kakao.maps.services.Status.OK) {
-      
-      if(setPlaces) setPlaces(data);
-      displaySearchMarkers(data);
-    } else {
-      alert("검색 결과가 존재하지 않거나 오류가 발생했습니다.");
     }
   };
 
@@ -149,7 +137,18 @@ export const useKakaoMapService = (mapRef: React.RefObject<HTMLDivElement | null
       const first = new (window as any).kakao.maps.LatLng(places[0].y, places[0].x);
       kakaoMap.panTo(first);
     }
-  },[kakaoMap, places]);
+  },[kakaoMap]);
+
+  const placesSearchCB = useCallback((data: Place[], status: string, pagination: any) => {
+    const kakao = (window as any).kakao;
+    if (status === kakao.maps.services.Status.OK) {
+      
+      if(setPlaces) setPlaces(data);
+      displaySearchMarkers(data);
+    } else {
+      alert("검색 결과가 존재하지 않거나 오류가 발생했습니다.");
+    }
+  },[displaySearchMarkers]);
 
   return { loadKakaoMapScript, searchPlace, placesSearchCB, displaySearchMarkers };
 };

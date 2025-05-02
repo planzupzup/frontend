@@ -12,8 +12,8 @@ export async function GET(
       {
         locationId: 1,
         locationName: "ㅁ",
-        latitude: 33,
-        longitude: 121,
+        latitude: 37.567418716091005,
+        longitude: 126.97787106803995,
         address: null,
         day: "2025-07-01",
         scheduleOrder: 1,

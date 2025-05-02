@@ -53,7 +53,7 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
 
   useEffect(() => {
     kakaoMapService.loadKakaoMapScript();
-  }, [kakaoMapService.loadKakaoMapScript]);
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
