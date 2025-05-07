@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import EditSchedule from '../components/EditSchedule';
+import EditSchedule from '../../components/EditSchedule';
 import axios from 'axios';
 import style from "./Plan.module.scss";
 import classNames from 'classnames';
-import { useKakaoMapService } from '../hooks/useKakaoMapService';
+import { useKakaoMapService } from '../../hooks/useKakaoMapService';
 import { useParams } from 'next/navigation';
-import useDidMountEffect from '../hooks/useDidMountEffect';
+import useDidMountEffect from '../../hooks/useDidMountEffect';
 
 interface Location {
   id: number;
@@ -47,7 +47,6 @@ const PlanDetail: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
-  const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
 
   const kakaoMapService = useKakaoMapService(mapRef, {
     kakaoMap,
@@ -57,17 +56,17 @@ const PlanDetail: React.FC = () => {
   });
 
   useDidMountEffect(() => {
-    kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
-    setIsMapOpen
+    kakaoMapService.loadKakaoMapScript();
   },[location]);
 
   useEffect(() => {
+    loadLocationList();
+    console.log(selectedDay);
     if(locationList.length > 0) setLocation(locationList[0]);
   },[selectedDay]);
 
   useEffect(() => {
     loadPlan();
-    loadLocationList();
   }, [planId]);
 
   useEffect(() => {
@@ -76,8 +75,7 @@ const PlanDetail: React.FC = () => {
 
   const loadPlan = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/3`);
-      // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}`);
       setPlan(response.data.result);
     } catch (e) {
       alert('계획을 불러오는데 실패했습니다.');
@@ -86,8 +84,7 @@ const PlanDetail: React.FC = () => {
 
   const loadLocationList = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/3`);
-      // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}`);
       setLocationList(response.data.result);
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
