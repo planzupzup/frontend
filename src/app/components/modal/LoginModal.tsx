@@ -4,12 +4,12 @@ import Login from "./Login";
 import style from "./Modal.module.scss";
 
 type TModal = {
-    text: string;
+    text?: string;
     isShowModal: boolean;
     onClickCloseBtn: () => void;
 }
 
-const Modal = ({text, isShowModal, onClickCloseBtn}:TModal) => {
+const LoginModal = ({text, isShowModal, onClickCloseBtn}:TModal) => {
     return (
         isShowModal && (
             <div className={style.modal_wrap}>
@@ -27,4 +27,4 @@ const Modal = ({text, isShowModal, onClickCloseBtn}:TModal) => {
     )
 }
 
-export default Modal;
+export default LoginModal;

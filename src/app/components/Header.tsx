@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
+import LoginModal from "./modal/LoginModal";
 
 const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState<boolean>(false);
+  const [loginModal, setLoginModal] = useState<boolean>(false);
 
   const handleLogin = () => {
-    setIsLogin(true);
+    setLoginModal(true);
   };
 
   const handleLogout = () => {
@@ -134,6 +136,9 @@ const Header: React.FC = () => {
           </div>
         )}
       </div>
+      {
+        loginModal && <LoginModal isShowModal={loginModal} onClickCloseBtn={() => {setLoginModal(false)}} />
+      }
     </div>
   );
 };

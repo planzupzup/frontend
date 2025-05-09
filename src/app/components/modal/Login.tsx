@@ -4,8 +4,7 @@ import style from "./Modal.module.scss";
 
 const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 const NAVER_REST_API_KEY = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID;
-const KAKAO_REDIRECT_URI = `${process.env.NEXT_PUBLIC_API_HOST}/api/oauth/kakao`;
-const NAVER_REDIRECT_URI = `${process.env.NEXT_PUBLIC_API_HOST}/api/oauth/naver`;
+const KAKAO_REDIRECT_URI = `http://localhost:3000/login/kakao`;
 
 const Login = () => {
 
