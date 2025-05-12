@@ -5,9 +5,8 @@ import EditSchedule from '../../components/EditSchedule';
 import axios from 'axios';
 import style from "./Plan.module.scss";
 import classNames from 'classnames';
-import { useKakaoMapService } from '../../hooks/useKakaoMapService';
+import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
-import useDidMountEffect from '../../hooks/useDidMountEffect';
 
 interface Location {
   id: number;
@@ -46,18 +45,18 @@ const PlanDetail: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState<string>('전체 일정');
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const [kakaoMap, setKakaoMap] = useState<any>(null);
+  const [googleMap, setGoogleMap] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<any[]>([]);
 
-  const kakaoMapService = useKakaoMapService(mapRef, {
-    kakaoMap,
-    setKakaoMap,
+  const googleMapService = useGoogleMapService(mapRef, {
+    googleMap,
+    setGoogleMap,
     markers,
     setMarkers,
   });
 
-  useDidMountEffect(() => {
-    kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
+  useEffect(() => {
+    googleMapService.loadGoogleMapScript(location?.latitude, location?.longitude);
   },[location]);
 
   useEffect(() => {
