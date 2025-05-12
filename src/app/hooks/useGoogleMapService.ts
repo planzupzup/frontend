@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-interface Place {
+export interface Place {
   name: string;
   formatted_address: string;
   geometry: {

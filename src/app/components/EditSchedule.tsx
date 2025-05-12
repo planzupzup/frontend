@@ -3,15 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import style from "./EditSchedule.module.scss";
-import { useKakaoMapService } from '../hooks/useKakaoMapService';
-
-interface Place {
-  place_name: string;
-  road_address_name: string;
-  address_name: string;
-  x: string;
-  y: string;
-}
+import { useGoogleMapService } from '../hooks/useGoogleMapService';
+import { Place } from '../hooks/useGoogleMapService';
 
 interface Location {
   locationId: number;
@@ -28,7 +21,7 @@ interface Props {
 
 const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [kakaoMap, setKakaoMap] = useState<any>(null);
+  const [googleMap, setGoogleMap] = useState<any>(null);
   const [placesService, setPlacesService] = useState<any>(null);
   const [searchInput, setSearchInput] = useState('');
   const [places, setPlaces] = useState<Place[]>([]);
@@ -38,9 +31,9 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   const [file, setFile] = useState<File | null>(null);
   const [category, setCategory] = useState("카페");
 
-  const kakaoMapService = useKakaoMapService(mapRef, {
-    kakaoMap,
-    setKakaoMap,
+  const kakaoMapService = useGoogleMapService(mapRef, {
+    googleMap,
+    setGoogleMap,
     placesService,
     setPlacesService,
     markers,
@@ -52,7 +45,7 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   })
 
   useEffect(() => {
-    kakaoMapService.loadKakaoMapScript();
+    kakaoMapService.loadGoogleMapScript();
   }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,25 +55,33 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   };
 
   const selectLocation = (place: Place) => {
-    if (!kakaoMap) return;
+    if (!googleMap) return;
     setSelectedLocation(place);
-    setSearchInput(place.place_name);
+    setSearchInput(place.name);
     setPlaces([]);
-    const position = new (window as any).kakao.maps.LatLng(place.y, place.x);
-    kakaoMap.panTo(position);
+
+    const lat = place.geometry.location.lat;
+    const lng = place.geometry.location.lng;
+
+    setMarkers([new window.google.maps.Marker({
+      position: { lat, lng },
+      map: googleMap,
+    })]);
+
+    googleMap.panTo({ lat, lng });
   };
 
   const addLocation = async () => {
     if (!selectedLocation) return;
 
     const dto = {
-      latitude: selectedLocation.y,
-      longitude: selectedLocation.x,
-      address: selectedLocation.address_name,
+      latitude: selectedLocation.geometry.location.lat,
+      longitude: selectedLocation.geometry.location.lng,
+      address: selectedLocation.formatted_address,
       day,
       scheduleOrder: locations.length + 1,
       category,
-      locationName: selectedLocation.place_name,
+      locationName: selectedLocation.name,
       planId,
     };
 
@@ -128,9 +129,9 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
         <ul className={style.placesList}>
           {places.map((place, idx) => (
             <li key={idx} className={style.placeItem} onClick={() => selectLocation(place)}>
-              <strong>{place.place_name}</strong>
+              <strong>{place.name}</strong>
               <div className={style.addressText}>
-                {place.road_address_name || place.address_name}
+                {place.formatted_address}
               </div>
             </li>
           ))}
