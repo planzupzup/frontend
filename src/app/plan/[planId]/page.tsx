@@ -34,6 +34,7 @@ interface Plan {
 interface Day {
   label: string;
   value: string;
+  index: string;
 }
 
 const PlanDetail: React.FC = () => {
@@ -56,13 +57,15 @@ const PlanDetail: React.FC = () => {
   });
 
   useDidMountEffect(() => {
-    kakaoMapService.loadKakaoMapScript();
+    kakaoMapService.loadKakaoMapScript(location?.latitude, location?.longitude);
   },[location]);
 
   useEffect(() => {
-    loadLocationList();
-    console.log(selectedDay);
     if(locationList.length > 0) setLocation(locationList[0]);
+  }, [locationList]);
+
+  useEffect(() => {
+    loadLocationList();
   },[selectedDay]);
 
   useEffect(() => {
@@ -84,8 +87,10 @@ const PlanDetail: React.FC = () => {
 
   const loadLocationList = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}`);
-      setLocationList(response.data.result);
+      if(selectedDay !== '전체 일정') {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}/${selectedDay}`);
+        setLocationList(response.data.result);
+      }
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
     }
@@ -96,20 +101,19 @@ const PlanDetail: React.FC = () => {
     const start = new Date(plan.startDate);
     const end = new Date(plan.endDate);
     const result: Day[] = [];
-    let dayIndex = 1;
+    let index = 1;
 
     for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
       result.push({
-        label: `${dayIndex}일차`,
+        label: `${index}일차`,
         value: date.toISOString().split('T')[0],
+        index: `${index}`
       });
-      dayIndex++;
+      index++;
     }
 
     setDays(result);
   };
-
-  const getLocationsForDay = (day: string) => locationList.filter(location => location.day === day);
 
   return (
     <div style={{ display: 'flex' }} className={style.list_wrap}>
@@ -120,7 +124,7 @@ const PlanDetail: React.FC = () => {
         </div>
         <div className={style.scroll_area}>
           {days.map(day => (
-            <div key={day.value} onClick={() => {setSelectedDay(day.value); }} style={{ fontWeight: selectedDay === day.value ? 'bold' : 'normal' }} className={style.item}>
+            <div key={day.value} onClick={() => {setSelectedDay(day.index); }} style={{ fontWeight: selectedDay === day.index ? 'bold' : 'normal' }} className={style.item}>
               {day.label}
             </div>
           ))}
@@ -149,7 +153,7 @@ const PlanDetail: React.FC = () => {
             <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
             <div className={style.location_list_wrap}>
               <div className={style.location_list}>
-                {getLocationsForDay(selectedDay).map(location => (
+                {locationList.map(location => (
                   <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
                     <div className={style.order}>{location.scheduleOrder}</div>
                     <div className={style.name_wrap}>
