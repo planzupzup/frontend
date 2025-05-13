@@ -47,6 +47,7 @@ const PlanDetail: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [googleMap, setGoogleMap] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<any[]>([]);
+  const [polyline, setPolyline] = useState<google.maps.Polyline | null>(null);
 
   const googleMapService = useGoogleMapService(mapRef, {
     googleMap,
@@ -55,9 +56,46 @@ const PlanDetail: React.FC = () => {
     setMarkers,
   });
 
+  const createCustomIcon = (text: string) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 30;
+    canvas.height = 30;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.beginPath();
+      ctx.arc(15, 15, 12, 0, 2 * Math.PI);
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'white';
+      ctx.stroke();
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 15, 15);
+    }
+    return {
+      url: canvas.toDataURL(),
+      scaledSize: new window.google.maps.Size(30, 30),
+      anchor: new window.google.maps.Point(15, 15),
+    };
+  };
+
   useEffect(() => {
-    googleMapService.loadGoogleMapScript(location?.latitude, location?.longitude);
-  },[location, locationList]);
+    if(mapRef.current){
+      googleMapService.loadGoogleMapScript();
+    }
+  },[mapRef]);
+
+  useEffect(() => {
+    if(location && googleMap) {
+      const lat = location.latitude;
+      const lng = location.longitude;
+  
+      googleMap.panTo({ lat, lng });
+    }
+  },[location]);
 
   useEffect(() => {
     if(googleMap && locationList.length > 0) {
@@ -72,9 +110,12 @@ const PlanDetail: React.FC = () => {
         newMarkers.push(new window.google.maps.Marker({
           position: latLng,
           map: googleMap,
-          title: location?.locationName,
+          icon: createCustomIcon(location.scheduleOrder.toString()),
         }))
       })
+
+      if(polyline) polyline.setMap(null);
+      markers.forEach((marker) => marker.setMap(null));
 
       setMarkers(newMarkers);
 
@@ -84,7 +125,7 @@ const PlanDetail: React.FC = () => {
         scale: 4
       };
 
-      const polyline = new window.google.maps.Polyline({
+      setPolyline(new window.google.maps.Polyline({
         path: pathCoordinates,
         strokeOpacity: 0,
         icons: [{
@@ -93,7 +134,7 @@ const PlanDetail: React.FC = () => {
           repeat: '20px'
         }],
         map: googleMap,
-      })
+      }));
 
       googleMap.fitBounds(bounds);
 
@@ -184,12 +225,7 @@ const PlanDetail: React.FC = () => {
           <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
         </div>
 
-        {selectedDay === '전체 일정' ? (
-          <EditSchedule day={selectedDay} planId={planId!} onSave={() => loadLocationList()} />
-        ) : isEditing ? (
-          <EditSchedule day={selectedDay} planId={planId!} onSave={() => loadLocationList()} />
-        ) : (
-          <div className={style.schedule_wrap}>
+        <div className={style.schedule_wrap}>
             <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
             <div className={style.location_list_wrap}>
               <div className={style.location_list}>
@@ -209,7 +245,6 @@ const PlanDetail: React.FC = () => {
               <div className={style.kakao_map} ref={mapRef}></div>
             </div>
           </div>
-        )}
       </div>
     </div>
   );
