@@ -64,7 +64,13 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
     const lat = place.geometry.location.lat();
     const lng = place.geometry.location.lng();
 
+
     markers.forEach((marker) => marker.setMap(null));
+
+    setMarkers([new window.google.maps.Marker({
+      position: { lat, lng },
+      map: googleMap,
+    })]);
 
     googleMap.panTo({ lat, lng });
   };

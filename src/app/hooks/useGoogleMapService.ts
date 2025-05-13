@@ -146,7 +146,6 @@ export const useGoogleMapService = (
       if (!googleMap) return;
 
       markers.forEach((marker) => marker.setMap(null));
-
       if(places) {
         const newMarkers: google.maps.Marker[] = places.map((place) => {
           const marker = new window.google.maps.Marker({
