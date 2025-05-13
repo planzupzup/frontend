@@ -40,7 +40,7 @@ export const useGoogleMapService = (
     setPlaces,
   } = state;
 
-  const loadGoogleMapScript = (latitude?: number, longitude?: number) => {
+  const loadGoogleMapScript = useCallback((latitude?: number, longitude?: number) => {
     const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY;
 
     if (!googleApiKey) {
@@ -112,7 +112,7 @@ export const useGoogleMapService = (
     };
 
     document.head.appendChild(script);
-  };
+  },[]);
 
   const searchPlace = () => {
     if (placesService && searchInput) {
@@ -131,7 +131,6 @@ export const useGoogleMapService = (
             if (setPlaces) {
               setPlaces(results as Place[]);
             }
-            displaySearchResults(results as Place[]);
           } else {
             alert(
               "검색 결과가 존재하지 않거나 오류가 발생했습니다: " + status
@@ -143,31 +142,34 @@ export const useGoogleMapService = (
   };
 
   const displaySearchResults = useCallback(
-    (results: Place[]) => {
+    () => {
       if (!googleMap) return;
 
       markers.forEach((marker) => marker.setMap(null));
-      const newMarkers: google.maps.Marker[] = results.map((place) => {
-        const marker = new window.google.maps.Marker({
-          map: googleMap,
-          position: place.geometry.location,
-        });
-        return marker;
-      });
-      setMarkers(newMarkers);
 
-      if (results.length > 0) {
-        googleMap.panTo(results[0].geometry.location);
+      if(places) {
+        const newMarkers: google.maps.Marker[] = places.map((place) => {
+          const marker = new window.google.maps.Marker({
+            map: googleMap,
+            position: place.geometry.location,
+          });
+          return marker;
+        });
+        setMarkers(newMarkers);
+
+        if (places.length > 0) {
+          googleMap.panTo(places[0].geometry.location);
+        }
       }
     },
-    [googleMap, setMarkers]
+    [googleMap, places]
   );
 
   useEffect(() => {
-    if (places && places.length > 0) {
-      displaySearchResults(places);
+    if(places && places.length > 0) {
+      displaySearchResults();
     }
-  }, [places, displaySearchResults]);
+  }, [places])
 
   return { loadGoogleMapScript, searchPlace, displaySearchResults };
 };

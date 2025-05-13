@@ -45,8 +45,10 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   })
 
   useEffect(() => {
-    kakaoMapService.loadGoogleMapScript();
-  }, []);
+    if(mapRef.current){
+      kakaoMapService.loadGoogleMapScript();
+    }
+  }, [mapRef]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -58,15 +60,11 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
     if (!googleMap) return;
     setSelectedLocation(place);
     setSearchInput(place.name);
-    setPlaces([]);
 
-    const lat = place.geometry.location.lat;
-    const lng = place.geometry.location.lng;
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
 
-    setMarkers([new window.google.maps.Marker({
-      position: { lat, lng },
-      map: googleMap,
-    })]);
+    markers.forEach((marker) => marker.setMap(null));
 
     googleMap.panTo({ lat, lng });
   };
@@ -75,8 +73,8 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
     if (!selectedLocation) return;
 
     const dto = {
-      latitude: selectedLocation.geometry.location.lat,
-      longitude: selectedLocation.geometry.location.lng,
+      latitude: selectedLocation.geometry.location.lat(),
+      longitude: selectedLocation.geometry.location.lng(),
       address: selectedLocation.formatted_address,
       day,
       scheduleOrder: locations.length + 1,
