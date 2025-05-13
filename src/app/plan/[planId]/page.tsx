@@ -57,11 +57,52 @@ const PlanDetail: React.FC = () => {
 
   useEffect(() => {
     googleMapService.loadGoogleMapScript(location?.latitude, location?.longitude);
-  },[location]);
+  },[location, locationList]);
 
   useEffect(() => {
-    if(locationList.length > 0) setLocation(locationList[0]);
-  }, [locationList]);
+    if(googleMap && locationList.length > 0) {
+      const newMarkers: any[] = [];
+      const pathCoordinates: google.maps.LatLng[] = [];
+      const bounds = new window.google.maps.LatLngBounds(); 
+
+      locationList.forEach((location) => {
+        const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
+        pathCoordinates.push(latLng);
+        bounds.extend(latLng);
+        newMarkers.push(new window.google.maps.Marker({
+          position: latLng,
+          map: googleMap,
+          title: location?.locationName,
+        }))
+      })
+
+      setMarkers(newMarkers);
+
+      var lineSymbol = {
+        path: 'M 0,-1 0,1',
+        strokeOpacity: 1,
+        scale: 4
+      };
+
+      const polyline = new window.google.maps.Polyline({
+        path: pathCoordinates,
+        strokeOpacity: 0,
+        icons: [{
+          icon: lineSymbol,
+          offset: '0',
+          repeat: '20px'
+        }],
+        map: googleMap,
+      })
+
+      googleMap.fitBounds(bounds);
+
+      if (locationList.length === 1) {
+        googleMap.setZoom(15); // 적절한 줌 레벨 설정
+        googleMap.panTo(pathCoordinates[0]); // 첫 번째 (유일한) 위치로 이동
+      }
+    }
+  }, [googleMap,locationList]);
 
   useEffect(() => {
     loadLocationList();
