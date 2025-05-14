@@ -50,7 +50,7 @@ const PlanDetail: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [googleMap, setGoogleMap] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<any[]>([]);
-  const [polyline, setPolyline] = useState<google.maps.Polyline | null>(null);
+  const [polyline, setPolyline] = useState<google.maps.Polyline | google.maps.Polyline[] | null>(null);
   const [durations, setDurations] = useState<number[]>([]);
   const [totalLocationList, setTotalLocationList] = useState<Location[][]>([]);
 
@@ -61,7 +61,7 @@ const PlanDetail: React.FC = () => {
     setMarkers,
   });
 
-  const createCustomIcon = (text: string) => {
+  const createCustomIconWithColor = (text: string, color: string) => {
     const canvas = document.createElement('canvas');
     canvas.width = 30;
     canvas.height = 30;
@@ -69,7 +69,7 @@ const PlanDetail: React.FC = () => {
     if (ctx) {
       ctx.beginPath();
       ctx.arc(15, 15, 12, 0, 2 * Math.PI);
-      ctx.fillStyle = 'blue';
+      ctx.fillStyle = color;
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = 'white';
@@ -86,6 +86,119 @@ const PlanDetail: React.FC = () => {
       anchor: new window.google.maps.Point(15, 15),
     };
   };
+
+  const createPolyLine = () => {
+    const newMarkers: any[] = [];
+    const pathCoordinates: google.maps.LatLng[] = [];
+    const bounds = new window.google.maps.LatLngBounds(); 
+
+    var lineSymbol = {
+      path: 'M 0,-1 0,1',
+      strokeOpacity: 1,
+      scale: 4
+    };
+
+    const colorPalette = ['blue', 'green', 'orange', 'purple', 'red'];
+
+    if (polyline) {
+      if (Array.isArray(polyline)) {
+        polyline.forEach((p) => p.setMap(null));
+      } else {
+        polyline.setMap(null);
+      }
+    }
+
+    markers.forEach((marker) => marker.setMap(null));
+
+    if(selectedDay === '전체 일정') {
+      const allPaths: google.maps.LatLng[][] = [];
+
+      totalLocationList.forEach((locationList, dayIndex) => {
+        const dayPath: google.maps.LatLng[] = [];
+        locationList.forEach((location) => {
+        const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
+        dayPath.push(latLng);
+        bounds.extend(latLng);
+
+        newMarkers.push(new window.google.maps.Marker({
+          position: latLng,
+          map: googleMap,
+          icon: createCustomIconWithColor(location.scheduleOrder.toString(), colorPalette[dayIndex % colorPalette.length]),
+        }))
+      })
+      
+      if (dayPath.length > 0) {
+        allPaths.push(dayPath);
+      }
+    });
+
+    const polylinesToSet: google.maps.Polyline[] = [];
+    allPaths.forEach((path, index) => {
+      if(path.length > 0 && googleMap) {
+        polylinesToSet.push(
+          new window.google.maps.Polyline({
+            path: path,
+            strokeOpacity: 0,
+            icons: [
+              {
+                icon: { ...lineSymbol, strokeColor: colorPalette[index % colorPalette.length] }, // Polyline 색상 적용
+                offset: '0',
+                repeat: '20px',
+              },
+            ],
+            map: googleMap,
+          })
+        )
+      }
+    })
+
+    setPolyline(polylinesToSet);
+
+    } else {
+      locationList.forEach((location) => {
+        const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
+        pathCoordinates.push(latLng);
+        bounds.extend(latLng);
+        newMarkers.push(new window.google.maps.Marker({
+          position: latLng,
+          map: googleMap,
+          icon: createCustomIconWithColor(location.scheduleOrder.toString(), colorPalette[0]),
+        }))
+      })
+
+      if(pathCoordinates.length > 0 && googleMap) {
+        setPolyline(
+          new window.google.maps.Polyline({
+            path: pathCoordinates,
+            strokeOpacity: 0,
+            icons: [
+              {
+                icon: { ...lineSymbol, strokeColor: colorPalette[0] }, // Polyline 색상 적용
+                offset: '0',
+                repeat: '20px',
+              },
+            ],
+            map: googleMap,
+          })
+        );
+      } else {
+        setPolyline(null);
+      }
+    }
+
+    setMarkers(newMarkers);
+
+    if(googleMap) {
+      googleMap.fitBounds(bounds);
+
+      const currentLocations = selectedDay === '전체 일정' ? totalLocationList.flat() : locationList;
+
+      if (currentLocations.length === 1) {
+        googleMap.setZoom(15);
+        googleMap.panTo(new window.google.maps.LatLng(currentLocations[0].latitude, currentLocations[0].longitude));
+      }
+    }
+  }
 
   useEffect(() => {
     if(mapRef.current){
@@ -104,60 +217,20 @@ const PlanDetail: React.FC = () => {
 
   useEffect(() => {
     if(googleMap && locationList.length > 0) {
-      const newMarkers: any[] = [];
-      const pathCoordinates: google.maps.LatLng[] = [];
-      const bounds = new window.google.maps.LatLngBounds(); 
-
-      locationList.forEach((location) => {
-        const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
-        pathCoordinates.push(latLng);
-        bounds.extend(latLng);
-        newMarkers.push(new window.google.maps.Marker({
-          position: latLng,
-          map: googleMap,
-          icon: createCustomIcon(location.scheduleOrder.toString()),
-        }))
-      })
-
-      if(polyline) polyline.setMap(null);
-      markers.forEach((marker) => marker.setMap(null));
-
-      setMarkers(newMarkers);
-
-      var lineSymbol = {
-        path: 'M 0,-1 0,1',
-        strokeOpacity: 1,
-        scale: 4
-      };
-
-      setPolyline(new window.google.maps.Polyline({
-        path: pathCoordinates,
-        strokeOpacity: 0,
-        icons: [{
-          icon: lineSymbol,
-          offset: '0',
-          repeat: '20px'
-        }],
-        map: googleMap,
-      }));
-
-      googleMap.fitBounds(bounds);
-
-      if (locationList.length === 1) {
-        googleMap.setZoom(15); // 적절한 줌 레벨 설정
-        googleMap.panTo(pathCoordinates[0]); // 첫 번째 (유일한) 위치로 이동
-      }
+      createPolyLine();
     }
   }, [googleMap,locationList]);
 
   useEffect(() => {
-    if(selectedDay === '전체 일정') {
-      return
-    } else {
-      console.log(Number(selectedDay) - 1);
-      setLocationList(totalLocationList[Number(selectedDay) - 1]);
+    if(googleMap){
+      if(selectedDay==='전체 일정'){
+        createPolyLine();
+      } else {
+        setLocationList(totalLocationList[Number(selectedDay) - 1]);
+      }
     }
-  },[selectedDay]);
+
+  },[totalLocationList, selectedDay]);
 
   useEffect(() => {
     loadTotalLocationList();
