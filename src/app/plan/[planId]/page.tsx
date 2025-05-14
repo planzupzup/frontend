@@ -52,6 +52,7 @@ const PlanDetail: React.FC = () => {
   const [markers, setMarkers] = useState<any[]>([]);
   const [polyline, setPolyline] = useState<google.maps.Polyline | null>(null);
   const [durations, setDurations] = useState<number[]>([]);
+  const [totalLocationList, setTotalLocationList] = useState<Location[][]>([]);
 
   const googleMapService = useGoogleMapService(mapRef, {
     googleMap,
@@ -150,16 +151,27 @@ const PlanDetail: React.FC = () => {
   }, [googleMap,locationList]);
 
   useEffect(() => {
-    loadLocationList();
+    if(selectedDay === '전체 일정') {
+      return
+    } else {
+      console.log(Number(selectedDay) - 1);
+      setLocationList(totalLocationList[Number(selectedDay) - 1]);
+    }
   },[selectedDay]);
+
+  useEffect(() => {
+    loadTotalLocationList();
+  }, [days]);
+
+  useEffect(() => {
+    if (plan) {
+      generateDays();
+    }
+  }, [plan]);
 
   useEffect(() => {
     loadPlan();
   }, [planId]);
-
-  useEffect(() => {
-    if (plan) generateDays();
-  }, [plan]);
 
   const loadPlan = async () => {
     try {
@@ -170,10 +182,11 @@ const PlanDetail: React.FC = () => {
     }
   };
 
-  const loadLocationList = async () => {
+  const loadTotalLocationList = async () => {
     try {
-      if(selectedDay !== '전체 일정') {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}/${selectedDay}`);
+      var tempTotalLocationList:Location[][] = [];
+      for(const [index] of days.entries()) {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}/${index + 1}`);
         var tempLocationList = response.data.result;
 
         var tempLocation: {lat: number; lng: number} | null = null;
@@ -203,8 +216,10 @@ const PlanDetail: React.FC = () => {
           }
         }
 
-        setLocationList(tempLocationList);
+        tempTotalLocationList[index] = tempLocationList;
       }
+
+      setTotalLocationList(tempTotalLocationList);
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
     }
@@ -243,16 +258,43 @@ const PlanDetail: React.FC = () => {
             </div>
           ))}
         </div>
-        {selectedDay !== '전체 일정' && (
-          <div onClick={() => setIsEditing(prev => !prev)} className={classNames(style.item, style.type_edit)}>
-            {isEditing ? '편집 종료' : '편집'}
-          </div>
-        )}
+        <div onClick={() => setIsEditing(prev => !prev)} className={classNames(style.item, style.type_edit)}>
+          {isEditing ? '편집 종료' : '편집'}
+        </div>
       </div>
 
       {/* Main Content */}
       <div style={{ flex: 1 }} className={style.contents}>
-        <EditSchedule day={selectedDay} planId={planId} />
+        {/* <EditSchedule day={selectedDay} planId={planId} /> */}
+        <h2 className={style.title}>{plan?.title}</h2>
+        <div className={style.date_wrap}>
+          <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
+          <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
+        </div>
+
+        <div className={style.schedule_wrap}>
+            <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
+            <div className={style.location_list_wrap}>
+              <div className={style.location_list}>
+                {locationList.map((location, idx) => (
+                  <>
+                    {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
+                    <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
+                      <div className={style.order}>{location.scheduleOrder}</div>
+                      <div className={style.name_wrap}>
+                        <div className={style.name}>{location.locationName}</div>
+                        <div className={style.category}>{location.category}</div>
+                      </div>
+                      <div className={style.img_wrap}>
+                        <img src={location.image?.imageUrl} className={style.img}/>
+                      </div>
+                    </div>
+                  </>
+                ))}
+              </div>
+              <div className={style.kakao_map} ref={mapRef}></div>
+            </div>
+          </div>
       </div>
     </div>
   );
