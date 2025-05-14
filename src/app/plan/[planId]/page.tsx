@@ -3,13 +3,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import EditSchedule from '../../components/EditSchedule';
 import axios from 'axios';
-import style from "./Plan.module.scss";
+import style from "@/app/plan/[planId]/Plan.module.scss";
 import classNames from 'classnames';
 import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
-import { getTimeUnit } from '@/app/utils/getTimeUnit';
+import LocationList from '@/app/components/locationList/locationList';
 
-interface Location {
+export interface Location {
   id: number;
   locationName: string;
   category: string;
@@ -25,7 +25,7 @@ interface Location {
   duration: number;
 }
 
-interface Plan {
+export interface Plan {
   id: number;
   title: string;
   destination: string;
@@ -33,7 +33,7 @@ interface Plan {
   endDate: string;
 }
 
-interface Day {
+export interface Day {
   label: string;
   value: string;
   index: string;
@@ -346,28 +346,17 @@ const PlanDetail: React.FC = () => {
         </div>
 
         <div className={style.schedule_wrap}>
-            <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
-            <div className={style.location_list_wrap}>
-              <div className={style.location_list}>
-                {locationList.map((location, idx) => (
-                  <>
-                    {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
-                    <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
-                      <div className={style.order}>{location.scheduleOrder}</div>
-                      <div className={style.name_wrap}>
-                        <div className={style.name}>{location.locationName}</div>
-                        <div className={style.category}>{location.category}</div>
-                      </div>
-                      <div className={style.img_wrap}>
-                        <img src={location.image?.imageUrl} className={style.img}/>
-                      </div>
-                    </div>
-                  </>
-                ))}
-              </div>
-              <div className={style.kakao_map} ref={mapRef}></div>
+          <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
+          <div className={style.location_list_wrap}>
+            <div className={style.location_list_area}>
+              {
+                selectedDay==="전체 일정" ? totalLocationList.map((locationList) => <LocationList locationList={locationList} location={location} setLocation={setLocation}/>) :
+                <LocationList locationList={locationList} location={location} setLocation={setLocation}/>
+              }
             </div>
+            <div className={style.kakao_map} ref={mapRef}></div>
           </div>
+        </div>
       </div>
     </div>
   );
