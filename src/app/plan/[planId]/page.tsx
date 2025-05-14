@@ -252,6 +252,7 @@ const PlanDetail: React.FC = () => {
 
       {/* Main Content */}
       <div style={{ flex: 1 }} className={style.contents}>
+        {/* [D] 편집모드<EditSchedule day={selectedDay} planId={planId} /> */ } 
         <h2 className={style.title}>{plan?.title}</h2>
         <div className={style.date_wrap}>
           <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>

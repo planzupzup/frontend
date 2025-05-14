@@ -16,7 +16,7 @@ interface Location {
 interface Props {
   day: string; // format 'YYYY-MM-DD'
   planId: string;
-  onSave: (locations: Location[]) => void;
+  onSave?: (locations: Location[]) => void;
 }
 
 const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
@@ -100,19 +100,8 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
       setSelectedLocation(null);
       setSearchInput('');
       setFile(null);
-      loadLocations();
     } catch (error: any) {
       alert('위치등록에 실패했습니다.');
-      console.error(error);
-    }
-  };
-
-  const loadLocations = async () => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}/${day}`);
-      setLocations(res.data.result);
-    } catch (error: any) {
-      alert('위치 불러오기 실패');
       console.error(error);
     }
   };
@@ -133,9 +122,14 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
         <ul className={style.placesList}>
           {places.map((place, idx) => (
             <li key={idx} className={style.placeItem} onClick={() => selectLocation(place)}>
-              <strong>{place.name}</strong>
-              <div className={style.addressText}>
-                {place.formatted_address}
+              <div>
+                <strong>{place.name}</strong>
+                <div className={style.addressText}>
+                  {place.formatted_address}
+                </div>
+              </div>
+              <div className={style.img_wrap}>
+                <img src={place.photos[0]?.getUrl()} className={style.img}/>
               </div>
             </li>
           ))}
