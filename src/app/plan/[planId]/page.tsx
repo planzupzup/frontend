@@ -7,6 +7,7 @@ import style from "./Plan.module.scss";
 import classNames from 'classnames';
 import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
+import { getTimeUnit } from '@/app/utils/getTimeUnit';
 
 interface Location {
   id: number;
@@ -20,6 +21,8 @@ interface Location {
   }
   latitude: number;
   longitude: number;
+  address: string;
+  duration: number;
 }
 
 interface Plan {
@@ -48,6 +51,7 @@ const PlanDetail: React.FC = () => {
   const [googleMap, setGoogleMap] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<any[]>([]);
   const [polyline, setPolyline] = useState<google.maps.Polyline | null>(null);
+  const [durations, setDurations] = useState<number[]>([]);
 
   const googleMapService = useGoogleMapService(mapRef, {
     googleMap,
@@ -170,7 +174,36 @@ const PlanDetail: React.FC = () => {
     try {
       if(selectedDay !== '전체 일정') {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}/${selectedDay}`);
-        setLocationList(response.data.result);
+        var tempLocationList = response.data.result;
+
+        var tempLocation: {lat: number; lng: number} | null = null;
+    
+        for(const [index, location] of tempLocationList.entries()) {
+          if(index == 0) {
+            tempLocation = {lat: location.latitude, lng: location.longitude};
+            location.duration = 0;
+            continue;
+          }
+    
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=transit`
+            );
+      
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+      
+            const data = await response.json();
+            tempLocation = {lat: location.latitude, lng: location.longitude};
+            location.duration = data.routes[0].legs[0].duration.value;
+          } catch(e) {
+            console.error(e);
+            return [] ;
+          }
+        }
+
+        setLocationList(tempLocationList);
       }
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
@@ -229,17 +262,20 @@ const PlanDetail: React.FC = () => {
             <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
             <div className={style.location_list_wrap}>
               <div className={style.location_list}>
-                {locationList.map(location => (
-                  <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
-                    <div className={style.order}>{location.scheduleOrder}</div>
-                    <div className={style.name_wrap}>
-                      <div className={style.name}>{location.locationName}</div>
-                      <div className={style.category}>{location.category}</div>
+                {locationList.map((location, idx) => (
+                  <>
+                    {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
+                    <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
+                      <div className={style.order}>{location.scheduleOrder}</div>
+                      <div className={style.name_wrap}>
+                        <div className={style.name}>{location.locationName}</div>
+                        <div className={style.category}>{location.category}</div>
+                      </div>
+                      <div className={style.img_wrap}>
+                        <img src={location.image?.imageUrl} className={style.img}/>
+                      </div>
                     </div>
-                    <div className={style.img_wrap}>
-                      <img src={location.image?.imageUrl} className={style.img}/>
-                    </div>
-                  </div>
+                  </>
                 ))}
               </div>
               <div className={style.kakao_map} ref={mapRef}></div>
