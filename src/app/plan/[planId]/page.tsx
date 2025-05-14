@@ -252,36 +252,7 @@ const PlanDetail: React.FC = () => {
 
       {/* Main Content */}
       <div style={{ flex: 1 }} className={style.contents}>
-        {/* [D] 편집모드<EditSchedule day={selectedDay} planId={planId} /> */ } 
-        <h2 className={style.title}>{plan?.title}</h2>
-        <div className={style.date_wrap}>
-          <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
-          <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
-        </div>
-
-        <div className={style.schedule_wrap}>
-            <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
-            <div className={style.location_list_wrap}>
-              <div className={style.location_list}>
-                {locationList.map((location, idx) => (
-                  <>
-                    {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
-                    <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
-                      <div className={style.order}>{location.scheduleOrder}</div>
-                      <div className={style.name_wrap}>
-                        <div className={style.name}>{location.locationName}</div>
-                        <div className={style.category}>{location.category}</div>
-                      </div>
-                      <div className={style.img_wrap}>
-                        <img src={location.image?.imageUrl} className={style.img}/>
-                      </div>
-                    </div>
-                  </>
-                ))}
-              </div>
-              <div className={style.kakao_map} ref={mapRef}></div>
-            </div>
-          </div>
+        <EditSchedule day={selectedDay} planId={planId} />
       </div>
     </div>
   );

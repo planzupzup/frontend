@@ -5,6 +5,7 @@ import axios from 'axios';
 import style from "./EditSchedule.module.scss";
 import { useGoogleMapService } from '../hooks/useGoogleMapService';
 import { Place } from '../hooks/useGoogleMapService';
+import { getKoreanCategory } from '../utils/getKoreanCategory';
 
 interface Location {
   locationId: number;
@@ -49,6 +50,10 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
       kakaoMapService.loadGoogleMapScript();
     }
   }, [mapRef]);
+
+  useEffect(() => {
+    console.log(places);
+  },[places]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -129,7 +134,14 @@ const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
                 </div>
               </div>
               <div className={style.img_wrap}>
-                <img src={place.photos[0]?.getUrl()} className={style.img}/>
+                {place.photos && place.photos.length > 0 && place.photos[0].getUrl() ? (
+                  <img src={place.photos[0].getUrl()} className={style.img} alt={place.name} />
+                ) : (
+                  <div className={style.noImage}>No Image</div>
+                )}
+              </div>
+              <div>
+              {getKoreanCategory(place.types)}
               </div>
             </li>
           ))}

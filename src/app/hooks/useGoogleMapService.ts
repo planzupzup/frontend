@@ -9,6 +9,7 @@ export interface Place {
     location: google.maps.LatLng; // 또는 google.maps.LatLngLiteral
   };
   photos: google.maps.places.PlacePhoto[];
+  types: string[];
 }
 
 interface GoogleMapState {
@@ -119,7 +120,8 @@ export const useGoogleMapService = (
     if (placesService && searchInput) {
       const request = {
         query: searchInput,
-        fields: ["name", "geometry", "formatted_address", "photos"],
+        fields: ["name", "geometry", "formatted_address", "photos", "types"],
+        language: 'ko',
       };
 
       placesService.textSearch(
