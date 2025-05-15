@@ -11,7 +11,7 @@ import LocationList from '@/app/components/locationList/LocationList';
 import LocationListEditWrapper from '@/app/components/locationList/LocationListEidtWrapper';
 
 export interface Location {
-  id: number;
+  locationId: number;
   locationName: string;
   category: string;
   scheduleOrder: number;
@@ -340,7 +340,7 @@ const PlanDetail: React.FC = () => {
       {/* Main Content */}
       <div style={{ flex: 1 }} className={style.contents}>
         {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-        <LocationListEditWrapper totalLocationList={totalLocationList}/>
+        {totalLocationList.length > 0 && <LocationListEditWrapper totalLocationList={totalLocationList}/> }
       </div>
     </div>
   );

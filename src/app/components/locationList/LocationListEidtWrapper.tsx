@@ -15,11 +15,8 @@ type TProps = {
 const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
     const [locations, setLocations] = useState<Location[][]>(totalLocationList);
 
-    useEffect(() => {
-        console.log("@");
-    },[totalLocationList]);
-
     const onDragEnd = (result: DropResult) => {
+        console.log('onDragEnd result:', result);
         const { destination, source } = result;
 
         if (!destination) return;
@@ -48,7 +45,7 @@ const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
         <div style={{ display: 'flex', gap: '8px' }}>
-            {locations.map((column, columnIndex) => 
+            {locations.filter(column => column.length > 0).map((column, columnIndex) => 
                 <Droppable droppableId={`${columnIndex}`} key={columnIndex}>
                 {(provided) => (
                     <div
@@ -63,20 +60,20 @@ const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
                     }}
                     >
                     <h3>{columnIndex + 1}</h3>
-                    {column.map((location, index) => 
-                        <Draggable
-                        key={location.id}
-                        draggableId={`${location.id}`}
+                    {column.map((location, index) => {
+                        return <Draggable
+                        key={location.locationId}
+                        draggableId={`${location.locationId}`}
                         index={index}
                         >
                         {(provided) => (
                             <div ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}>
-                                <LocationItem location={location} />
+                                <LocationItem location={location} locationIndex={index}/>
                             </div>
                         )}
-                        </Draggable>
+                        </Draggable>}
                     )}
                     {provided.placeholder}
                     </div>

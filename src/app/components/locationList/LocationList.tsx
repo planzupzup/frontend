@@ -20,7 +20,7 @@ const LocationList = ({ day, locationList, location, setLocation }:TProps) => {
             {locationList.map((location, idx) => (
             <>
                 {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
-                <LocationItem location={location} setLocation={setLocation} />
+                <LocationItem locationIndex={idx+1} location={location} setLocation={setLocation} />
             </>
             ))}
         </div>
