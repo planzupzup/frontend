@@ -9,11 +9,10 @@ import LocationItem from "@/app/components/locationList/LocationItem";
 type TProps = {
     day?: number;
     locationList: Location[];
-    location: Location | undefined;
     setLocation: React.Dispatch<React.SetStateAction<Location | undefined>>;
 }
 
-const LocationList = ({ day, locationList, location, setLocation }:TProps) => {
+const LocationList = ({ day, locationList, setLocation }:TProps) => {
 
     return (
         <div className={style.location_list}>
