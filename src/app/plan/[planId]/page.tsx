@@ -52,7 +52,8 @@ const PlanDetail: React.FC = () => {
   const [markers, setMarkers] = useState<any[]>([]);
   const [polyline, setPolyline] = useState<google.maps.Polyline | google.maps.Polyline[] | null>(null);
   const [durations, setDurations] = useState<number[]>([]);
-  const [totalLocationList, setTotalLocationList] = useState<Location[][]>([]);
+  const [totalLocationList, setTotalLocationList] = useState<Location[][]>([]); // 편집되어 저장될 수있는 원본 전체 지역 리스트
+  const [originalTotalLocationList, setOriginalTotalLocationList] = useState<Location[][]>([]); // 편집되지 않은 원본 전체 지역 리스트
 
   const googleMapService = useGoogleMapService(mapRef, {
     googleMap,
@@ -115,7 +116,7 @@ const PlanDetail: React.FC = () => {
 
       totalLocationList.forEach((locationList, dayIndex) => {
         const dayPath: google.maps.LatLng[] = [];
-        locationList.forEach((location) => {
+        locationList.forEach((location, locationIndex) => {
         const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
         dayPath.push(latLng);
         bounds.extend(latLng);
@@ -123,7 +124,7 @@ const PlanDetail: React.FC = () => {
         newMarkers.push(new window.google.maps.Marker({
           position: latLng,
           map: googleMap,
-          icon: createCustomIconWithColor(location.scheduleOrder.toString(), colorPalette[dayIndex % colorPalette.length]),
+          icon: createCustomIconWithColor((locationIndex + 1).toString(), colorPalette[dayIndex % colorPalette.length]),
         }))
       })
       
@@ -156,14 +157,14 @@ const PlanDetail: React.FC = () => {
 
     } else {
       const locationList = totalLocationList[parseInt(selectedDay, 10) - 1];
-      locationList.forEach((location) => {
+      locationList.forEach((location, locationIndex) => {
         const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
         pathCoordinates.push(latLng);
         bounds.extend(latLng);
         newMarkers.push(new window.google.maps.Marker({
           position: latLng,
           map: googleMap,
-          icon: createCustomIconWithColor(location.scheduleOrder.toString(), colorPalette[0]),
+          icon: createCustomIconWithColor((locationIndex + 1).toString(), colorPalette[0]),
         }))
       })
 
@@ -220,8 +221,13 @@ const PlanDetail: React.FC = () => {
     if(googleMap){
       createPolyLine();
     }
-
   },[totalLocationList, selectedDay]);
+
+  useEffect(() => {
+    if(totalLocationList && !isEditing) {
+      setTotalLocationList(originalTotalLocationList);
+    } // 편집 종료시 원본 전체 지역 리스트로 복구
+  },[isEditing]);
 
   useEffect(() => {
     loadTotalLocationList();
@@ -284,6 +290,7 @@ const PlanDetail: React.FC = () => {
       }
 
       setTotalLocationList(tempTotalLocationList);
+      setOriginalTotalLocationList(tempTotalLocationList);
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
     }
@@ -341,7 +348,7 @@ const PlanDetail: React.FC = () => {
             <div className={style.location_list_wrap}>
               <div className={style.location_list_area}>
                 {
-                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} /> :
+                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList} /> :
                   <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
                 }
               </div>

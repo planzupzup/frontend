@@ -10,13 +10,12 @@ import LocationItem from './LocationItem';
 
 type TProps = {
     totalLocationList : Location[][];
+    setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
 }
 
-const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
-    const [locations, setLocations] = useState<Location[][]>(totalLocationList);
+const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList } : TProps) => {
 
     const onDragEnd = (result: DropResult) => {
-        console.log('onDragEnd result:', result);
         const { destination, source } = result;
 
         if (!destination) return;
@@ -24,11 +23,11 @@ const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
         const sourceIndex = parseInt(source.droppableId, 10);
         const destinationIndex = parseInt(destination.droppableId, 10);
 
-        const sourceColumn = [...locations[sourceIndex]];
-        const destColumn = [...locations[destinationIndex]];
+        const sourceColumn = [...totalLocationList[sourceIndex]];
+        const destColumn = [...totalLocationList[destinationIndex]];
         const [moveItem] = sourceColumn.splice(source.index, 1);
 
-        const newLocations = [...locations];
+        const newLocations = [...totalLocationList];
 
         if (sourceIndex === destinationIndex) {
             sourceColumn.splice(destination.index, 0, moveItem);
@@ -39,17 +38,13 @@ const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
             newLocations[destinationIndex]= destColumn;
         }
 
-        setLocations(newLocations);
+        setTotalLocationList(newLocations);
     }
-
-    useEffect(() => {
-        setLocations(totalLocationList);
-    }, [totalLocationList]);
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
         <div style={{ display: 'flex', gap: '8px' }}>
-            {locations.filter(column => column.length > 0).map((column, columnIndex) => 
+            {totalLocationList.filter(column => column.length > 0).map((column, columnIndex) => 
                 <Droppable droppableId={`${columnIndex}`} key={columnIndex}>
                 {(provided) => (
                     <div
