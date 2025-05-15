@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import {
   DragDropContext,
   Droppable,
@@ -42,6 +42,10 @@ const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
         setLocations(newLocations);
     }
 
+    useEffect(() => {
+        setLocations(totalLocationList);
+    }, [totalLocationList]);
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -70,7 +74,7 @@ const LocationListEditWrapper = ({ totalLocationList } : TProps) => {
                             <div ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}>
-                                <LocationItem location={location} locationIndex={index}/>
+                                <LocationItem location={location} locationIndex={index + 1}/>
                             </div>
                         )}
                         </Draggable>}

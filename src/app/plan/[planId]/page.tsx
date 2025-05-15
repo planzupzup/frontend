@@ -43,7 +43,6 @@ export interface Day {
 const PlanDetail: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
   const [plan, setPlan] = useState<Plan | null>(null);
-  const [locationList, setLocationList] = useState<Location[]>([]);
   const [location, setLocation] = useState<Location>();
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>('전체 일정');
@@ -156,6 +155,7 @@ const PlanDetail: React.FC = () => {
     setPolyline(polylinesToSet);
 
     } else {
+      const locationList = totalLocationList[parseInt(selectedDay, 10) - 1];
       locationList.forEach((location) => {
         const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
         pathCoordinates.push(latLng);
@@ -192,7 +192,7 @@ const PlanDetail: React.FC = () => {
     if(googleMap) {
       googleMap.fitBounds(bounds);
 
-      const currentLocations = selectedDay === '전체 일정' ? totalLocationList.flat() : locationList;
+      const currentLocations = selectedDay === '전체 일정' ? totalLocationList.flat() : totalLocationList[parseInt(selectedDay) -1];
 
       if (currentLocations.length === 1) {
         googleMap.setZoom(15);
@@ -217,18 +217,8 @@ const PlanDetail: React.FC = () => {
   },[location]);
 
   useEffect(() => {
-    if(googleMap && locationList.length > 0) {
-      createPolyLine();
-    }
-  }, [googleMap,locationList]);
-
-  useEffect(() => {
     if(googleMap){
-      if(selectedDay==='전체 일정'){
-        createPolyLine();
-      } else {
-        setLocationList(totalLocationList[Number(selectedDay) - 1]);
-      }
+      createPolyLine();
     }
 
   },[totalLocationList, selectedDay]);
@@ -351,13 +341,13 @@ const PlanDetail: React.FC = () => {
             <div className={style.location_list_wrap}>
               <div className={style.location_list_area}>
                 {
-                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={totalLocationList} /> :
+                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} /> :
                   <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
                 }
               </div>
               <div className={style.kakao_map} ref={mapRef}></div>
             </div>
-          </div>
+          </div>원ㄹ
       </div>
     </div>
   );
