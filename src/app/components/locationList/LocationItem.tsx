@@ -5,13 +5,13 @@ import style from "@/app/plan/[planId]/Plan.module.scss";
 
 type TProps = {
     location: Location;
-    setLocation: React.Dispatch<React.SetStateAction<Location | undefined>>;
+    setLocation?: React.Dispatch<React.SetStateAction<Location | undefined>>;
 }
 
 const LocationItem = ({ location, setLocation }:TProps) => {
 
     return (
-        <div key={location.id} className={style.location_item} onClick={() => setLocation(location)}>
+        <div key={location.id} className={style.location_item} onClick={() => setLocation && setLocation(location)}>
             <div className={style.order}>{location.scheduleOrder}</div>
             <div className={style.name_wrap}>
                 <div className={style.name}>{location.locationName}</div>

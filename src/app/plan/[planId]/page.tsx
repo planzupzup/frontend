@@ -7,7 +7,8 @@ import style from "@/app/plan/[planId]/Plan.module.scss";
 import classNames from 'classnames';
 import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
-import LocationList from '@/app/components/locationList/locationList';
+import LocationList from '@/app/components/locationList/LocationList';
+import LocationListEditWrapper from '@/app/components/locationList/LocationListEidtWrapper';
 
 export interface Location {
   id: number;
@@ -339,24 +340,7 @@ const PlanDetail: React.FC = () => {
       {/* Main Content */}
       <div style={{ flex: 1 }} className={style.contents}>
         {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-        <h2 className={style.title}>{plan?.title}</h2>
-        <div className={style.date_wrap}>
-          <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
-          <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
-        </div>
-
-        <div className={style.schedule_wrap}>
-          <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
-          <div className={style.location_list_wrap}>
-            <div className={style.location_list_area}>
-              {
-                selectedDay==="전체 일정" ? totalLocationList.map((locationList) => <LocationList locationList={locationList} location={location} setLocation={setLocation}/>) :
-                <LocationList locationList={locationList} location={location} setLocation={setLocation}/>
-              }
-            </div>
-            <div className={style.kakao_map} ref={mapRef}></div>
-          </div>
-        </div>
+        <LocationListEditWrapper totalLocationList={totalLocationList}/>
       </div>
     </div>
   );
