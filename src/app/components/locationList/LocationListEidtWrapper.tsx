@@ -5,7 +5,7 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
-import { Location } from '@/app/plan/[planId]/page';
+import { Day, Location } from '@/app/plan/[planId]/page';
 import LocationItem from './LocationItem';
 
 type TProps = {
@@ -13,7 +13,7 @@ type TProps = {
     setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
 }
 
-const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList } : TProps) => {
+const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList} : TProps) => {
 
     const onDragEnd = (result: DropResult) => {
         const { destination, source } = result;

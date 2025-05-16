@@ -36,7 +36,6 @@ export interface Plan {
 
 export interface Day {
   label: string;
-  value: string;
   index: string;
 }
 
@@ -308,7 +307,6 @@ const PlanDetail: React.FC = () => {
     for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
       result.push({
         label: `${index}일차`,
-        value: date.toISOString().split('T')[0],
         index: `${index}`
       });
       index++;
@@ -325,9 +323,9 @@ const PlanDetail: React.FC = () => {
           전체 일정
         </div>
         <div className={style.scroll_area}>
-          {days.map(day => (
-            <div key={day.value} onClick={() => {setSelectedDay(day.index); }} style={{ fontWeight: selectedDay === day.index ? 'bold' : 'normal' }} className={style.item}>
-              {day.label}
+          {Array.from({length:totalLocationList.length}, (_, index) => index +1).map(day => (
+            <div key={day} onClick={() => {setSelectedDay(`${day}`)}} style={{ fontWeight: selectedDay === `${day}` ? 'bold' : 'normal' }} className={style.item}>
+              {`${day}일차`}
             </div>
           ))}
         </div>
@@ -346,11 +344,11 @@ const PlanDetail: React.FC = () => {
           </div>
   
           <div className={style.schedule_wrap}>
-            <h3 className={style.schedule_order}>{days.find(day => day.value === selectedDay)?.label}</h3>
+            <h3 className={style.schedule_order}>{days.find(day => day.index === selectedDay)?.label}</h3>
             <div className={style.location_list_wrap}>
               <div className={style.location_list_area}>
                 {
-                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList} /> :
+                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
                   <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
                 }
               </div>
