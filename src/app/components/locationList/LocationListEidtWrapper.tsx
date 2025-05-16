@@ -36,6 +36,9 @@ const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList } : T
             destColumn.splice(destination.index, 0, moveItem);
             newLocations[sourceIndex] = sourceColumn;
             newLocations[destinationIndex]= destColumn;
+            if(sourceColumn.length === 0) {
+                newLocations.splice(sourceIndex, 1);
+            }
         }
 
         setTotalLocationList(newLocations);

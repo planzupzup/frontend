@@ -121,6 +121,8 @@ const PlanDetail: React.FC = () => {
         dayPath.push(latLng);
         bounds.extend(latLng);
 
+        console.log(dayIndex)
+
         newMarkers.push(new window.google.maps.Marker({
           position: latLng,
           map: googleMap,
@@ -354,7 +356,7 @@ const PlanDetail: React.FC = () => {
               </div>
               <div className={style.kakao_map} ref={mapRef}></div>
             </div>
-          </div>원ㄹ
+          </div>
       </div>
     </div>
   );
