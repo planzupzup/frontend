@@ -311,7 +311,6 @@ const PlanDetail: React.FC = () => {
       });
       index++;
     }
-
     setDays(result);
   };
 
