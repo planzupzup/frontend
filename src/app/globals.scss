@@ -59,6 +59,7 @@ body {
   -webkit-text-size-adjust: none;
   display: flex;
   flex-direction: column;
+  word-break: break-all;
 
   &[data-mode='dimmed'] {
     overflow: hidden;

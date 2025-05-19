@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@egjs/react-infinitegrid": "^4.12.0",
     "@hello-pangea/dnd": "^18.0.1",
     "axios": "^1.9.0",
     "classnames": "^2.5.1",

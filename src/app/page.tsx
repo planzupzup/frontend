@@ -2,6 +2,41 @@
 
 import React from "react";
 import styles from "@/app/page.module.scss";
+import { MasonryInfiniteGrid } from "@egjs/react-infinitegrid";
+import MasonryGridItem from "./components/main/MasonryGridItem";
+
+const tempMockupBADataArray = [
+  {
+    profileImageUrl: "/img_jeju_island.png",
+    nickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임",
+    title: "asdsadasdasdasdasdsadasd",
+    desc: "asdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasd"
+  },
+  {
+    profileImageUrl: "/img_jeju_island.png",
+    nickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임",
+    title: "asdsadasdasdasdasdsadasd",
+    desc: "asdsadasdadasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasd"
+  },
+  {
+    profileImageUrl: "/img_jeju_island.png",
+    nickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임",
+    title: "asdsadd",
+    desc: "123123"
+  },
+  {
+    profileImageUrl: "/img_jeju_island.png",
+    nickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임",
+    title: "asdsadasdasdasdasdsadasd",
+    desc: "asdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasddasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsa"
+  },
+  {
+    profileImageUrl: "/img_jeju_island.png",
+    nickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임",
+    title: "asdsadasdasdasdasdsadasd",
+    desc: "asdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasddasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsadasdasdsadasdasdasdasdsa"
+  }
+]
 
 const Home: React.FC = () => {
   const handlePlanClick = () => {
@@ -72,28 +107,17 @@ const Home: React.FC = () => {
         <div className={styles.link_wrap}>
           <a href="#" className={styles.link}>플랜 만들기</a>
         </div>
-        <ul className={styles.list}>
-          <li className={styles.item}>
-            <img src="/img_jeju_island.png" alt="섬네일" className={styles.img}/>
-            <div className={styles.info_area}>
-              <div className={styles.day_wrap}>
-                <span className={styles.day}>N일차</span>
-              </div>
-              <h3 className={styles.sub_title}>[일이삼사오육칠팔구십]</h3>
-              <p className={styles.sub_desc}>일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십</p>
-            </div>
-          </li>
-          <li className={styles.item}>
-            <img src="/img_jeju_island.png" alt="섬네일" className={styles.img}/>
-            <div className={styles.info_area}>
-              <div className={styles.day_wrap}>
-                <span className={styles.day}>N일차</span>
-              </div>
-              <h3 className={styles.sub_title}>[일이삼사오육칠팔구십]</h3>
-              <p className={styles.sub_desc}>일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십</p>
-            </div>
-          </li>
-        </ul>
+        <MasonryInfiniteGrid className={styles.list}
+          gap={32}
+          useRecycle={true}
+          autoResize={true}
+          threshold={300}
+          resizeDebounce={10}
+          align="stretch"
+          column={3}
+          useTransform={true}>
+            {tempMockupBADataArray.map((item) => <MasonryGridItem ProfileImageUrl={item.profileImageUrl} nickname={item.nickname} title={item.title} desc={item.desc} />)}
+        </MasonryInfiniteGrid>
       </section>
     </>
   );
