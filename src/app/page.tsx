@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/app/page.module.scss";
 import { MasonryInfiniteGrid } from "@egjs/react-infinitegrid";
 import MasonryGridItem from "./components/main/MasonryGridItem";
+
+const getColumnSize = () => (window.innerWidth >= 1024 ? 3: 2);
 
 const tempMockupBADataArray = [
   {
@@ -39,9 +41,20 @@ const tempMockupBADataArray = [
 ]
 
 const Home: React.FC = () => {
+  const [column, setColumn] = useState(getColumnSize());
+
   const handlePlanClick = () => {
     window.location.href = "/destination"; // react-router 사용 시 navigate로 대체 가능
   };
+
+  useEffect(() => {
+
+    window.addEventListener("resize", () => setColumn(getColumnSize()));
+    return () => {
+      window.removeEventListener("resize", () => setColumn(getColumnSize()));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   return (
     <>  
@@ -114,7 +127,7 @@ const Home: React.FC = () => {
           threshold={300}
           resizeDebounce={10}
           align="stretch"
-          column={3}
+          column={column}
           useTransform={true}>
             {tempMockupBADataArray.map((item) => <MasonryGridItem ProfileImageUrl={item.profileImageUrl} nickname={item.nickname} title={item.title} desc={item.desc} />)}
         </MasonryInfiniteGrid>
