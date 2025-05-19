@@ -1,58 +1,45 @@
 "use client";
 
 import React from "react";
+import styles from "@/app/page.module.scss";
 
 const Home: React.FC = () => {
   const handlePlanClick = () => {
     window.location.href = "/destination"; // react-router 사용 시 navigate로 대체 가능
   };
 
-  const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-      padding: "20px",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    spacer: {
-      height: "50px",
-    },
-    infoMent: {
-      fontSize: "30px",
-      fontWeight: 800,
-      textAlign: "center",
-    },
-    smallFont: {
-      color: "#828282",
-      fontSize: "18px",
-      textAlign: "center",
-      marginTop: "20px",
-    },
-    blackButton: {
-      backgroundColor: "black",
-      color: "white",
-      padding: "10px 20px",
-      cursor: "pointer",
-      marginTop: "30px",
-      textAlign: "center",
-      borderRadius: "5px",
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.spacer} />
-      <div style={styles.infoMent}>
-        기존에 경험하지 못한 새로운 여행 플래너
-      </div>
-      <div style={styles.spacer} />
-      <div style={styles.smallFont}>
-        고민만 하던 여행 계획을 트래블러로 스케줄링 해보세요
-      </div>
-      <div style={styles.blackButton} onClick={handlePlanClick}>
-        여행 계획하기
-      </div>
-    </div>
+    <>  
+      <section className={styles.section_1}>
+        <div className={styles.section_1_image}>
+          <a href="#" className={styles.link}>
+            <h1 className={styles.title}>유튜버처럼 떠나는 여행,<br />지금 시작해보세요</h1>
+          </a>
+          <span className="blind">
+            100만+ 유튜버의 여행루트
+          </span>
+        </div>
+      </section>
+      <section className={styles.section_2}>
+        <h2 className={styles.title}>보고 끝내지 말고, 직접 떠나보세요</h2>
+        <p className={styles.desc}>유튜버 & 인플루언서들의 여행 루트를 나도 경험할 수있어요!</p>
+      </section>
+      <section className={styles.section_3}>
+        <ul className={styles.list}>
+          <li className={styles.item}>
+            <img src="/img_section_3_290x290.png" alt="섬네일" className={styles.img}/>
+            <div className={styles.info_area}>
+              <h2 className={styles.title}>곽튜브는 맛집만 골라간다?<br />그게 바로 여행의 묘미!</h2>
+              <p className={styles.desc}>곽튜브와 함께라면, 평범한 여행도 특별해집니다.<br/>일이삼사오육칠팔구십일이삼사오육칠팔구십<br/>일이삼사오육칠팔구십일이삼사오육칠팔구십</p>
+              <div className={styles.link_area}>
+                <a href="#" className={styles.youtube_link}>유튜브 보러가기</a>
+                <a href="#" className={styles.follow_link}>따라가기</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </>
   );
 };
 

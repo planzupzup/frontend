@@ -1,9 +1,122 @@
+@import "/src/app/scss/variables.scss";
 
-.main {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  grid-row-start: 2;
+.section_1 {
+  height: 764px;
+  background: linear-gradient(to bottom, rgba(#bedeff,100%), rgba(#bedeff,14%)) 0 0/100% 100% no-repeat;
+
+  .title {
+    padding-top: 145px;
+    text-align: right;
+  
+    @include text-style('h2','black');
+  }
 }
 
+.section_2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 272px;
+  background-color: #fff;
+  text-align: center;
 
+  .title {
+    line-height: 48px;
+
+    @include text-style('h3','black');
+  }
+
+  .desc {
+    margin-top: 3px;
+    line-height: 22px;
+
+    @include text-style('b2-1','gray');
+  }
+}
+
+.section_3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 452px;
+  background-color: #f7f7fb;
+
+  .item {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    line-height: 38px;
+
+    .img {
+      width: 290px;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .info_area {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 75px;
+    }
+    
+    .title {
+      @include text-style('s1', 'black');
+    }
+
+    .desc {
+      margin-top: 10px;
+      line-height: 24px;
+
+      @include text-style('s2-1', 'gray1');
+    }
+
+    .link_area {
+      display: flex;
+      justify-self: flex-end;
+      margin-top: 24px;
+      
+      a {
+        display: block;
+        padding: 0 20px;
+        border-radius: 21px;
+        line-height: 42px;
+      }
+    }
+
+    .youtube_link {
+      margin-right: 12px;
+      background-color: #fff;
+
+      filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+      
+      @include text-style('b2-2', 'black');
+    }
+
+    .follow_link {
+      background-color: #3c76f1;
+
+      @include text-style('b2-2', 'white');
+    }
+  }
+}
+
+.section_1_image {
+  display: block;
+  height: 764px;
+  background: url("/img_section_1_758x566.png") 0 0/1024px 764px no-repeat;
+}
+
+.link {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .section_1 {
+    padding-left: calc(50% - 480px);
+    padding-right: calc(50% - 480px);
+  }
+}

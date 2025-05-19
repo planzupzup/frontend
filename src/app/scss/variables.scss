@@ -1,0 +1,61 @@
+$font-styles: (
+  'h1': (
+    'size': 55px,
+    'weight': 700,
+  ),
+  'h2': (
+    'size': 50px,
+    'weight': 700,
+  ),
+  'h3': (
+    'size': 40px,
+    'weight': 700,
+  ),
+  's1': (
+    'size': 32px,
+    'weight': 700,
+  ),
+  's2-1': (
+    'size': 20px,
+    'weight': 500,
+  ),
+  's2-2': (
+    'size': 20px,
+    'weight': 700,
+  ),
+  'b1': (
+    'size': 18px,
+    'weight': 600,
+  ),
+  'b2-1': (
+    'size': 16px,
+    'weight': 500,
+  ),
+  'b2-2': (
+    'size': 16px,
+    'weight': 600,
+  ),
+  'b3': (
+    'size': 14px,
+    'weight': 500,
+  ),
+  'b4': (
+    'size': 12px,
+    'weight': 500,
+  ),
+);
+
+$color-types: (
+    'blue': #3c76f1,
+    'sky': #bedeff,
+    'white': #fff,
+    'black': #000,
+    'gray1': #767676,
+    'gray2': #f7f7fb
+);
+
+@mixin text-style($style-name, $color) {
+  font-size: map-get(map-get($font-styles, $style-name), 'size');
+  font-weight: map-get(map-get($font-styles, $style-name), 'weight');
+  color: map-get($color-types, $color);
+}

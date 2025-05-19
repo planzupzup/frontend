@@ -10,6 +10,7 @@ export interface Place {
   };
   photos: google.maps.places.PlacePhoto[];
   types: string[];
+  place_id?: string;
 }
 
 interface GoogleMapState {

@@ -1,45 +1,38 @@
+@import "/src/app/scss/variables.scss";
+
 .header_wrap {
+    position: absolute;
+    top: 0;
+    left: 0 ;
+    right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 80px;
-    height: 80px;
-    border-bottom: 1px solid #e6e6e6;
-
-    @media (max-width: 768px) {
-        padding: 0 20px;
-    }
+    height: 64px;
 }
 
-.center_btn {
-    font-weight: 700;
+.logo {
     font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    line-height: 21px;
 }
 
-.profile_area {
-    display: inline-flex;
-    align-items: center;
-    gap: 17px;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 24px;
+.nav_area {
+    display: flex;
+    justify-content: space-between;
+    gap: 48px;
 
-    .svg1 {
-        display: block;
-        fill: none;
-        height: 16px;
-        width: 16px;
-        margin-left: 10px;
-        stroke: #6a6a6a;
-        stroke-width: 3;
-        overflow: visible;
+    .nav {
+        @include text-style("b2-1", "black");
+
+        line-height: 22px;
     }
+}
 
-    .svg2 {
-        display: block; 
-        height: 100%; 
-        width: 32px; 
-        color: #6a6a6a;
-        fill: #6a6a6a;
+@media (min-width: 1024px) {
+    .header_wrap {
+        width: 960px;
+        margin: 0 auto;
     }
 }
