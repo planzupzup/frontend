@@ -12,7 +12,7 @@ export async function GET(
   try {
     // 외부 API로 통신
     const response = await axios.get(
-      `${BACKEND_URL}/api/location/${params.planId}/${params.day}`,
+      `${BACKEND_URL}/api/plan/${params.planId}/${params.day}`,
     )
     if (response.data && Array.isArray(response.data.result)) {
       const updatedResult = response.data.result.map((item:any) => ({

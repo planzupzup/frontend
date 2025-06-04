@@ -1,5 +1,6 @@
 import LocationList from "@/app/components/locationList/LocationList";
 import { Location } from "@/app/plan/[planId]/page";
+import style from "@/app/plan/[planId]/Plan.module.scss";
 
 type TProps = {
     selectedDay: string;
@@ -11,7 +12,7 @@ const LocationListWrapper = ({ selectedDay, totalLocationList, setLocation} : TP
     if(selectedDay !== '전체 일정') {
         return <LocationList locationList={totalLocationList[parseInt(selectedDay, 10) - 1]} setLocation={setLocation} />
     } else {
-        return totalLocationList.map(locationList => <LocationList locationList={locationList} setLocation={setLocation}/>)
+        return <div className={style.locationlist_list}>{totalLocationList.map((locationList,index) => (<div className={style.locationlist_item}><span className={style.day}>{index+1}일차</span><LocationList locationList={locationList} setLocation={setLocation}/></div>))}</div>
     }
 }
 

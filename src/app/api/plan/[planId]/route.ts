@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { planId: stri
   try {
     // 외부 API로 통신
     const response = await axios.get(
-      `${BACKEND_URL}/api/plan/${params.planId}`,
+      `${BACKEND_URL}/api/plan/${planId}`,
     )
     return new NextResponse(JSON.stringify(response.data), {
       status: 200,

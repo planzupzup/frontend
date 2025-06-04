@@ -257,8 +257,9 @@ const PlanDetail: React.FC = () => {
     try {
       var tempTotalLocationList:Location[][] = [];
       for(const [index] of days.entries()) {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${planId}/${index + 1}`);
-        var tempLocationList = response.data.result;
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}/${index + 1}`);
+        console.log(response);
+        var tempLocationList = response.data.result.locations;
 
         var tempLocation: {lat: number; lng: number} | null = null;
     
@@ -271,7 +272,7 @@ const PlanDetail: React.FC = () => {
     
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=transit`
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
             );
       
             if (!response.ok) {
@@ -279,6 +280,7 @@ const PlanDetail: React.FC = () => {
             }
       
             const data = await response.json();
+            console.log(data);
             tempLocation = {lat: location.latitude, lng: location.longitude};
             location.duration = data.routes[0].legs[0].duration.value;
           } catch(e) {
@@ -317,43 +319,43 @@ const PlanDetail: React.FC = () => {
   return (
     <div style={{ display: 'flex' }} className={style.list_wrap}>
       {/* Sidebar */}
-      <div style={{ width: '200px' }} className={style.list}>
-        <div onClick={() => setSelectedDay('전체 일정')} style={{ fontWeight: selectedDay === '전체 일정' ? 'bold' : 'normal' }} className={style.item}>
-          전체 일정
-        </div>
+      <div className={style.list}>
+        <button onClick={() => setSelectedDay('전체 일정')} aria-selected={ selectedDay === '전체 일정' ? true : false } className={style.total_btn}>
+          <span className="blind">전체 일정</span>
+        </button>
         <div className={style.scroll_area}>
           {Array.from({length:totalLocationList.length}, (_, index) => index +1).map(day => (
-            <div key={day} onClick={() => {setSelectedDay(`${day}`)}} style={{ fontWeight: selectedDay === `${day}` ? 'bold' : 'normal' }} className={style.item}>
-              {`${day}일차`}
+            <div key={day} onClick={() => {setSelectedDay(`${day}`)}} aria-selected={ selectedDay === `${day}` ? true : false } className={style.item}>
+              {day}<span className="blind">일차</span>
             </div>
           ))}
         </div>
-        <div onClick={() => setIsEditing(prev => !prev)} className={classNames(style.item, style.type_edit)}>
-          {isEditing ? '편집 종료' : '편집'}
-        </div>
+        <button onClick={() => setIsEditing(prev => !prev)} className={classNames(style.edit_btn)}>
+          {isEditing ? '종료' : '편집'}
+        </button>
       </div>
 
       {/* Main Content */}
       <div style={{ flex: 1 }} className={style.contents}>
         {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-        <h2 className={style.title}>{plan?.title}</h2>
-          <div className={style.date_wrap}>
-            <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
-            <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
-          </div>
-  
-          <div className={style.schedule_wrap}>
-            <h3 className={style.schedule_order}>{days.find(day => day.index === selectedDay)?.label}</h3>
-            <div className={style.location_list_wrap}>
-              <div className={style.location_list_area}>
-                {
-                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
-                  <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
-                }
-              </div>
-              <div className={style.kakao_map} ref={mapRef}></div>
+        <h2 className={style.title}>{plan?.title}<span className={style.bookmark}><span className="blind">즐겨찾기</span></span></h2>
+        <div className={style.date_wrap}>
+          <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
+          <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
+        </div>
+
+        <div className={style.schedule_wrap}>
+          <h3 className={style.schedule_order}>{days.find(day => day.index === selectedDay)?.label}</h3>
+          <div className={style.location_list_wrap}>
+            <div className={style.location_list_area}>
+              {
+                isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
+                <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
+              }
             </div>
+            <div className={style.kakao_map} ref={mapRef}></div>
           </div>
+        </div>
       </div>
     </div>
   );

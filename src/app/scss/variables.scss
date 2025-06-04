@@ -15,11 +15,15 @@ $font-styles: (
     'size': 32px,
     'weight': 700,
   ),
-  's2-1': (
+  's2': (
+    'size': 24px,
+    'weight': 600,
+  ),
+  's3-1': (
     'size': 20px,
     'weight': 500,
   ),
-  's2-2': (
+  's3-2': (
     'size': 20px,
     'weight': 700,
   ),
@@ -43,6 +47,10 @@ $font-styles: (
     'size': 12px,
     'weight': 500,
   ),
+  'n1': (
+    'size': 12px,
+    'weight': 600,
+  ),
 );
 
 $color-types: (
@@ -51,7 +59,12 @@ $color-types: (
     'white': #fff,
     'black': #000,
     'gray1': #767676,
-    'gray2': #f7f7fb
+    'gray2': #f7f7fb,
+    'gray3': #f1f3f5,
+    'gray4': #e2e2e2,
+    'gray5': #9ca3af,
+    'purple': #7a54ff,
+    'red': #f95353,
 );
 
 @mixin text-style($style-name, $color) {
@@ -59,3 +72,8 @@ $color-types: (
   font-weight: map-get(map-get($font-styles, $style-name), 'weight');
   color: map-get($color-types, $color);
 }
+
+@mixin bg_color($color) {
+  background: map-get($color-types, $color);
+}
+
