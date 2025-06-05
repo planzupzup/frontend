@@ -1,0 +1,65 @@
+@import "/src/app/scss/variables.scss";
+
+.profile_wrap {
+    display: flex;
+    align-items: center;
+}
+
+.link {
+    flex-shrink: 0;
+    width: 63px;
+    margin-right: 12px;
+}
+
+.img_wrap {
+    display: block;
+    position: relative;
+    padding-top: 63px;
+    background: #f1f3f5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' fill='none'%3E%3Cpath fill='%239CA3AF' d='M12.5 15.625c3.302 0 6.238 1.594 8.108 4.069.402.532.604.799.597 1.158-.005.278-.18.63-.398.8-.284.223-.676.223-1.46.223H5.652c-.785 0-1.177 0-1.46-.222a1.161 1.161 0 0 1-.399-.8c-.006-.36.195-.627.597-1.16 1.87-2.474 4.806-4.068 8.109-4.068ZM12.5 12.5a4.688 4.688 0 1 1 0-9.375 4.688 4.688 0 0 1 0 9.375Z'/%3E%3C/svg%3E") center/25px 25px no-repeat;
+    border-radius: 50%;
+}
+
+.img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: inherit;
+}
+
+.nickname {
+    line-height: 14px;
+
+    @include text-style('b4', 'black');
+    @include ellipsis();
+}
+
+.title_wrap {
+    line-height: 30px;
+
+    @include text-style('s2', 'black');
+    @include ellipsis();
+
+    .bookmark {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin: 3px 0 0 2px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='25' fill='none'%3E%3Cpath fill='%23E2E2E2' d='M19 8.3c0-1.68 0-2.52-.327-3.162a3 3 0 0 0-1.311-1.311C16.72 3.5 15.88 3.5 14.2 3.5H9.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C5 5.78 5 6.62 5 8.3v13.2l7-4 7 4V8.3Z'/%3E%3C/svg%3E") no-repeat;
+        vertical-align: top;
+    }
+}
+
+.date_wrap {
+    display: flex;
+    line-height: 19px;
+
+    @include text-style('b3', 'gray1');
+
+    .location {
+        margin-right: 4px;
+    }
+}

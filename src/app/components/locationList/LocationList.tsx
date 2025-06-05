@@ -4,25 +4,30 @@ import { Location } from "@/app/plan/[planId]/page";
 import style from "@/app/plan/[planId]/Plan.module.scss";
 import { getTimeUnit } from "@/app/utils/getTimeUnit";
 import { useState } from "react";
-import LocationItem from "@/app/components/locationList/LocationItem";
+import LocationItem from "@/app/components/locationItem/LocationItem";
 
 type TProps = {
-    day?: number;
+    isTotal?: boolean;
     locationList: Location[];
     setLocation: React.Dispatch<React.SetStateAction<Location | undefined>>;
 }
 
-const LocationList = ({ day, locationList, setLocation }:TProps) => {
+const LocationList = ({ isTotal , locationList, setLocation }:TProps) => {
 
     return (
-        <div className={style.location_list}>
-            {locationList.map((location, idx) => (
-            <>
-                 {/* idx>0 && <div className={style.duration} style={{display: "none"}}>{getTimeUnit(location.duration)}</div> */}
-                <LocationItem locationIndex={idx+1} location={location} setLocation={setLocation} />
-            </>
-            ))}
+        isTotal ? <div className={style.total_location_list}>
+        {locationList.map((location, idx) => (
+        <LocationItem isTotal={true} locationIndex={idx+1} location={location} setLocation={setLocation} />
+        ))}
+    </div> : <div className={style.location_list}>
+    {locationList.map((location, idx) => (
+        <div className={style.duration_wrap}>
+             {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
+            <LocationItem isTotal={false} locationIndex={idx+1} location={location} setLocation={setLocation} />
         </div>
+        ))}
+        <span className={style.line} />
+    </div>
     )
 }
 

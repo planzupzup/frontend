@@ -9,6 +9,7 @@ import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
 import LocationListEditWrapper from '@/app/components/locationList/LocationListEidtWrapper';
 import LocationListWrapper from '@/app/components/locationList/LocationListWrapper';
+import TopProfile from '@/app/components/TopProfile/TopProfile';
 
 export interface Location {
   locationId: number;
@@ -46,6 +47,7 @@ const PlanDetail: React.FC = () => {
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>('전체 일정');
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isShow, setIsShow] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const [googleMap, setGoogleMap] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<any[]>([]);
@@ -299,6 +301,10 @@ const PlanDetail: React.FC = () => {
     }
   };
 
+  const handleShowButton = () => {
+    setIsShow(!isShow);
+  }
+
   const generateDays = () => {
     if (!plan) return;
     const start = new Date(plan.startDate);
@@ -336,26 +342,30 @@ const PlanDetail: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1 }} className={style.contents}>
-        {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-        <h2 className={style.title}>{plan?.title}<span className={style.bookmark}><span className="blind">즐겨찾기</span></span></h2>
-        <div className={style.date_wrap}>
-          <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
-          <button className={style.change_date_btn} onClick={() => alert('날짜변경은 아직 구현되지 않았습니다.')}>일자변경</button>
-        </div>
+      <div className={classNames(style.contents, {[style.type_total]:selectedDay === "전체 일정"})}>
+        <div className={classNames(style.floating_area, {[style.is_show]:isShow})}>
+          {/* <EditSchedule day={selectedDay} planId={planId} /> */}
+          {
+            selectedDay !== "전체 일정" ? <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/> : 
+            <>
+                          <h2 className={style.title}>{plan?.title}<span className={style.bookmark}><span className="blind">즐겨찾기</span></span></h2>
+              <div className={style.date_wrap}>
+                <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
+              </div>
+            </>
+          }
 
-        <div className={style.schedule_wrap}>
-          <h3 className={style.schedule_order}>{days.find(day => day.index === selectedDay)?.label}</h3>
-          <div className={style.location_list_wrap}>
+          <div className={style.schedule_wrap}>
             <div className={style.location_list_area}>
               {
                 isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
                 <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
               }
             </div>
-            <div className={style.kakao_map} ref={mapRef}></div>
           </div>
+          <span className={style.handle} onClick={handleShowButton}></span>
         </div>
+        <div className={style.google_map} ref={mapRef}></div>
       </div>
     </div>
   );

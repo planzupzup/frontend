@@ -71,7 +71,7 @@
       margin-top: 10px;
       line-height: 24px;
 
-      @include text-style('s2-1', 'gray1');
+      @include text-style('s3-1', 'gray1');
     }
 
     .link_area {
@@ -194,7 +194,7 @@
         .sub_title {
           line-height: 28px;
 
-          @include text-style('s2-2', 'black');
+          @include text-style('s3-2', 'black');
         }
 
         .sub_desc {
@@ -285,7 +285,7 @@
         text-overflow: ellipsis;
         line-height: 28px;
 
-        @include text-style('s2-2', 'black')
+        @include text-style('s3-2', 'black')
       }
 
       .plan_desc {

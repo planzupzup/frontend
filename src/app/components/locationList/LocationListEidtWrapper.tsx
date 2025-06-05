@@ -6,7 +6,7 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 import { Day, Location } from '@/app/plan/[planId]/page';
-import LocationItem from './LocationItem';
+import LocationItem from '../locationItem/LocationItem';
 
 type TProps = {
     totalLocationList : Location[][];

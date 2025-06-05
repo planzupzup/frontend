@@ -10,9 +10,9 @@ type TProps = {
 
 const LocationListWrapper = ({ selectedDay, totalLocationList, setLocation} : TProps) => {
     if(selectedDay !== '전체 일정') {
-        return <LocationList locationList={totalLocationList[parseInt(selectedDay, 10) - 1]} setLocation={setLocation} />
+        return <LocationList isTotal={false} locationList={totalLocationList[parseInt(selectedDay, 10) - 1]} setLocation={setLocation} />
     } else {
-        return <div className={style.locationlist_list}>{totalLocationList.map((locationList,index) => (<div className={style.locationlist_item}><span className={style.day}>{index+1}일차</span><LocationList locationList={locationList} setLocation={setLocation}/></div>))}</div>
+        return <div className={style.locationlist_list}>{totalLocationList.map((locationList,index) => (<div className={style.locationlist_item}><span className={style.day}>{index+1}일차</span><LocationList isTotal={true} locationList={locationList} setLocation={setLocation}/></div>))}</div>
     }
 }
 

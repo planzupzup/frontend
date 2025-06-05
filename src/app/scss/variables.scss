@@ -77,3 +77,8 @@ $color-types: (
   background: map-get($color-types, $color);
 }
 
+@mixin ellipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
