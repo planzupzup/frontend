@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import EditSchedule from '../../components/EditSchedule';
 import axios from 'axios';
 import style from "@/app/plan/[planId]/Plan.module.scss";
 import classNames from 'classnames';

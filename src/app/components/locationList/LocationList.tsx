@@ -3,7 +3,6 @@
 import { Location } from "@/app/plan/[planId]/page";
 import style from "@/app/plan/[planId]/Plan.module.scss";
 import { getTimeUnit } from "@/app/utils/getTimeUnit";
-import { useState } from "react";
 import LocationItem from "@/app/components/locationItem/LocationItem";
 
 type TProps = {

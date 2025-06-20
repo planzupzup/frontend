@@ -1,11 +1,11 @@
-import React, { use, useEffect, useState } from 'react';
+import React from 'react';
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
-import { Day, Location } from '@/app/plan/[planId]/page';
+import { Location } from '@/app/plan/[planId]/page';
 import LocationItem from '../locationItem/LocationItem';
 
 type TProps = {

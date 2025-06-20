@@ -1,6 +1,6 @@
 // googleMapService.ts
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
 export interface Place {
   name: string;

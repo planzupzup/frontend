@@ -15,8 +15,8 @@ interface Location {
 }
 
 interface Props {
-  day: string; // format 'YYYY-MM-DD'
-  planId: string;
+  day?: string; // format 'YYYY-MM-DD'
+  planId?: string;
   onSave?: (locations: Location[]) => void;
 }
 

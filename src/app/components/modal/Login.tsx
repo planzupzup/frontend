@@ -2,8 +2,6 @@
 
 import style from "./Modal.module.scss";
 
-const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
-const NAVER_REST_API_KEY = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID;
 export const BACK_HOST = process.env.NEXT_PUBLIC_BACK_HOST;
 
 const Login = () => {

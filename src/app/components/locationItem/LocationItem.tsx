@@ -17,13 +17,13 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation }:TProps) 
         <div className={style.order}>{locationIndex}</div>
         <div className={style.name}>{location.locationName}</div>
         <div className={style.img_wrap}>
-            <img src={location.image?.imageUrl} className={style.img}/>
+            <img src="https://placehold.co/600x400" className={style.img}/>
         </div>
         {/* <div className={style.category}>{location.category}</div> */}
     </div> : <div key={location.locationId} className={style.location_item} onClick={() => setLocation && setLocation(location)}>
         <a href="#" className={style.link}>
             <div className={style.img_wrap}>
-                <img src={location.image?.imageUrl} className={style.img}/>
+                <img src="https://placehold.co/600x400" className={style.img}/>
             </div>
         </a>
         <div>

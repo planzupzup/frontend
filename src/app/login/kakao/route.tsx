@@ -1,9 +1,8 @@
 import { BACK_HOST } from "@/app/components/modal/Login";
 import axios from "axios";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export const GET = async (req:NextRequest, res:NextResponse) => {
-    const url = new URL(req.url);
+export const GET = async () => {
 
     await( axios.get(`${BACK_HOST}/login`));
 
