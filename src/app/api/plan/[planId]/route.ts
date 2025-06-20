@@ -25,3 +25,5 @@ export async function GET(req: NextRequest, { params } : { params : Promise<{ pl
     })
   }
 }
+
+export const runtime = 'edge';

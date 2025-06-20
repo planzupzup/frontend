@@ -133,3 +133,5 @@ const PlanList: React.FC = () => {
 };
 
 export default PlanList;
+
+export const runtime = 'edge';

@@ -371,3 +371,5 @@ const PlanDetail: React.FC = () => {
 };
 
 export default PlanDetail;
+
+export const runtime = 'edge';

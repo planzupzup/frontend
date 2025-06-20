@@ -11,3 +11,5 @@ export const GET = async () => {
     return NextResponse.json(
     { status: 200 });
 }
+
+export const runtime = 'edge';
