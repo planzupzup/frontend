@@ -8,8 +8,6 @@ export const GET = async () => {
     await( axios.get(`${BACK_HOST}/login`));
 
     
-    window.location.reload();
-    
     return NextResponse.json(
     { status: 200 });
 }
