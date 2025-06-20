@@ -6,8 +6,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACK_HOST;
 
-export async function GET(req: NextRequest, { params }: { params: { planId: string } }) {
-  const { planId } = params;
+export async function GET(req: NextRequest, { params } : { params : Promise<{ planId: string }>} ) {
+  const { planId } = await params;
 
   // Optionally validate or use `planId` dynamically
   try {
