@@ -6,7 +6,12 @@ import styles from "@/app/page.module.scss";
 import { MasonryInfiniteGrid } from "@egjs/react-infinitegrid";
 import MasonryGridItem from "./components/main/MasonryGridItem";
 
-const getColumnSize = () => (window.innerWidth >= 1024 ? 3: 2);
+const getColumnSize = () => {
+  if (typeof window !== 'undefined') {
+    return window.innerWidth >= 1024 ? 3 : 2;
+  }
+  return 2; 
+};
 
 const tempMockupBADataArray = [
   {
@@ -43,10 +48,6 @@ const tempMockupBADataArray = [
 
 const Home: React.FC = () => {
   const [column, setColumn] = useState(getColumnSize());
-
-  const handlePlanClick = () => {
-    window.location.href = "/destination"; // react-router 사용 시 navigate로 대체 가능
-  };
 
   useEffect(() => {
 
