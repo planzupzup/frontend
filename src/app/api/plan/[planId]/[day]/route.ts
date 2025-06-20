@@ -21,10 +21,12 @@ interface PlanResponseData {
 
 export async function GET(
   req: NextRequest,
-  { params }: any
+  { params }: { params: Promise<{ planId: string; day: string }> } // <-- CHANGE IS HERE
 ) {
   try {
-    const { planId, day } = params; 
+    // Await params to get the actual values
+    const resolvedParams = await params; // <-- AWAIT IS HERE
+    const { planId, day } = resolvedParams; // Destructure the resolved params
 
     // 외부 API로 통신
     const response = await axios.get<PlanResponseData>(
