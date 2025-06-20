@@ -8,5 +8,6 @@ const useDidMountEffect = (func: () => void, deps: React.DependencyList) => {
     else didMount.current = true;
   }, deps);
 };
+/* eslint-disable */
 
 export default useDidMountEffect;

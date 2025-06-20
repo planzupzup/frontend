@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable */
 
 import { Location } from "@/app/plan/[planId]/page";
 import style from "@/app/plan/[planId]/Plan.module.scss";

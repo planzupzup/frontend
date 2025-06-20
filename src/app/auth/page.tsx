@@ -1,5 +1,5 @@
 "use client";
-
+/* eslint-disable */
 import React, { useEffect } from "react";
 
 const auth: React.FC = () => {

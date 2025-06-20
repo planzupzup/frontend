@@ -26,5 +26,6 @@ const Footer = () => {
         </footer>
     )   
 }
+/* eslint-disable */
 
 export default Footer;

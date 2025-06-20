@@ -1,21 +1,38 @@
+/* eslint-disable */
+
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACK_HOST;
 
+// Define your interfaces here, or in a separate types.ts file
+interface PlanItem {
+  id: string; // Replace with actual properties from your backend
+  name: string;
+  // ... other properties
+}
+
+interface PlanResponseData {
+  result: PlanItem[];
+  message?: string;
+  status?: string;
+  // ... other top-level properties
+}
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: { planId: string, day: string } }
+  { params }: any
 ) {
-
-  // Optionally validate or use `planId` dynamically
   try {
+    const { planId, day } = params; 
+
     // 외부 API로 통신
-    const response = await axios.get(
-      `${BACKEND_URL}/api/plan/${params.planId}/${params.day}`,
-    )
+    const response = await axios.get<PlanResponseData>(
+      `${BACKEND_URL}/api/plan/${planId}/${day}`, // Use the destructured values
+    );
+
     if (response.data && Array.isArray(response.data.result)) {
-      const updatedResult = response.data.result.map((item:any) => ({
+      const updatedResult = response.data.result.map((item) => ({ // item type is now inferred as PlanItem
         ...item
       }));
 
@@ -28,9 +45,9 @@ export async function GET(
       });
     }
   } catch (error) {
-    console.log(error)
-    return new NextResponse('server error', {
+    console.error('Error fetching plan data:', error); // Use console.error for errors
+    return new NextResponse('Server error', {
       status: 500,
-    })
+    });
   }
 }

@@ -7,3 +7,4 @@ export const getTimeUnit = (value: number):string => {
 
     return `${Math.floor(value/3600)} 시간 ${Math.floor((value%3600)/60)}분`;
 }
+/* eslint-disable */

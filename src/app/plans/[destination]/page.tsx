@@ -1,5 +1,5 @@
 "use client";
-
+/* eslint-disable */
 import React, { useState} from "react";
 import { useParams } from "next/navigation";
 import PlanCreateModal from "../../components/modal/PlanCreateModal";

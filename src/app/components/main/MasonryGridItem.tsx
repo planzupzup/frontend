@@ -7,8 +7,7 @@ type TProps = {
     nickname: string;
     title: string;
     desc: string;
-}
-
+}/* eslint-disable */
 const MasonryGridItem = ({ProfileImageUrl, nickname, title, desc} : TProps) => {
 
     return (

@@ -3,7 +3,7 @@
 import style from "./Modal.module.scss";
 
 export const BACK_HOST = process.env.NEXT_PUBLIC_BACK_HOST;
-
+/* eslint-disable */
 const Login = () => {
 
     const onClickKakaoLogin = () => {

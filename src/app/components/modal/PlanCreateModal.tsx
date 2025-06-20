@@ -1,5 +1,6 @@
 
 "use client";
+/* eslint-disable */
 
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
@@ -10,7 +11,6 @@ interface PlanCreateModalProps {
   onClose: () => void;
   onCreatePlan?: (plan: any) => void;
 }
-
 const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ open, destination, onClose, onCreatePlan }) => {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");

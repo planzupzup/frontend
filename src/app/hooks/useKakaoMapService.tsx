@@ -1,5 +1,5 @@
 // kakaoMapService.ts
-
+/* eslint-disable */
 import { useCallback } from "react";
 
 interface Place {

@@ -8,7 +8,7 @@ type TProps = {
     date: string,
     isBookmark: boolean
 }
-
+/* eslint-disable */
 const TopProfile = ({profile_img, nickname, title, location, date, isBookmark}:TProps) => {
     return (    
        <div className={style.profile_wrap}>

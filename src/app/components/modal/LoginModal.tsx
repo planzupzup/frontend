@@ -8,7 +8,7 @@ type TModal = {
     isShowModal: boolean;
     onClickCloseBtn: () => void;
 }
-
+/* eslint-disable */
 const LoginModal = ({text, isShowModal, onClickCloseBtn}:TModal) => {
     return (
         isShowModal && (

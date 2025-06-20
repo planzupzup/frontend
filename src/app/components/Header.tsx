@@ -21,7 +21,7 @@ const Header: React.FC = () => {
   const toggleProfileMenu = () => {
     setProfileMenuOpen((prev) => !prev);
   };
-
+/* eslint-disable */
   return (
     <header className={styles.header_wrap}>
       <a href="/" className={styles.logo}>

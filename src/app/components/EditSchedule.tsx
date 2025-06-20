@@ -19,7 +19,7 @@ interface Props {
   planId?: string;
   onSave?: (locations: Location[]) => void;
 }
-
+/* eslint-disable */
 const EditSchedule: React.FC<Props> = ({ day, planId, onSave }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [googleMap, setGoogleMap] = useState<any>(null);

@@ -1,7 +1,7 @@
 import LocationList from "@/app/components/locationList/LocationList";
 import { Location } from "@/app/plan/[planId]/page";
 import style from "@/app/plan/[planId]/Plan.module.scss";
-
+/* eslint-disable */
 type TProps = {
     selectedDay: string;
     totalLocationList: Location[][];

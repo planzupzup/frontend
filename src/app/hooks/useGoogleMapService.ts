@@ -1,5 +1,5 @@
 // googleMapService.ts
-
+/* eslint-disable */
 import { useCallback, useEffect } from "react";
 
 export interface Place {

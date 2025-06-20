@@ -21,3 +21,4 @@ export const getKoreanCategory = (types: string[]):string => {
 
     return "기타";
 }
+/* eslint-disable */

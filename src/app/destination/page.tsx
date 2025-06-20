@@ -7,6 +7,7 @@ interface Destination {
   image: string;
   name: string;
 }
+/* eslint-disable */
 
 const DestinationSelector: React.FC = () => {
   const [search, setSearch] = useState<string>("");

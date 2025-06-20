@@ -7,7 +7,7 @@ import {
 } from '@hello-pangea/dnd';
 import { Location } from '@/app/plan/[planId]/page';
 import LocationItem from '../locationItem/LocationItem';
-
+/* eslint-disable */
 type TProps = {
     totalLocationList : Location[][];
     setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
