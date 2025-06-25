@@ -7,6 +7,7 @@ import {
 } from '@hello-pangea/dnd';
 import { Location } from '@/app/plan/[planId]/page';
 import LocationItem from '../locationItem/LocationItem';
+import { getOrderColor } from '@/app/utils/getOrderColor';
 /* eslint-disable */
 type TProps = {
     totalLocationList : Location[][];
@@ -72,7 +73,7 @@ const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList} : TP
                             <div ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}>
-                                <LocationItem location={location} locationIndex={index + 1}/>
+                                <LocationItem location={location} locationIndex={index + 1} orderColor={getOrderColor(index)}/>
                             </div>
                         )}
                         </Draggable>}

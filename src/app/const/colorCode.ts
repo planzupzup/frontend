@@ -1,0 +1,1 @@
+export const COLOR_CODE:string[] = ['#ff2600', '#fc8600', '#ffe521', '#9900ff', '#fd347e','#ff55c0','#1b07ef','#0077ff','#1fd5f8','#33d900','#aeee00','#717171'];

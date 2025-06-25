@@ -1,0 +1,137 @@
+@import "/src/app/scss/variables.scss";
+
+.comment_list {
+    margin-top: 145px;
+}
+
+.count_wrap {
+    display: flex;
+
+    @include text-style('s2','black');
+}
+
+.textarea_wrap {
+    display: flex;
+    align-items: center;
+    margin-top: 14px;
+    padding: 14px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+}
+
+.thumb_wrap {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: #e2e2e2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none'%3E%3Cpath fill='%23fff' d='M9 12c3.414 0 6.45 1.53 8.383 3.906.416.511.624.767.617 1.112-.005.267-.186.604-.412.769-.293.213-.698.213-1.51.213H1.922c-.812 0-1.217 0-1.51-.213-.226-.165-.407-.502-.412-.769-.007-.345.201-.6.617-1.112C2.55 13.531 5.587 12 9 12ZM9 9C6.324 9 4.5 6.985 4.5 4.5S6.324 0 9 0s4.5 2.015 4.5 4.5S11.676 9 9 9Z'/%3E%3C/svg%3E") center/18px 18px no-repeat;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 12px;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.textarea {
+    flex: 1;
+    height: 40px;
+    resize: none;
+    background: none;
+    border: 0;
+    padding: 4px;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.textarea::placeholder {
+    @include text-style('b2-1','gray1');
+
+    line-height: 22px;
+}
+
+.list {
+    margin: 30px 14px;
+}
+
+.item {
+    display: flex;
+
+    & + .item {
+        margin-top: 12px;
+    }
+}
+
+.text_area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+
+.nickname {
+    @include text-style('b3','gray1');
+
+    line-height: 20px;
+}
+
+.content {
+    @include text-style('b2-1','black');
+
+    display: -webkit-box; /* 웹킷 기반 브라우저에서 플렉스 박스 레이아웃 활성화 */
+    -webkit-line-clamp: 2; /* 텍스트를 2줄로 제한 */
+    -webkit-box-orient: vertical; /* 박스의 내용이 세로로 흐르도록 설정 */
+    overflow: hidden; /* 지정된 줄 수를 초과하는 텍스트 숨기기 */
+    text-overflow: ellipsis;
+    line-height: 22px;
+}
+
+.reaction_area {
+    display: flex;
+    margin-top: 4px;
+    gap: 12px;
+
+
+    .likes_btn {
+        @include text-style('n1','gray1');
+
+        display: flex;
+        align-items: center;
+        line-height: 15px;
+
+        &::before {
+            width: 15px;
+            height: 15px;
+            margin-right: 2px;
+            background: url("/img_likes_30x30.png") 0 0/15px 15px no-repeat;
+            content: "";
+        }
+    }
+
+    .re_comment_btn {
+        @include text-style('b4','blue');
+
+        display: flex;
+        align-items: center;
+        line-height: 15px;
+
+        &::after {
+            width: 10px;
+            height: 10px;
+            margin-left: 2px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='none'%3E%3Cpath stroke='%233C76F1' stroke-linecap='round' stroke-linejoin='round' d='M7.5 3.75 5 6.25l-2.5-2.5'/%3E%3C/svg%3E") 0 0/10px 10px no-repeat;
+            content: "";
+        }
+
+        &[aria-pressed=true] {
+            &::after {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}

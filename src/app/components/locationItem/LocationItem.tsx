@@ -9,14 +9,17 @@ type TProps = {
     location: Location;
     locationIndex: number;
     setLocation?: React.Dispatch<React.SetStateAction<Location | undefined>>;
+    orderColor: string;
 }
 
-const LocationItem = ({ isTotal, location, locationIndex, setLocation }:TProps) => {
+const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor }:TProps) => {
 
     return (
         isTotal ? <div key={location.locationId} className={style.location_total_item} onClick={() => setLocation && setLocation(location)}>
-        <div className={style.order}>{locationIndex}</div>
-        <div className={style.name}>{location.locationName}</div>
+        <div>
+            <div className={style.order} style={{backgroundColor: `${orderColor}`}}>{locationIndex}</div>
+            <div className={style.name}>{location.locationName}</div>
+        </div>
         <div className={style.img_wrap}>
             <img src="https://placehold.co/600x400" className={style.img}/>
         </div>
@@ -28,7 +31,7 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation }:TProps) 
             </div>
         </a>
         <div>
-            <div className={style.order}>{locationIndex}</div>
+            <div className={style.order} style={{backgroundColor: `${orderColor}`}}>{locationIndex}</div>
             <div className={style.name}>{location.locationName}</div>
             <div className={style.likes}>4.8</div>
         </div>

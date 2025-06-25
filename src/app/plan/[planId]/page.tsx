@@ -8,7 +8,9 @@ import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
 import LocationListEditWrapper from '@/app/components/locationList/LocationListEidtWrapper';
 import LocationListWrapper from '@/app/components/locationList/LocationListWrapper';
-import TopProfile from '@/app/components/TopProfile/TopProfile';
+import TopProfile from '@/app/components/topProfile/TopProfile';
+import { COLOR_CODE } from '@/app/const/colorCode';
+import CommentList from '@/app/components/comment/CommentList';
 
 export interface Location {
   locationId: number;
@@ -99,7 +101,7 @@ const PlanDetail: React.FC = () => {
       scale: 4
     };
 
-    const colorPalette = ['blue', 'green', 'orange', 'purple', 'red'];
+    const colorPalette = COLOR_CODE;
 
     if (polyline) {
       if (Array.isArray(polyline)) {
@@ -166,7 +168,7 @@ const PlanDetail: React.FC = () => {
         newMarkers.push(new window.google.maps.Marker({
           position: latLng,
           map: googleMap,
-          icon: createCustomIconWithColor((locationIndex + 1).toString(), colorPalette[0]),
+          icon: createCustomIconWithColor((locationIndex + 1).toString(), colorPalette[parseInt(selectedDay, 10) - 1]),
         }))
       })
 
@@ -177,7 +179,7 @@ const PlanDetail: React.FC = () => {
             strokeOpacity: 0,
             icons: [
               {
-                icon: { ...lineSymbol, strokeColor: colorPalette[0] }, // Polyline 색상 적용
+                icon: { ...lineSymbol, strokeColor: colorPalette[parseInt(selectedDay, 10) - 1] }, // Polyline 색상 적용
                 offset: '0',
                 repeat: '20px',
               },
@@ -273,7 +275,7 @@ const PlanDetail: React.FC = () => {
     
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=transit`
             );
       
             if (!response.ok) {
@@ -342,25 +344,19 @@ const PlanDetail: React.FC = () => {
 
       {/* Main Content */}
       <div className={classNames(style.contents, {[style.type_total]:selectedDay === "전체 일정"})}>
-        <div className={classNames(style.floating_area, {[style.is_show]:isShow})}>
+        <div className={classNames(style.floating_wrap, {[style.is_show]:isShow})}>
           {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-          {
-            selectedDay !== "전체 일정" ? <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/> : 
-            <>
-                          <h2 className={style.title}>{plan?.title}<span className={style.bookmark}><span className="blind">즐겨찾기</span></span></h2>
-              <div className={style.date_wrap}>
-                <p className={style.date}>{plan?.startDate} - {plan?.endDate}</p>
+          <div className={style.floating_area}>
+            <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
+            <div className={style.schedule_wrap}>
+              <div className={style.location_list_area}>
+                {
+                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
+                  <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
+                }
               </div>
-            </>
-          }
-
-          <div className={style.schedule_wrap}>
-            <div className={style.location_list_area}>
-              {
-                isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
-                <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
-              }
             </div>
+            {selectedDay==="전체 일정" && <CommentList />}
           </div>
           <span className={style.handle} onClick={handleShowButton}></span>
         </div>
