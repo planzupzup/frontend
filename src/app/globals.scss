@@ -126,3 +126,8 @@ section,
 summary {
   display: block;
 }
+
+.flicking-camera {
+  display: flex;
+  overflow: hidden;
+}
