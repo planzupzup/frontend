@@ -128,7 +128,7 @@
             content: "";
         }
 
-        &[aria-pressed=true] {
+        &[aria-expanded=true] {
             &::after {
                 transform: rotate(180deg);
             }

@@ -1,10 +1,16 @@
 /* eslint-disable */
+"use client";
 
+import { useState } from "react";
 import { TComment } from "./CommentList";
 import style from "./CommentList.module.scss";
 
 
 const CommentItem = ({thumbnailUrl, nickname, content, commentCount, reCommentCount}:TComment) => {
+
+    const [isExpaneded, setIsExpanded] = useState(false);
+
+
     return (
         <li className={style.item}>
             <span className={style.thumb_wrap}>
@@ -17,7 +23,7 @@ const CommentItem = ({thumbnailUrl, nickname, content, commentCount, reCommentCo
                     <button type="button" aria-pressed={false} className={style.likes_btn}>
                         <span className="blind">공감</span>{commentCount}
                     </button>
-                    <button type="button" aria-pressed={false} className={style.re_comment_btn}>
+                    <button type="button" aria-expanded={isExpaneded} className={style.re_comment_btn}>
                         답글 {reCommentCount}
                     </button>
                 </div>

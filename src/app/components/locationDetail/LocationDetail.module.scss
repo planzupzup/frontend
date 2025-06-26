@@ -1,0 +1,113 @@
+@import "/src/app/scss/variables.scss";
+
+.dimmed_layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.27);
+    z-index: 10000;
+}
+
+.modal {
+    box-sizing: border-box;
+    position: absolute;
+    width: 653px;
+    height: 520px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 24px 32px;
+}
+
+.top {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.day {
+    width: 65px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 8px;
+    background-color: #000;
+    text-align: center;
+
+    @include text-style('b3', 'white');
+}
+
+.title {
+    margin-left: 11px;
+    line-height: 24px;
+
+    @include text-style('s3-1', 'black');
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+
+    &.type_tourlist {
+        @include text-style('b3', 'red');
+
+        &::before {
+            width: 15px;
+            height: 15px;
+            background: url(/ico_tourist_15x15.svg) no-repeat;
+            margin-right: 2px;
+            content: "";
+        }
+    }
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.img_wrap {
+    width: 589px;
+    height: 248px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.desc {
+    @include text-style('b2-1', 'black');
+    
+    margin-top: 20px;
+    display: -webkit-box; /* 웹킷 기반 브라우저에서 플렉스 박스 레이아웃 활성화 */
+    -webkit-line-clamp: 3; /* 텍스트를 3줄로 제한 */
+    -webkit-box-orient: vertical; /* 박스의 내용이 세로로 흐르도록 설정 */
+    overflow: hidden; /* 지정된 줄 수를 초과하는 텍스트 숨기기 */
+    text-overflow: ellipsis;
+    line-height: 22px;
+}
+
+.bottom_btn {
+    @include text-style('b3', 'white');
+
+    width: 64px;
+    height: 30px;
+    background-color: #3c76f1;
+    border-radius: 60px;
+    margin: 20px 0 0 537px;
+    line-height: 30px;
+}
+
+.close_btn {
+    position: absolute;
+    top: 20px;
+    right: 28px;
+    width: 32px;
+    height: 32px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none'%3E%3Cpath fill='%23111' stroke='%23000' d='M5.813 5.538a.278.278 0 0 1 .185.062l5.648 5.656.353.354.354-.353 5.653-5.653a.279.279 0 0 1 .367.023.277.277 0 0 1 .02.367l-5.65 5.652-.354.354 6.004 6.004a.278.278 0 0 1-.02.368.279.279 0 0 1-.372.019l-6-6.001-.354.352-5.678 5.67-.014.014-.013.015a.278.278 0 0 1-.407.016.277.277 0 0 1-.062-.096.277.277 0 0 1 .077-.311l.015-.013.014-.014 5.677-5.67.355-.353-.354-.354-5.65-5.657a.278.278 0 0 1 .02-.37.278.278 0 0 1 .186-.08Z'/%3E%3C/svg%3E") center/32px 32px no-repeat;
+}
