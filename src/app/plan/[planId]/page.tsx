@@ -11,6 +11,7 @@ import LocationListWrapper from '@/app/components/locationList/LocationListWrapp
 import TopProfile from '@/app/components/topProfile/TopProfile';
 import { COLOR_CODE } from '@/app/const/colorCode';
 import CommentList from '@/app/components/comment/CommentList';
+import CreateSearchList from '@/app/components/create/CreateSearchList';
 
 export interface Location {
   locationId: number;
@@ -51,18 +52,21 @@ const PlanDetail: React.FC = () => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const [googleMap, setGoogleMap] = useState<google.maps.Map | null>(null);
+  const [placesService, setPlacesService] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
   const [polyline, setPolyline] = useState<google.maps.Polyline | google.maps.Polyline[] | null>(null);
   const [durations, setDurations] = useState<number[]>([]);
   const [totalLocationList, setTotalLocationList] = useState<Location[][]>([]); // 편집되어 저장될 수있는 원본 전체 지역 리스트
   const [originalTotalLocationList, setOriginalTotalLocationList] = useState<Location[][]>([]); // 편집되지 않은 원본 전체 지역 리스트
 
-  const googleMapService = useGoogleMapService(mapRef, {
+  const googleMapService = useGoogleMapService({
     googleMap,
     setGoogleMap,
     markers,
     setMarkers,
-  });
+    placesService,
+    setPlacesService
+  },mapRef);
 
   const createCustomIconWithColor = (text: string, color: string) => {
     const canvas = document.createElement('canvas');
@@ -208,7 +212,7 @@ const PlanDetail: React.FC = () => {
 
   useEffect(() => {
     if(mapRef.current){
-      googleMapService.loadGoogleMapScript();
+      googleMapService?.loadGoogleMapScript();
     }
   },[mapRef]);
 
@@ -275,7 +279,7 @@ const PlanDetail: React.FC = () => {
     
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=transit`
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
             );
       
             if (!response.ok) {
@@ -348,12 +352,17 @@ const PlanDetail: React.FC = () => {
           {/* <EditSchedule day={selectedDay} planId={planId} /> */}
           <div className={style.floating_area}>
             <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
-            <div className={style.schedule_wrap}>
-              <div className={style.location_list_area}>
-                {
-                  isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
-                  <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
-                }
+            <div className={style.content_wrap}>
+              {
+                isEditing && <CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService}/>
+              }
+              <div className={style.schedule_wrap}>
+                <div className={style.location_list_area}>
+                  {
+                    isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
+                    <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
+                  }
+                </div>
               </div>
             </div>
             {selectedDay==="전체 일정" && <CommentList />}

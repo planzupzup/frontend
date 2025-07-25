@@ -131,3 +131,11 @@ summary {
   display: flex;
   overflow: hidden;
 }
+
+input {
+  border: 0;
+  
+  &:focus {
+    outline: 0;
+  }
+}

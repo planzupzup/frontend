@@ -302,3 +302,7 @@
     padding-right: calc(50% - 480px);
   }
 }
+
+body:has(.section_1) {
+  height: auto;
+}

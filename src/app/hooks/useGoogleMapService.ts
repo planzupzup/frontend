@@ -11,15 +11,16 @@ export interface Place {
   photos: google.maps.places.PlacePhoto[];
   types: string[];
   place_id?: string;
+  rating: number;
 }
 
 interface GoogleMapState {
-  googleMap: google.maps.Map | null;
+  googleMap?: google.maps.Map | null;
   placesService?: google.maps.places.PlacesService | null;
-  markers: google.maps.Marker[];
-  setGoogleMap: (map: google.maps.Map | null) => void;
+  markers?: google.maps.Marker[];
+  setGoogleMap?: (map: google.maps.Map | null) => void;
   setPlacesService?: (service: google.maps.places.PlacesService | null) => void;
-  setMarkers: (markers: google.maps.Marker[]) => void;
+  setMarkers?: (markers: google.maps.Marker[]) => void;
   searchInput?: string;
   setSearchInput?: (input: string) => void;
   places?: Place[];
@@ -27,9 +28,11 @@ interface GoogleMapState {
 }
 
 export const useGoogleMapService = (
-  mapRef: React.RefObject<HTMLDivElement | null>,
-  state: GoogleMapState
+  state?: GoogleMapState,
+  mapRef?: React.RefObject<HTMLDivElement | null>
 ) => {
+  if(!state) return;
+  
   const {
     googleMap,
     setGoogleMap,
@@ -38,7 +41,6 @@ export const useGoogleMapService = (
     markers,
     setMarkers,
     searchInput,
-    setSearchInput,
     places,
     setPlaces,
   } = state;
@@ -69,7 +71,7 @@ export const useGoogleMapService = (
     // 성공 시
     script.onload = () => {
       console.log("✅ Google Map 스크립트 로드 완료");
-      if (window.google && window.google.maps) {
+      if (window.google && window.google.maps&& mapRef) {
         console.log("✅ Google Map API 로딩 완료");
 
         const container = mapRef.current;
@@ -90,7 +92,7 @@ export const useGoogleMapService = (
         };
 
         const map = new window.google.maps.Map(container, options);
-        setGoogleMap(map);
+        if(setGoogleMap) setGoogleMap(map);
 
         const service = new window.google.maps.places.PlacesService(map);
         if(setPlacesService) setPlacesService(service);
@@ -101,7 +103,7 @@ export const useGoogleMapService = (
             position: { lat: latitude, lng: longitude },
             map: map,
           });
-          setMarkers([initialMarker]);
+          if(setMarkers) setMarkers([initialMarker]);
           map.panTo({ lat: latitude, lng: longitude });
         }
       } else {
@@ -118,10 +120,12 @@ export const useGoogleMapService = (
   },[]);
 
   const searchPlace = () => {
+    console.log("@");
     if (placesService && searchInput) {
+      console.log("@");
       const request = {
         query: searchInput,
-        fields: ["name", "geometry", "formatted_address", "photos", "types"],
+        fields: ["name", "geometry", "formatted_address", "photos", "types", "rating"],
         language: 'ko',
       };
 
@@ -148,22 +152,24 @@ export const useGoogleMapService = (
   const displaySearchResults = useCallback(
     () => {
       if (!googleMap) return;
-
-      markers.forEach((marker) => marker.setMap(null));
-      if(places) {
-        const newMarkers: google.maps.Marker[] = places.map((place) => {
-          const marker = new window.google.maps.Marker({
-            map: googleMap,
-            position: place.geometry.location,
+      if(markers && setMarkers) {
+        markers.forEach((marker) => marker.setMap(null));
+        if(places) {
+          const newMarkers: google.maps.Marker[] = places.map((place) => {
+            const marker = new window.google.maps.Marker({
+              map: googleMap,
+              position: place.geometry.location,
+            });
+            return marker;
           });
-          return marker;
-        });
-        setMarkers(newMarkers);
+          setMarkers(newMarkers);
 
-        if (places.length > 0) {
-          googleMap.panTo(places[0].geometry.location);
+          if (places.length > 0) {
+            googleMap.panTo(places[0].geometry.location);
+          }
         }
       }
+      
     },
     [googleMap, places]
   );

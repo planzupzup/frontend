@@ -71,6 +71,10 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+
+    .comment_list {
+        margin-top: 0;
+    }
 }
 
 
@@ -96,13 +100,20 @@
     margin-top: 4px;
     gap: 12px;
 
-
     .likes_btn {
         @include text-style('n1','gray1');
 
         display: flex;
         align-items: center;
         line-height: 15px;
+
+        &[aria-pressed=true] {
+            color: #3c76f1;
+            
+            &::before {
+                background-image: url("/img_likes_30x30_blue.png");
+            }
+        }
 
         &::before {
             width: 15px;
