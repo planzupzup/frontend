@@ -123,7 +123,6 @@ export const useGoogleMapService = (
     console.log(placesService);
     console.log(searchInput);
     if (placesService && searchInput) {
-      console.log("@");
       const request = {
         query: searchInput,
         fields: ["name", "geometry", "formatted_address", "photos", "types", "rating"],

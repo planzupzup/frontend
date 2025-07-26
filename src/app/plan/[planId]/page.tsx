@@ -18,7 +18,6 @@ export interface Location {
   locationName: string;
   category?: string;
   scheduleOrder?: number;
-  day: string;
   image?: {
     imageId: number,
     imageUrl: string
@@ -28,6 +27,9 @@ export interface Location {
   address?: string;
   duration?: number;
   rating: number;
+  types?: string;
+  googleImgUrl?: string;
+  description?: string;
 }
 
 export interface Plan {
@@ -42,6 +44,8 @@ export interface Day {
   label: string;
   index: string;
 }
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACK_HOST;
 
 const PlanDetail: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
@@ -240,7 +244,7 @@ const PlanDetail: React.FC = () => {
 
   useEffect(() => {
     loadTotalLocationList();
-  }, [days]);
+  }, [days, isEditing]);
 
   useEffect(() => {
     if (plan) {
@@ -260,6 +264,34 @@ const PlanDetail: React.FC = () => {
       alert('계획을 불러오는데 실패했습니다.');
     }
   };
+
+  const onClickEditBtn = () => {
+    if(isEditing) {
+      console.log("@");
+      fetch(`${BACKEND_URL}/api/location/${planId}`, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(totalLocationList)
+      })
+      .then(response => {
+        if (!response.ok) {
+          // If the server response was not ok (e.g., 404, 500), throw an error
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json(); // Parse the JSON response body
+      })
+      .then((responseData: any) => { 
+        console.log('Success:', responseData); 
+      })
+      .catch((error: Error) => {
+        console.error('Error:', error);
+      });
+      loadTotalLocationList();
+    }
+    setIsEditing(prev => !prev);
+  }
 
   const loadTotalLocationList = async () => {
     try {
@@ -342,7 +374,7 @@ const PlanDetail: React.FC = () => {
             </div>
           ))}
         </div>
-        <button onClick={() => setIsEditing(prev => !prev)} className={classNames(style.edit_btn)}>
+        <button onClick={() => onClickEditBtn()} className={classNames(style.edit_btn)}>
           {isEditing ? '종료' : '편집'}
         </button>
       </div>

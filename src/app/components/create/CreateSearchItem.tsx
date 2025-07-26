@@ -18,7 +18,7 @@ const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay}:TCreat
 
     const {name, formatted_address, photos, types, rating} = place;
 
-    const tempLocation:Location={locationName: name, day: selectedDay, latitude: place.geometry.location.lat(), longitude: place.geometry.location.lng(), rating:place.rating};
+    const tempLocation:Location={locationName: name, googleImgUrl: place.photos[0].getUrl() ,latitude: place.geometry.location.lat(), longitude: place.geometry.location.lng(), rating:place.rating, category:"관광 명소", description: "설명"};
 
     const highlightText = (text: string, highlight: string) => {
         // 검색어가 없거나 공백만 있다면 하이라이트 없이 원본 텍스트 반환
