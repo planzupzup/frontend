@@ -3,7 +3,7 @@
 
 .create_search_wrap {
     min-width: 417px;
-    margin: 18px 32px 0;
+    margin: 121px 32px 0;
 
     .search_wrap {
         display: flex;
@@ -93,6 +93,11 @@
                     margin-right: 2px;
                     content: "";
                 }
+            }
+
+            .category {
+                display: block;
+                margin-top: 20px;
             }
         }
 

@@ -5,6 +5,7 @@ import { Location } from "@/app/plan/[planId]/page";
 import style from "@/app/plan/[planId]/Plan.module.scss";
 import { useEffect, useState } from "react";
 import LocationDetail from "../locationDetail/LocationDetail";
+import classNames from "classnames";
 
 type TProps = {
     isTotal?: boolean; 
@@ -12,9 +13,11 @@ type TProps = {
     locationIndex: number;
     setLocation?: React.Dispatch<React.SetStateAction<Location | undefined>>;
     orderColor: string;
+    isEdit?: boolean;
+    deleteEditItem?: (day: number) => void;
 }
 
-const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor }:TProps) => {
+const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit=false, deleteEditItem }:TProps) => {
 
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
 
@@ -44,16 +47,17 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColo
             <img src="https://placehold.co/600x400" className={style.img}/>
         </div>
         {/* <div className={style.category}>{location.category}</div> */}
-    </div> : <div key={location.locationId} className={style.location_item} onClick={() => setLocation && setLocation(location)}>
+    </div> : <div key={location.locationId} className={classNames(style.location_item, {[style.is_edit]:isEdit})} onClick={() => setLocation && setLocation(location)}>
         <a href="#" className={style.link}>
             <div className={style.img_wrap} onClick={onClickItemImg}>
                 <img src="https://placehold.co/600x400" className={style.img}/>
             </div>
         </a>
-        <div>
-            <div className={style.order} style={{backgroundColor: `${orderColor}`}}>{locationIndex}</div>
+        <div style={{"overflow":"hidden", "marginRight": "30px"}}>
+            {!isEdit && <div className={style.order} style={{backgroundColor: `${orderColor}`}}>{locationIndex}</div>}
             <div className={style.name}>{location.locationName}</div>
-            <div className={style.likes}>{location.rating}</div>
+            <div className={style.rating}>{location.rating}</div>
+            {isEdit && <button type="button" className={style.delete_btn} onClick={() => deleteEditItem && deleteEditItem(locationIndex)}></button>}
         </div>
     </div>}
         </>

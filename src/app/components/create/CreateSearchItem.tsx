@@ -5,6 +5,7 @@ import { useState } from "react";
 import style from "./CreateSearchList.module.scss";
 import { Place } from "@/app/hooks/useGoogleMapService";
 import { Location } from "@/app/plan/[planId]/page";
+import { getKoreanCategory } from "@/app/utils/getKoreanCategory";
 
 type TCreateSearchItem = {
     place: Place;
@@ -55,6 +56,7 @@ const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay}:TCreat
                 <div className={style.info_area}>
                     <strong className={style.title}>{highlightText(name, searchInput)}</strong>
                     <span className={style.rating}>{rating}</span>
+                    <span className={style.category}>{getKoreanCategory(place.types)}</span>
                 </div>
             </div>
             <button className={style.add_btn} onClick={() => addSearchItem(tempLocation)}>

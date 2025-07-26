@@ -1,4 +1,5 @@
-export const getTimeUnit = (value: number):string => {
+export const getTimeUnit = (value?: number):string => {
+    if(!value) return "";
     if(value < 60) return `1분 이내`;
 
     if(value < 60 * 60) {

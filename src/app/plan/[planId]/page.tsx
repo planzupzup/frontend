@@ -6,7 +6,7 @@ import style from "@/app/plan/[planId]/Plan.module.scss";
 import classNames from 'classnames';
 import { useGoogleMapService } from '../../hooks/useGoogleMapService';
 import { useParams } from 'next/navigation';
-import LocationListEditWrapper from '@/app/components/locationList/LocationListEidtWrapper';
+import LocationListEditWrapper from '@/app/components/locationList/LocationListEditWrapper';
 import LocationListWrapper from '@/app/components/locationList/LocationListWrapper';
 import TopProfile from '@/app/components/topProfile/TopProfile';
 import { COLOR_CODE } from '@/app/const/colorCode';
@@ -351,7 +351,7 @@ const PlanDetail: React.FC = () => {
       <div className={classNames(style.contents, {[style.type_total]:selectedDay === "전체 일정"})}>
         <div className={classNames(style.floating_wrap, {[style.is_show]:isShow})}>
           {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-          <div className={style.floating_area}>
+          <div className={classNames(style.floating_area,{[style.is_edit]:isEditing})}>
             <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
             <div className={style.content_wrap}>
               {
@@ -360,7 +360,7 @@ const PlanDetail: React.FC = () => {
               <div className={style.schedule_wrap}>
                 <div className={style.location_list_area}>
                   {
-                    isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={selectedDay !== "전체 일정" ? [totalLocationList[parseInt(selectedDay) - 1]]: totalLocationList} setTotalLocationList={setTotalLocationList}/> :
+                    isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={totalLocationList} setTotalLocationList={setTotalLocationList} selectedDay={selectedDay}/> :
                     <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
                   }
                 </div>
