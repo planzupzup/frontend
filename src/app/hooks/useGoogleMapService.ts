@@ -120,7 +120,8 @@ export const useGoogleMapService = (
   },[]);
 
   const searchPlace = () => {
-    console.log("@");
+    console.log(placesService);
+    console.log(searchInput);
     if (placesService && searchInput) {
       console.log("@");
       const request = {

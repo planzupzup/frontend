@@ -53,7 +53,7 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColo
         <div>
             <div className={style.order} style={{backgroundColor: `${orderColor}`}}>{locationIndex}</div>
             <div className={style.name}>{location.locationName}</div>
-            <div className={style.likes}>4.8</div>
+            <div className={style.likes}>{location.rating}</div>
         </div>
     </div>}
         </>

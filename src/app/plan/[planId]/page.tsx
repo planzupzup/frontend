@@ -14,10 +14,10 @@ import CommentList from '@/app/components/comment/CommentList';
 import CreateSearchList from '@/app/components/create/CreateSearchList';
 
 export interface Location {
-  locationId: number;
+  locationId?: number;
   locationName: string;
-  category: string;
-  scheduleOrder: number;
+  category?: string;
+  scheduleOrder?: number;
   day: string;
   image?: {
     imageId: number,
@@ -25,8 +25,9 @@ export interface Location {
   }
   latitude: number;
   longitude: number;
-  address: string;
-  duration: number;
+  address?: string;
+  duration?: number;
+  rating: number;
 }
 
 export interface Plan {
@@ -354,7 +355,7 @@ const PlanDetail: React.FC = () => {
             <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
             <div className={style.content_wrap}>
               {
-                isEditing && <CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService}/>
+                isEditing && <CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} selectedDay={selectedDay}/>
               }
               <div className={style.schedule_wrap}>
                 <div className={style.location_list_area}>

@@ -5,6 +5,7 @@ import { RefObject, forwardRef, useEffect, useState } from "react";
 import style from "./CreateSearchList.module.scss";
 import CreateSearchItem from "./CreateSearchItem";
 import { Place, useGoogleMapService } from "@/app/hooks/useGoogleMapService";
+import { Location } from "@/app/plan/[planId]/page";
 
 type TCreateSearchList = {
   googleMap: google.maps.Map | null;
@@ -12,9 +13,11 @@ type TCreateSearchList = {
   mapRef: RefObject<HTMLDivElement | null> | undefined;
   placesService: any;
   setPlacesService: any;
+  setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
+  selectedDay: string;
 }
 
-const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesService, mapRef}:TCreateSearchList ) => {
+const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesService, mapRef, setTotalLocationList, selectedDay}:TCreateSearchList ) => {
 
   const [places, setPlaces] = useState<Place[]>([]);
   const [searchInput, setSearchInput] = useState('');
@@ -34,25 +37,35 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
     console.log(places);
   },[places]);
 
+  const addSearchItem = (location: Location) => {
+    const dayIndex = parseInt(selectedDay, 10) - 1;
+
+    setTotalLocationList(prevTotalLocationList => {
+      const newTotalLocationList = prevTotalLocationList.map(dayLocations => [...dayLocations]);
+
+      if (dayIndex >= 0 && dayIndex < newTotalLocationList.length) {
+        newTotalLocationList[dayIndex].push(location);
+      } else {
+        console.warn(`[addSearchItem] 유효하지 않은 dayIndex에 위치를 추가하려고 시도했습니다: ${dayIndex}. 현재 totalLocationList의 길이: ${newTotalLocationList.length}.`);
+      }
+      return newTotalLocationList
+    });
+  };
+
     return (
         <div className={style.create_search_wrap}>
-            <div className={style.date_wrap}>
-                <span className={style.day}>1일차</span>
-                <span className={style.destination}>부산</span>
-                <span className={style.date}>2025/05/27</span>
-            </div>
             <div className={style.search_wrap}>
                 <input type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && googleMapService?.searchPlace()}
-                  className={style.searchInput}
+                  className={style.search_input}
                   placeholder="상호명 또는 주소를 입력하세요"/>
             </div>
             <ul className={style.list}>
                 {
                     places.map((place) => (
-                        <CreateSearchItem place={place} />
+                        <CreateSearchItem place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay}/>
                     ))
                 }
             </ul>
