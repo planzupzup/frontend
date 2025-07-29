@@ -6,10 +6,15 @@ import style from "./LocationDetail.module.scss";
 import axios from "axios";
 import classNames from "classnames";
 import Flicking from "@egjs/react-flicking";
+import { Location } from "@/app/plan/[planId]/page";
 
 type TProps = {
     locationId: string;
     setIsShowModal: React.Dispatch<SetStateAction<boolean>>;
+    isEdit?: boolean;
+    day?: number;
+    setTotalLocationList? : React.Dispatch<React.SetStateAction<Location[][]>>;
+    locationIndex: number;
 }
 
 type TLocation = {
@@ -21,9 +26,11 @@ type TLocation = {
     images?: string[];
 }   
 
-const LocationDetail = ({ locationId, setIsShowModal}:TProps) => {
+const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTotalLocationList, locationIndex}:TProps) => {
 
     const [location, setLocation] = useState<TLocation | null>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [editedDescription, setEditedDescription] = useState<string>("");
 
     const flickingRef = useRef<Flicking>(null);
 
@@ -38,8 +45,8 @@ const LocationDetail = ({ locationId, setIsShowModal}:TProps) => {
     const loadLocation = async () => {
         try {
           const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${locationId}`);
-          console.log(response.data.result.locationName);
-          setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: response.data.result.description, googleImageUrl: response.data.result.googleImageUrl, images: ["/img_section_1_758x566.png","/img_section_3_290x290.png"]});
+          setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: "asdasd", googleImageUrl: response.data.result.googleImageUrl, images: ["/img_section_1_758x566.png","/img_section_3_290x290.png"]});
+            setEditedDescription(response.data.result.description);
         } catch (e) {
           alert('지역을 불러오는데 실패했습니다.');
         }
@@ -48,6 +55,37 @@ const LocationDetail = ({ locationId, setIsShowModal}:TProps) => {
     useEffect(() => {
         loadLocation();
     },[]);
+
+    const onClickSaveBtn = () => {
+        if(setTotalLocationList) {
+            setTotalLocationList(prevTotalLocationList => {
+            const newTotalLocationList = prevTotalLocationList.map(dayLocations => [...dayLocations]);
+        if (day && day >= 0 && day < newTotalLocationList.length) {
+            const targetLocation = { ...newTotalLocationList[day][locationIndex]};
+
+            // 3. 복사본의 description만 수정
+            targetLocation.description = editedDescription;
+
+            // 4. 원래 위치에 수정된 새로운 객체로 교체
+            newTotalLocationList[day][locationIndex] = targetLocation;
+        }
+        return newTotalLocationList
+        });}
+        setIsShowModal(false);
+    }
+
+    const getTotalImageCount = () => {
+        let count = 0;
+        if (location?.googleImageUrl) {
+            count++;
+        }
+        if (location?.images?.length) {
+            count += location.images.length;
+        }
+        return count;
+    };
+
+    const totalImages = getTotalImageCount();
 
     return (
         <div className={style.dimmed_layer} onClick={() => {setIsShowModal(false);}}>
@@ -63,7 +101,7 @@ const LocationDetail = ({ locationId, setIsShowModal}:TProps) => {
                             ref={flickingRef}
                             align="prev"
                             bound={true}
-                            onChanged={e => console.log(e.index)}
+                            onChanged={e => setCurrentIndex(e.index)}
                         >
                         {location?.googleImageUrl && (
                                 <div className={style.img_wrap}>
@@ -77,17 +115,30 @@ const LocationDetail = ({ locationId, setIsShowModal}:TProps) => {
                         ))}
 
                     </Flicking>
-                    { location?.images?.length && location?.images?.length > 1 && <><button type="button" className={style.prev_btn} onClick={goToPrev}>
+                    { location?.images?.length && location?.images?.length > 1 && 
+                    <><button type="button" className={style.prev_btn} onClick={goToPrev}>
                         <span className="blind">이전</span>
                     </button>
                     <button type="button" className={style.next_btn} onClick={goToNext}>
                         <span className="blind">다음</span>
-                    </button> </> }
+                    </button></> }
                 </div>
-                <p className={style.desc}>
-                    {location?.description}
-                </p>
-                <button type="button" className={style.save_btn}>저장</button>
+                {totalImages > 0 &&
+                <div className={style.dot_wrap}>
+                    {Array.from({ length: totalImages }, (_, index) => (
+                        <span
+                            key={index}
+                            className={classNames(style.dot, { [style.is_active]: index === currentIndex })}
+                        ></span>
+                    ))}
+                </div>
+                }
+                {location?.description &&
+                    <p className={style.desc}>{
+                        isEdit ? <textarea className={style.textarea} value={editedDescription} onChange={(e) => setEditedDescription(e.target.value)} placeholder={"사진과 함께, 이곳의 여행 이야기를 들려주세요"}></textarea> : location.description
+                    }</p>
+                }
+                {isEdit && <button type="button" className={style.save_btn} onClick={onClickSaveBtn}>저장</button>}
             </div>
         </div>
     )

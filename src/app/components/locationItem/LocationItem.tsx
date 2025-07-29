@@ -6,6 +6,7 @@ import style from "@/app/plan/[planId]/Plan.module.scss";
 import { useEffect, useState } from "react";
 import LocationDetail from "../locationDetail/LocationDetail";
 import classNames from "classnames";
+import { createPortal } from "react-dom";
 
 type TProps = {
     isTotal?: boolean; 
@@ -14,12 +15,15 @@ type TProps = {
     setLocation?: React.Dispatch<React.SetStateAction<Location | undefined>>;
     orderColor: string;
     isEdit?: boolean;
-    deleteEditItem?: (day: number) => void;
+    day: number;
+    deleteEditItem?: (locationIndex: number) => void;
+    setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
 }
 
-const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit=false, deleteEditItem }:TProps) => {
+const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit=false, deleteEditItem , day, setTotalLocationList}:TProps) => {
 
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
+    const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
     const onClickItemImg = () => {
         setIsShowModal(true);
@@ -36,9 +40,17 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColo
         };
     }, [isShowModal]);
 
+    useEffect(() => {
+        setPortalRoot(document.body);
+    },[]);
+
     return (
-        <>{isShowModal && <LocationDetail locationId={`${location.locationId}`} setIsShowModal={setIsShowModal}/>}
-            {isTotal ? <div key={location.locationId} className={style.location_total_item} onClick={() => setLocation && setLocation(location)}>
+        <>
+        {isShowModal && portalRoot && createPortal(
+            <LocationDetail locationId={`${location.locationId}`} setIsShowModal={setIsShowModal} isEdit={isEdit} {...(isEdit && {day: day})} {...(isEdit && {setTotalLocationList: setTotalLocationList})} locationIndex={locationIndex}/>,
+            portalRoot
+        )}
+        {isTotal ? <div key={location.locationId} className={style.location_total_item} onClick={() => setLocation && setLocation(location)}>
         <div>
             <div className={style.order} style={{backgroundColor: `${orderColor}`}}>{locationIndex}</div>
             <div className={style.name}>{location.locationName}</div>

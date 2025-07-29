@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   DragDropContext,
   Droppable,
@@ -62,7 +62,7 @@ const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList, sele
             setTotalLocationList(newTotalLocationList);
         }
     }
-
+    
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <div style={{ display: 'flex', gap: '8px' }} >
@@ -85,7 +85,7 @@ const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList, sele
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 className={style.drag_item_wrap}>
-                                    <LocationItem location={location} locationIndex={index + 1} orderColor={getOrderColor(index)} isEdit={true} deleteEditItem={deleteEditItem}/>
+                                    <LocationItem location={location} locationIndex={index + 1} orderColor={getOrderColor(index)} isEdit={true} deleteEditItem={deleteEditItem} day={columnIndex} setTotalLocationList={setTotalLocationList}/>
                                 </div>
                             )}
                             </Draggable>}
