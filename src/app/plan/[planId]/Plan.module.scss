@@ -396,11 +396,12 @@
 
 .floating_area {
     position: relative;
-    padding: 0 32px;
+    padding: 40px 32px 0;
     overflow: hidden;
 
     &.is_edit {
         height: 100%;
+        padding-top: 0;
 
         [class*=profile_wrap] {
             position: absolute;

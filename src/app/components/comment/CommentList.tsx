@@ -11,11 +11,10 @@ export type TComment = {
     profileImage: string;
     nickName: string;
     content: string;
-    commentCount?: string;
-    reCommentCount: string;
     likesCount: number;
     isLiked: boolean;
     parentId?: string;
+    childrenCount: number;
 }
 
 type TCommentList = {
@@ -43,8 +42,6 @@ const CommentList = ({parentId}: TCommentList) => {
 
         setLoading(true);
         try {
-            // 'YOUR_PLAN_ID_HERE'를 실제 planId로 교체해야 합니다.
-            // planId는 CommentList의 prop으로 전달받거나, context/route에서 가져와야 할 수 있습니다.
             let response;
             
             if(!parentId) {
@@ -61,10 +58,11 @@ const CommentList = ({parentId}: TCommentList) => {
 
             setComments(prevComments => [...prevComments, ...data.result.content]);
             setPage(prevPage => prevPage + 1);
-            setLoading(data.result.totalElements);
             // API 응답에 'hasMore' 속성이 있다고 가정하고 업데이트합니다.
-            if(parseInt(data.result.page, 10) + 1 >= parseInt(data.result.totalPages,10) )setHasMore(false);
-
+            if(parseInt(data.result.page, 10) >= parseInt(data.result.totalPages,10) )setHasMore(false);
+            if(!parentId){
+                setTotalElements(data.result.totalElements);
+            }
         } catch (error) {
             console.error("댓글 불러오기 실패:", error);
             setHasMore(false);
@@ -96,12 +94,7 @@ const CommentList = ({parentId}: TCommentList) => {
                 observer.unobserve(currentObserverTarget);
             }
         };
-    }, [fetchComments, hasMore, loading]); // fetchComments, hasMore, loading이 변경될 때마다 이펙트를 다시 실행합니다.
-
-    useEffect(() => {
-        fetchComments();
-    }, []);
-
+    }, [fetchComments]); // fetchComments, hasMore, loading이 변경될 때마다 이펙트를 다시 실행합니다.
     return (
         <div className={style.comment_list}>
             {!parentId && 
@@ -118,7 +111,7 @@ const CommentList = ({parentId}: TCommentList) => {
             }
             <ul className={style.list}>
                 {
-                    comments.map((item) => <CommentItem profileImage={item.profileImage} nickName={item.nickName} content={item.content} reCommentCount={item.reCommentCount} likesCount={item.likesCount} isLiked={item.isLiked} parentId={item.commentId}/>)
+                    comments.map((item) => <CommentItem profileImage={item.profileImage} nickName={item.nickName} content={item.content} likesCount={item.likesCount} isLiked={item.isLiked} parentId={item.commentId} childrenCount={item.childrenCount}/>)
                 }
             </ul>
             <div ref={observerTarget} style={{ height: "20px" }}>

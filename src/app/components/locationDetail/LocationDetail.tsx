@@ -45,7 +45,7 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
     const loadLocation = async () => {
         try {
           const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/location/${locationId}`);
-          setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: "asdasd", googleImageUrl: response.data.result.googleImageUrl, images: ["/img_section_1_758x566.png","/img_section_3_290x290.png"]});
+          setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: response.data.result.description, googleImageUrl: response.data.result.googleImageUrl, images: ["/img_section_1_758x566.png","/img_section_3_290x290.png"]});
             setEditedDescription(response.data.result.description);
         } catch (e) {
           alert('지역을 불러오는데 실패했습니다.');
@@ -60,16 +60,17 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
         if(setTotalLocationList) {
             setTotalLocationList(prevTotalLocationList => {
             const newTotalLocationList = prevTotalLocationList.map(dayLocations => [...dayLocations]);
-        if (day && day >= 0 && day < newTotalLocationList.length) {
-            const targetLocation = { ...newTotalLocationList[day][locationIndex]};
+            
+            if (day !== undefined && day >= 0 && day < newTotalLocationList.length) {
+                const targetLocation = { ...newTotalLocationList[day][locationIndex]};
+                // 3. 복사본의 description만 수정
+                targetLocation.description = editedDescription;
 
-            // 3. 복사본의 description만 수정
-            targetLocation.description = editedDescription;
-
-            // 4. 원래 위치에 수정된 새로운 객체로 교체
-            newTotalLocationList[day][locationIndex] = targetLocation;
-        }
-        return newTotalLocationList
+                // 4. 원래 위치에 수정된 새로운 객체로 교체
+                newTotalLocationList[day][locationIndex] = targetLocation;
+            }
+            console.log(newTotalLocationList);
+            return newTotalLocationList
         });}
         setIsShowModal(false);
     }
@@ -115,7 +116,7 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
                         ))}
 
                     </Flicking>
-                    { location?.images?.length && location?.images?.length > 1 && 
+                    { getTotalImageCount() > 1 && 
                     <><button type="button" className={style.prev_btn} onClick={goToPrev}>
                         <span className="blind">이전</span>
                     </button>

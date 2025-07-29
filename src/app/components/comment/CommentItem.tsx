@@ -5,8 +5,10 @@ import { useState } from "react";
 import CommentList, { TComment } from "./CommentList";
 import style from "./CommentList.module.scss";
 
+type TProps = TComment;
 
-const CommentItem = ({profileImage, nickName, content, reCommentCount, likesCount, isLiked, parentId}:TComment) => {
+
+const CommentItem = ({profileImage, nickName, content, likesCount, isLiked, parentId, childrenCount}:TProps) => {
 
     const [isExpaneded, setIsExpanded] = useState(false);
 
@@ -26,9 +28,9 @@ const CommentItem = ({profileImage, nickName, content, reCommentCount, likesCoun
                     <button type="button" aria-pressed={isLiked} className={style.likes_btn}>
                         <span className="blind">공감</span>{likesCount}
                     </button>
-                    <button type="button" aria-expanded={isExpaneded} className={style.re_comment_btn} onClick={onClickReCommentBtn}>
-                        답글 {reCommentCount}
-                    </button>
+                    {childrenCount !== null && parentId && <button type="button" aria-expanded={isExpaneded} className={style.re_comment_btn} onClick={onClickReCommentBtn}>
+                        답글 {childrenCount}
+                    </button>}
                 </div>
                 {
                     isExpaneded && 

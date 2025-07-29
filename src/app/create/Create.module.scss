@@ -1,0 +1,32 @@
+@import "/src/app/scss/variables.scss";
+
+.date_pick {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+}
+
+.main_title {
+    @include text-style('s1', 'black');
+
+    margin-top: 60px;
+    line-height: 38px;
+}
+
+.desc {
+    @include text-style('b2-1', 'gray1');
+
+    margin-top: 4px;
+    line-height: 22px;
+
+
+    .color {
+        color: #3c76f1;
+    }
+}

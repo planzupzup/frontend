@@ -298,7 +298,7 @@ const PlanDetail: React.FC = () => {
       var tempTotalLocationList:Location[][] = [];
       for(const [index] of days.entries()) {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}/${index + 1}`);
-        console.log(response);
+
         var tempLocationList = response.data.result.locations;
 
         var tempLocation: {lat: number; lng: number} | null = null;
