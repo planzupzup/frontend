@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@egjs/flicking-plugins": "^4.7.1",
     "@egjs/react-flicking": "^4.13.0",
     "@egjs/react-infinitegrid": "^4.12.0",
     "@hello-pangea/dnd": "^18.0.1",

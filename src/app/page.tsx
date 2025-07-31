@@ -5,6 +5,9 @@ import React, { useEffect, useState } from "react";
 import styles from "@/app/page.module.scss";
 import { MasonryInfiniteGrid } from "@egjs/react-infinitegrid";
 import MasonryGridItem from "./components/main/MasonryGridItem";
+import Flicking from "@egjs/react-flicking";
+import { AutoPlay } from "@egjs/flicking-plugins";
+import classNames from "classnames";
 
 const getColumnSize = () => {
   if (typeof window !== 'undefined') {
@@ -48,6 +51,7 @@ const tempMockupBADataArray = [
 
 const Home: React.FC = () => {
   const [column, setColumn] = useState(getColumnSize());
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
 
@@ -58,8 +62,61 @@ const Home: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
+  const easing = (x: number) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+  const plugins = [
+    new AutoPlay({
+      direction: "NEXT",
+      animationDuration: 600, // 이동 시간 0.6초 (밀리초 단위)
+      duration: 3000
+    })
+  ];
+
   return (
     <>  
+
+      <section className={styles.section_1_2}>
+        <Flicking
+          align="prev"
+          bound={true}
+          onChanged={e => setCurrentIndex(e.index)}
+          plugins={plugins}
+          easing={easing} // 애니메이션 easing 함수 적용 (이동 시간에 적용)
+          duration={600}
+          circular={true}
+          >
+            <div className={styles.img_wrap}>
+                <img className={styles.img} src={"/img_section_1_bg_1.png"} alt="대표 이미지"/>
+            </div>
+            <div className={styles.img_wrap}>
+                <img className={styles.img} src={"/img_section_1_bg_2.png"} alt="대표 이미지2"/>
+            </div>
+            <div className={styles.img_wrap}>
+                <img className={styles.img} src={"/img_section_1_bg_3.png"} alt="대표 이미지3"/>
+            </div>
+            <div className={styles.img_wrap}>
+                <img className={styles.img} src={"/img_section_1_bg_4.png"} alt="대표 이미지4"/>
+            </div>
+            <div className={styles.img_wrap}>
+                <img className={styles.img} src={"/img_section_1_bg_5.png"} alt="대표 이미지5"/>
+            </div>
+        </Flicking>
+        <div className={styles.dot_wrap}>
+          {Array.from({ length: 5 }, (_, index) => (
+              <span
+                  key={index}
+                  className={classNames(styles.dot, { [styles.is_active]: index === currentIndex })}
+              ></span>
+          ))}
+        </div>
+      </section>
+      <section className={styles.section_2_2}>
+        <h2 className={styles.title}>지금 어디로 떠나고 싶으신가요?</h2>
+        <div className={styles.input_wrap}>
+          <input type="text" placeholder="검색어를 입력하세요" className={styles.input}/>
+        </div>
+      </section>
+      {/*
       <section className={styles.section_1}>
         <div className={styles.section_1_image}>
           <a href="#" className={styles.link}>
@@ -69,7 +126,7 @@ const Home: React.FC = () => {
             100만+ 유튜버의 여행루트
           </span>
         </div>
-      </section>
+      </section> 
       <section className={styles.section_2}>
         <h2 className={styles.title}>보고 끝내지 말고, 직접 떠나보세요</h2>
         <p className={styles.desc}>유튜버 & 인플루언서들의 여행 루트를 나도 경험할 수있어요!</p>
@@ -89,10 +146,15 @@ const Home: React.FC = () => {
           </li>
         </ul>
       </section>
+          */}
       <section className={styles.section_5}>
-        <h2 className={styles.title}>당신만의 여행을 만들어보세요!</h2>
-        <p className={styles.desc}>유튜버의 루트를 참고해, 내 여행에 맞게 플랜을 짜보세요<br />장소, 일정, 동선까지 한눈에 정리할 수 있어요</p>
-        <a href="#" className={styles.link}>플랜 만들기</a>
+        <div className={styles.top_area}>
+          <div>
+          <h2 className={styles.title}>당신만의 여행을 만들어보세요!</h2>
+          <p className={styles.desc}>유튜버의 루트를 참고해, 내 여행에 맞게 플랜을 짜보세요<br />장소, 일정, 동선까지 한눈에 정리할 수 있어요</p>
+          </div>
+          <a href="#" className={styles.link}>플랜 만들기</a>
+        </div>
         <ul className={styles.list}>
           <li className={styles.item}>
             <img src="/img_jeju_island.png" alt="섬네일" className={styles.img}/>
@@ -100,7 +162,6 @@ const Home: React.FC = () => {
               <div className={styles.day_wrap}>
                 <span className={styles.day}>N일차</span>
               </div>
-              <h3 className={styles.sub_title}>[일이삼사오육칠팔구십]</h3>
               <p className={styles.sub_desc}>일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십</p>
             </div>
           </li>
@@ -110,7 +171,6 @@ const Home: React.FC = () => {
               <div className={styles.day_wrap}>
                 <span className={styles.day}>N일차</span>
               </div>
-              <h3 className={styles.sub_title}>[일이삼사오육칠팔구십]</h3>
               <p className={styles.sub_desc}>일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십</p>
             </div>
           </li>
@@ -118,10 +178,7 @@ const Home: React.FC = () => {
       </section>
       <section className={styles.section_6}>
         <h2 className={styles.title}>함께 소통하고 공유해요</h2>
-        <p className={styles.desc}>옹심이들의 여행루트도 살펴보고 공유할 수 있어요!</p>
-        <div className={styles.link_wrap}>
-          <a href="#" className={styles.link}>플랜 만들기</a>
-        </div>
+        <p className={styles.desc}>서로의 여행루트를 공유하고 소통할 수 있어요!</p>
         <MasonryInfiniteGrid className={styles.list}
           gap={32}
           useRecycle={true}

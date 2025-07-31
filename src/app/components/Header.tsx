@@ -25,7 +25,6 @@ const Header: React.FC = () => {
   return (
     <header className={styles.header_wrap}>
       <a href="/" className={styles.logo}>
-        LOGO
       </a>
       <div className={styles.nav_area}>
         <div className={styles.nav}>
@@ -41,7 +40,7 @@ const Header: React.FC = () => {
             className={styles.customButton}
             onClick={() => (window.location.href = "/destination")}
           >
-            플랜보기
+            플랜줍기
           </button>
         </div>
 

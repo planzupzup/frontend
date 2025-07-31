@@ -12,6 +12,104 @@
   }
 }
 
+.section_1_2 {
+  position: relative;
+  overflow: hidden;
+  margin: 66px 32px 0;
+  border-radius: 20px;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background-image: linear-gradient(to right, rgba(#000, 0), rgba(#000,100%)) no-repeat;
+    content: "";
+  }
+}
+
+.dot_wrap {
+  position: absolute;
+  display: flex;
+  right: 30px;
+  bottom: 32px;
+  gap: 8px;
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #fff;
+
+    &.is_active {
+      background-color: #000;
+    }
+
+    &:has(~ .is_active) {
+      background-color: #000;
+    }
+  }
+}
+
+.img_wrap {
+  width: 100%;
+  flex-shrink: 0;
+  height: 506px;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.section_2_2 {
+  margin: 120px;
+
+  .title {
+    @include text-style('h3','black');
+
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .input_wrap {
+    position: relative;
+    width: 540px;
+    padding: 19px 32px 19px 56px;
+    margin: 25px auto 60px;
+    border: 1px solid #f1f3f5;
+    border-radius: 12px;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.06);
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      width: 28px;
+      height: 28px;
+      transform: translateY(-50%);
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'%3E%3Cpath stroke='%23767676' stroke-miterlimit='10' stroke-width='2' d='M13 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z'/%3E%3Cpath fill='%23767676' d='M22.293 23.707a1 1 0 0 0 1.414-1.414l-1.414 1.414ZM18 18l-.707.707 5 5L23 23l.707-.707-5-5L18 18Z'/%3E%3C/svg%3E") no-repeat;
+      content: "";
+    }
+  }
+
+  .input {
+    width: 100%;
+    line-height: 22px;
+    font-weight: 500;
+    color: #000;
+    font-size: 16px;
+
+    &::placeholder {
+      color: #767676;
+    }
+  }
+}
+
 .section_2 {
   display: flex;
   flex-direction: column;
@@ -151,6 +249,12 @@
     @include text-style('b2-2', 'white');
   }
 
+  .top_area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .list {
     margin-top: 60px;
     display: flex;
@@ -214,13 +318,13 @@
 }
 
 .section_6 {
-  margin: 60px 0 300px;
+  margin: 148px 0 200px;
   background-color: #fff;
   text-align: center;
 
   .title {
     line-height: 48px;
-
+    
     @include text-style('h3','black');
   }
 
@@ -248,7 +352,7 @@
   }
 
   .list {
-    margin-top: 60px;
+    margin-top: 40px;
 
     .item {
       box-sizing: border-box;
