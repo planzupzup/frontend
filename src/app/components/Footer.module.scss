@@ -1,40 +1,28 @@
+@import "/src/app/scss/variables.scss";
+
 .footer_wrap {
-    height: 120px;
+    box-sizing: border-box;
+    height: 213px;
     display: flex;
-    justify-content: space-evenly;
     flex-direction: column;
-    padding: 0 20px;
-    background-color: #fafafa;
+    padding: 82px 32px 40px;
+    background: #f1f3f5 url(/img_logo.png) 32px 30px /74px 40px no-repeat;
     border-top: 1px solid #e6e6e6;
 }
 
-.list {
-    display: inline-flex;
-    font-size: 0.875rem !important;
-    line-height: 1.125rem !important;
-    color: rgb(34, 34, 34) !important;
-
-    .item {
-        
-        & + .item {
-            margin-left: 10px;
-
-            &::before {
-                display: inline-block;
-                width: 2px;
-                height: 2px;
-                margin: 7px 10px 0 0;
-                border-radius: 50%;
-                background-color: rgb(34, 34, 34);
-                vertical-align: top;
-                content: "";
-            }
-        }
-    }
+.email {
+    color: #767676;
+    font-size: 12px;
+    letter-spacing: -2.5%;
+    line-height: 17px;
+    font-weight: 400;
 }
 
-.text {
-    font-size: 0.875rem !important;
-    line-height: 1.125rem !important;
-    color: rgb(34, 34, 34) !important;
+.right {
+    margin-top: 40px;
+    color: #767676;
+    font-size: 12px;
+    letter-spacing: -2.5%;
+    line-height: 17px;
+    font-weight: 400;
 }
