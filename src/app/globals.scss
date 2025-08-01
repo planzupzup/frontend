@@ -1,4 +1,5 @@
 // blind 
+@import "/src/app/scss/variables.scss";
 
 .blind {
 position: absolute;
@@ -137,4 +138,54 @@ input {
 
 body, html {
   height: 100%;
+}
+
+// datepicker custom css
+
+html {
+  .react-datepicker {
+    border: 0;
+    font-family: Pretendard sans-serif;
+  }
+
+  .react-datepicker__header {
+    background-color: transparent;
+    border: 0;
+    padding: 0 0 12px 0;
+  }
+
+  .react-datepicker__day-names {
+    margin-bottom: 0;
+    margin-top: 20px;
+  }
+
+  .react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
+    @include text-style('b2-2','black');
+
+    width: 44px;
+    line-height: 44px;
+    margin: 0;
+
+    &:first-child {
+      color: #f95353;
+    }
+
+    &:last-child {
+      color: #3c76f1;
+    }
+
+    & + .react-datepicker__day-name,& + .react-datepicker__day, & + .react-datepicker__time-name {
+      margin-left: 8px;
+    }
+  }
+
+  .react-datepicker__month {
+    margin: 0;
+  }
+
+  .react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header {
+    @include text-style('s3-1', 'black');
+
+    line-height: 24px;
+  }
 }

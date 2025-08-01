@@ -30,3 +30,50 @@
         color: #3c76f1;
     }
 }
+
+.custom_header_container {
+    @include text-style('s3-1', 'black');
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 24px;
+
+    div {
+        margin: 0 20px;
+    }
+
+    button {
+        width: 20px;
+        height: 20px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none'%3E%3Cpath stroke='%23111' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m13 15-5-5 5-5'/%3E%3C/svg%3E") no-repeat;
+        
+        &:last-child {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.calendar {
+    &+ .calendar {
+        margin-left: 100px;
+    }
+}
+
+.next_btn {
+    @include text-style('b2-2', 'gray5');
+    
+    width: 68px;
+    margin-top: 32px;
+    background-color: #f1f3f5;
+    border-radius: 50px;
+    line-height: 42px;
+    pointer-events: none;
+    cursor: pointer;
+
+    &.is_active {
+        position: initial;
+        background-color: #3c76f1;
+        color: #fff;
+    }
+}
