@@ -135,37 +135,6 @@ input {
   }
 }
 
-
-@keyframes ani_title_desolve {
-    
-}
-
-@keyframes ani_img_slide {
-  0% {
-    transform: translateX(0%);
-  }
-  20.83% { 
-    transform: translateX(0%); 
-  }
-  25% { 
-    transform: translateX(-100%); 
-  }
-  45.83% {
-    transform: translateX(-100%); 
-  }
-  50% { transform: translateX(-200%);
-  }
-  70.83% { 
-    transform: translateX(-200%); 
-  }
-  75% { 
-    transform: translateX(-300%); 
-  }
-  100% {
-    transform: translateX(-300%);
-  }
-}
-
-@keyframes ani_indicator_move {
-
+body, html {
+  height: 100%;
 }

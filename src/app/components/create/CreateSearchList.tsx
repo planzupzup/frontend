@@ -33,10 +33,6 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
     setPlaces,
   }, mapRef);
 
-  useEffect(()=> {
-    console.log(places);
-  },[places]);
-
   const addSearchItem = (location: Location) => {
     const dayIndex = parseInt(selectedDay, 10) - 1;
 
@@ -64,8 +60,8 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
             </div>
             <ul className={style.list}>
                 {
-                    places.map((place) => (
-                        <CreateSearchItem place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay}/>
+                    places.map((place, index) => (
+                        <CreateSearchItem place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay} searchItemIndex={index}/>
                     ))
                 }
             </ul>

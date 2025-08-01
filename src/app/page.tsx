@@ -55,6 +55,8 @@ const Home: React.FC = () => {
 
   useEffect(() => {
 
+    document.body.style.height = 'auto';
+
     window.addEventListener("resize", () => setColumn(getColumnSize()));
     return () => {
       window.removeEventListener("resize", () => setColumn(getColumnSize()));
