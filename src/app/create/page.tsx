@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import style from "./Create.module.scss";
 import { ko } from 'date-fns/locale';
 import classNames from 'classnames';
+import axios from 'axios';
 
 const createPlan = () => {
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [startCalendarMonth, setStartCalendarMonth] = useState(new Date());
     const [endCalendarMonth, setEndCalendarMonth] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1));
+    const [inputText, setInputText] = useState("");
+    const [isActivePlanTitle, setIsActivePlanTitle] = useState(false);
 
     const initialMonth = new Date();
     const nextMonth = new Date(initialMonth.getFullYear(), initialMonth.getMonth() + 1, 1);
@@ -31,9 +34,45 @@ const createPlan = () => {
       return <span>{day}</span>;
   };
 
+  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputText(e.target.value);
+  }
 
+
+  const onClickDatePickNextBtn = () => {
+    console.log(startDate, endDate);
+    setIsActivePlanTitle(true);
+  }
+
+  const onClickPlanTitleNextBtn = async () => {
+    const newPlan = {
+      isPublic: true,
+      title: inputText,
+      content: "내용",
+      startDate,
+      endDate,
+      destinationName: "제주"
+    };
+
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan`, newPlan);
+      window.location.href = `/plan/${response.data.result.planId}`;
+    } catch (error) {
+      console.error("Failed to create plan:", error);
+    }
+  }
+
+  const getDTODateFormat = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  }
     return (
-        <div className={style.date_pick}>
+        <div>
+          <div className={classNames(style.date_pick, {[style.is_active]: isActivePlanTitle})}>
           <h1 className={style.main_title}>얼마동안 떠나시나요?</h1>
           <p className={style.desc}>여행기간은 <strong className={style.color}>최대 12일</strong> 선택 가능합니다.</p>
           <div style={{ display: 'flex',justifyContent: 'center', alignItems: 'flex-start' , marginTop: '80px'}}>
@@ -111,8 +150,18 @@ const createPlan = () => {
               />
             </div>
           </div>
-          <button type="button" className={classNames(style.next_btn, {[style.is_active]: startDate && endDate})}>다음</button>
+          <button type="button" className={classNames(style.next_btn, {[style.is_active]: startDate && endDate})} onClick={onClickDatePickNextBtn}>다음</button>
         </div>
+
+        <div className={style.plan_title}>
+          <h1 className={style.main_title}>이번 여행, 어떤 이름으로 남기고 싶나요?</h1>
+          <p className={style.desc}>나만의 이름을 붙이면, 여행이 더 특별해져요</p>
+          <div className={style.input_wrap}>
+            <input className={style.input} type="text" placeholder="예) 엄마랑 둘이 떠나는 제주 밤바다 3박 4일" value={inputText} onChange={onChangeInput}/>
+          </div>
+          <button type="button" className={classNames(style.next_btn, {[style.is_active]: inputText.length > 4})} onClick={onClickPlanTitleNextBtn}>다음</button>
+        </div>
+      </div>
     )
 }
 
