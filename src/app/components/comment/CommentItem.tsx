@@ -1,19 +1,58 @@
 /* eslint-disable */
 "use client";
 
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import CommentList, { TComment } from "./CommentList";
 import style from "./CommentList.module.scss";
+import axios from "axios";
 
 type TProps = TComment;
 
-
-const CommentItem = ({profileImage, nickName, content, likesCount, isLiked, parentId, childrenCount}:TProps) => {
+const CommentItem = ({commentId, profileImage, nickName, content, likesCount, isLiked, parentId, childrenCount}:TProps) => {
 
     const [isExpaneded, setIsExpanded] = useState(false);
+    const [isShowOptions, setIsShowOptions] = useState(false);
+    const [isClickEditBtn, setIsClickEditBtn] = useState(false);
+    const [inputContent, setInputContent] = useState("");
+    const [isCreateRecomment, setIsCreateRecomment] = useState(false);
 
     const onClickReCommentBtn = () => {
         setIsExpanded(!isExpaneded);
+    }
+
+    const onClickEditBtn = () => {
+        setIsClickEditBtn(true);
+        setIsShowOptions(false);
+        setInputContent(content);
+    }
+
+    const onClickSaveEditBtn = async () => {
+        try {
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}`, {content: inputContent});
+            console.log("Comment Edited", response.data);
+      
+            setIsClickEditBtn(false);
+          } catch (error) {
+            console.error("Failed to edit:", error);
+          }
+        setIsExpanded(false);
+    }
+
+    const onClickDeleteBtn = async () => {
+        try {
+            const isConfirmed = window.confirm("정말로 이 댓글을 삭제하시겠습니까?");
+
+            if(!isConfirmed) {
+                setIsExpanded(false);
+                return;
+            }
+            
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}`);
+            console.log("Comment Deleted", response.data);
+          } catch (error) {
+            console.error("Failed to delete:", error);
+          }
+        setIsExpanded(false);
     }
 
     return (
@@ -23,20 +62,40 @@ const CommentItem = ({profileImage, nickName, content, likesCount, isLiked, pare
             </span>
             <div className={style.text_area}>
                 <div className={style.nickname}>{nickName}</div>
-                <div className={style.content}>{content}</div>
-                <div className={style.reaction_area}>
-                    <button type="button" aria-pressed={isLiked} className={style.likes_btn}>
-                        <span className="blind">공감</span>{likesCount}
-                    </button>
-                    {childrenCount !== null && parentId && <button type="button" aria-expanded={isExpaneded} className={style.re_comment_btn} onClick={onClickReCommentBtn}>
-                        답글 {childrenCount}
-                    </button>}
-                </div>
+                <div className={style.content}>{isClickEditBtn ? <textarea className={style.edit_input} value={inputContent} onChange={(e) => setInputContent(e.target.value)}/> : content}</div>
+                {
+                    !isClickEditBtn ? (
+                        <div className={style.reaction_area}>
+                            <button type="button" aria-pressed={isLiked} className={style.likes_btn}>
+                                <span className="blind">공감</span>{likesCount}
+                            </button>
+                            {childrenCount !== null && parentId && <><button type="button" aria-expanded={isExpaneded} className={style.re_comment_btn} onClick={onClickReCommentBtn}>
+                                답글 {childrenCount}
+                            </button>
+                            {
+                                isExpaneded && <button type="button" className={style.create_recomment_btn} onClick={() => setIsCreateRecomment(true)}>답글 쓰기</button>
+                            }
+                            </>}
+                        </div>
+                    ) : <><div className={style.edit_confirm_btn_wrap}>
+                            <button type="button" className={style.edit_confirm_btn} onClick={onClickSaveEditBtn}>수정</button>
+                            <button type="button" className={style.edit_cancel_btn} onClick={() => setIsClickEditBtn(false)}>취소</button> 
+                        </div></>
+                }
                 {
                     isExpaneded && 
                         <div className={style.re_comment_area}>
-                            <CommentList parentId={parentId} />
+                            <CommentList parentId={parentId} setIsCreateRecomment={setIsCreateRecomment} isCreateRecomment={isCreateRecomment} />
                         </div>
+                }
+                <button type="button" className={style.option_btn} onClick={() => setIsShowOptions(!isShowOptions)}><span className="blind">설정</span></button>
+                {
+                    isShowOptions && (
+                        <div className={style.options}>
+                            <button type="button" className={style.edit_btn} onClick={onClickEditBtn}>수정</button>
+                            <button type="button" className={style.delete_btn} onClick={onClickDeleteBtn}>삭제</button>
+                        </div>
+                    )
                 }
             </div>
         </li>

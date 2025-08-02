@@ -1,15 +1,16 @@
 /* eslint-disable */
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import CommentItem from "./CommentItem";
 import style from "./CommentList.module.scss";
 import { useParams } from "next/navigation";
+import axios from "axios";
 
 export type TComment = {
     commentId?: string;
-    profileImage: string;
-    nickName: string;
+    profileImage?: string;
+    nickName?: string;
     content: string;
     likesCount: number;
     isLiked: boolean;
@@ -19,9 +20,11 @@ export type TComment = {
 
 type TCommentList = {
     parentId?: string;
+    isCreateRecomment?: boolean;
+    setIsCreateRecomment: React.Dispatch<SetStateAction<boolean>>;
 }
 
-const CommentList = ({parentId}: TCommentList) => {
+const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TCommentList) => {
     const { planId } = useParams<{ planId: string }>();
     const [comments, setComments] = useState<TComment[]>([]);
     // 현재 페이지 번호
@@ -31,11 +34,52 @@ const CommentList = ({parentId}: TCommentList) => {
     // 데이터 로딩 중인지 여부
     const [loading, setLoading] = useState(false);
     const [totalElements, setTotalElements] = useState(0);
+    const [createInputText, setCreateInputText] = useState("");
 
     // 무한 스크롤 감지를 위한 관찰 대상 요소
     const observerTarget = useRef<HTMLDivElement>(null);
 
     const thumbnailUrl = undefined;
+
+    const onClickCreateBtn = async () => {
+        try {
+            let response;
+
+            if(parentId) {
+                response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment`,{
+                    content: createInputText,
+                    parentId,
+                    planId : planId
+                })
+            }else {
+                response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment`,{
+                    content: createInputText,
+                    parentId : null,
+                    planId : planId
+                })
+            }
+            
+            const result = response.data.result;
+
+            const newComment:TComment = {
+                commentId: result.commentId,
+                content: result.content,
+                likesCount: 0,
+                isLiked: false,
+                childrenCount: 0,
+            }
+
+            setComments(prevComments => [newComment, ...prevComments]);
+        } catch(e) {
+            console.log(e);
+        }
+
+        setCreateInputText("");
+
+        if(parentId) {
+            setIsCreateRecomment(false);
+        }
+    }
 
     const fetchComments = useCallback(async () => {
         if (loading || !hasMore) return;
@@ -95,9 +139,15 @@ const CommentList = ({parentId}: TCommentList) => {
             }
         };
     }, [fetchComments]); // fetchComments, hasMore, loading이 변경될 때마다 이펙트를 다시 실행합니다.
+
+    useEffect(() => {
+        console.log(parentId);
+        console.log(isCreateRecomment);
+        console.log(parentId && isCreateRecomment);
+    }, [isCreateRecomment]);
     return (
         <div className={style.comment_list}>
-            {!parentId && 
+            { !parentId &&
                 <>
                     <div className={style.count_wrap}>
                         댓글&nbsp;
@@ -105,13 +155,20 @@ const CommentList = ({parentId}: TCommentList) => {
                     </div>
                     <div className={style.textarea_wrap}>
                         <span className={style.thumb_wrap}>{thumbnailUrl && <img className={style.img} src="" alt="섬네일 이미지" />}</span>
-                        <textarea placeholder={"댓글을 입력하세요"} className={style.textarea} />
+                        <textarea placeholder={"댓글을 입력하세요"} className={style.textarea} value={createInputText} onChange={(e)=> setCreateInputText(e.target.value)}/>
+                        <button type="button" className={style.create_confirm_btn} onClick={onClickCreateBtn}>등록</button>
                     </div>
                 </>
             }
+            {
+                isCreateRecomment && <div className={style.textarea_wrap}>
+                <textarea placeholder={"답글을 입력하세요"} className={style.textarea} value={createInputText} onChange={(e)=> setCreateInputText(e.target.value)}/>
+                <button type="button" className={style.create_confirm_btn} onClick={onClickCreateBtn}>등록</button>
+                </div>
+            }
             <ul className={style.list}>
                 {
-                    comments.map((item) => <CommentItem profileImage={item.profileImage} nickName={item.nickName} content={item.content} likesCount={item.likesCount} isLiked={item.isLiked} parentId={item.commentId} childrenCount={item.childrenCount}/>)
+                    comments.map((item) => <CommentItem commentId={item.commentId} profileImage={item.profileImage} nickName={item.nickName} content={item.content} likesCount={item.likesCount} isLiked={item.isLiked} parentId={item.commentId} childrenCount={item.childrenCount} />)
                 }
             </ul>
             <div ref={observerTarget} style={{ height: "20px" }}>

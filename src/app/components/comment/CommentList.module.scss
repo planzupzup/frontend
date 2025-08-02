@@ -49,6 +49,19 @@
     }
 }
 
+.create_confirm_btn {
+    @include text-style('b2-2', 'gray5');
+    
+
+    flex-shrink: 0;
+    margin-left: 20px;
+    width: 60px;
+    background-color: #3c76f1;
+    color: #fff;
+    border-radius: 50px;
+    line-height: 32px;
+}
+
 .textarea::placeholder {
     @include text-style('b2-1','gray1');
 
@@ -68,12 +81,52 @@
 }
 
 .text_area {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;
 
     .comment_list {
         margin-top: 0;
+    }
+
+    .option_btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none'%3E%3Cpath fill='%23111' d='M10 10.834a.833.833 0 1 0 0-1.667.833.833 0 0 0 0 1.667ZM10 5a.833.833 0 1 0 0-1.666.833.833 0 0 0 0 1.667ZM10 16.667a.833.833 0 1 0 0-1.666.833.833 0 0 0 0 1.666Z'/%3E%3Cpath stroke='%23000' stroke-linecap='round' stroke-linejoin='round' d='M10 10.834a.833.833 0 1 0 0-1.667.833.833 0 0 0 0 1.667ZM10 5a.833.833 0 1 0 0-1.666.833.833 0 0 0 0 1.667ZM10 16.667a.833.833 0 1 0 0-1.666.833.833 0 0 0 0 1.666Z'/%3E%3C/svg%3E") no-repeat;
+    }
+
+    .options {
+        position: absolute;
+        top: 0;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        box-sizing: border-box;
+        width: 110px;
+        padding: 12px 0;
+        border-radius: 8px;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.1);
+
+        button {
+            @include text-style('b2-1','black');
+
+            line-height: 30px;
+            text-align: left;
+            padding-left: 20px;
+
+            &:hover {
+                background-color: #f7f7fb;
+            }
+        }
+
+        .delete_btn {
+            @include text-style('b2-1','red');
+        }
     }
 }
 
@@ -145,4 +198,40 @@
             }
         }
     }
+}
+
+.edit_input {
+    @include text-style('b2-1','black');
+
+    box-sizing: border-box;
+    width: calc(100% - 40px);
+    resize: none;
+    border: 0;
+    padding: 14px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    height: 100px;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.edit_confirm_btn_wrap {
+    align-self: flex-end;
+    margin-right: 40px;
+}
+
+.edit_confirm_btn, .edit_cancel_btn {
+    @include text-style('b2-2', 'gray5');
+
+    width: 60px;
+    background-color: #3c76f1;
+    color: #fff;
+    border-radius: 50px;
+    line-height: 32px;
+}
+
+.edit_cancel_btn {
+    margin-left: 20px;
 }
