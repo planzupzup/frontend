@@ -6,9 +6,11 @@ import CommentList, { TComment } from "./CommentList";
 import style from "./CommentList.module.scss";
 import axios from "axios";
 
-type TProps = TComment;
+type TProps = TComment & {
+    setComments: React.Dispatch<SetStateAction<TComment[]>>;
+}
 
-const CommentItem = ({commentId, profileImage, nickName, content, likesCount, isLiked, parentId, childrenCount}:TProps) => {
+const CommentItem = ({commentId, profileImage, nickName, content, likesCount, isLiked, parentId, childrenCount, setComments}:TProps) => {
 
     const [isExpaneded, setIsExpanded] = useState(false);
     const [isShowOptions, setIsShowOptions] = useState(false);
@@ -26,11 +28,36 @@ const CommentItem = ({commentId, profileImage, nickName, content, likesCount, is
         setInputContent(content);
     }
 
+    const onClickLikeBtn = async () => {
+        try {
+            if(!isLiked) {
+                await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}/like`);
+            } else {
+                await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}/like`);
+            }
+            
+            setComments(prevComments => 
+                prevComments.map((comment) => comment.commentId === commentId ? {
+                    ...comment,
+                    isLiked: isLiked ? false : true,
+                    likesCount: isLiked ? likesCount - 1 : likesCount + 1
+                } : comment)
+            );
+            
+        } catch(e) {
+            console.error("Failed to post like", e);
+        }
+    }
+
     const onClickSaveEditBtn = async () => {
         try {
             const response = await axios.put(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}`, {content: inputContent});
             console.log("Comment Edited", response.data);
       
+            setComments(prevComments => prevComments.map(comment => comment.commentId===commentId ? {
+                ...comment, content: inputContent
+            } : comment))
+
             setIsClickEditBtn(false);
           } catch (error) {
             console.error("Failed to edit:", error);
@@ -46,13 +73,15 @@ const CommentItem = ({commentId, profileImage, nickName, content, likesCount, is
                 setIsExpanded(false);
                 return;
             }
-            
+
+            setComments(prevComments => prevComments.filter(comment => comment.commentId!==commentId ))
+
             const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}`);
             console.log("Comment Deleted", response.data);
           } catch (error) {
             console.error("Failed to delete:", error);
           }
-        setIsExpanded(false);
+        setIsShowOptions(false);
     }
 
     return (
@@ -66,7 +95,7 @@ const CommentItem = ({commentId, profileImage, nickName, content, likesCount, is
                 {
                     !isClickEditBtn ? (
                         <div className={style.reaction_area}>
-                            <button type="button" aria-pressed={isLiked} className={style.likes_btn}>
+                            <button type="button" aria-pressed={isLiked} className={style.likes_btn} onClick={onClickLikeBtn}>
                                 <span className="blind">공감</span>{likesCount}
                             </button>
                             {childrenCount !== null && parentId && <><button type="button" aria-expanded={isExpaneded} className={style.re_comment_btn} onClick={onClickReCommentBtn}>

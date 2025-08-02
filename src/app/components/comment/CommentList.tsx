@@ -58,7 +58,7 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
                     planId : planId
                 })
             }
-            
+
             const result = response.data.result;
 
             const newComment:TComment = {
@@ -168,7 +168,7 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
             }
             <ul className={style.list}>
                 {
-                    comments.map((item) => <CommentItem commentId={item.commentId} profileImage={item.profileImage} nickName={item.nickName} content={item.content} likesCount={item.likesCount} isLiked={item.isLiked} parentId={item.commentId} childrenCount={item.childrenCount} />)
+                    comments.map((item) => <CommentItem {...item} setComments={setComments} />)
                 }
             </ul>
             <div ref={observerTarget} style={{ height: "20px" }}>
