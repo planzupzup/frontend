@@ -7,7 +7,6 @@ import axios from "axios";
 import classNames from "classnames";
 import Flicking from "@egjs/react-flicking";
 import { Location } from "@/app/plan/[planId]/page";
-import { AutoPlay } from "@egjs/flicking-plugins";
 
 type TProps = {
     locationId: string;
@@ -34,14 +33,6 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
     const [editedDescription, setEditedDescription] = useState<string>("");
 
     const flickingRef = useRef<Flicking>(null);
-
-    const plugins = [
-        new AutoPlay({
-          direction: "NEXT",
-          animationDuration: 600, // 이동 시간 0.6초 (밀리초 단위)
-          duration: 3000
-        })
-      ];
 
       const easing = (x: number) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
@@ -89,9 +80,6 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
 
     const getTotalImageCount = () => {
         let count = 0;
-        if (location?.googleImageUrl) {
-            count++;
-        }
         if (location?.images?.length) {
             count += location.images.length;
         }
@@ -115,18 +103,11 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
                             align="prev"
                             bound={true}
                             onChanged={e => setCurrentIndex(e.index)}
-                            plugins={plugins}
-                            easing={easing} // 애니메이션 easing 함수 적용 (이동 시간에 적용)
+                            easing={easing}
                             duration={600}
                         >
                         <div className={style.img_wrap}>
                             <img className={style.img} src={"/img_section_1_758x566.png"} alt="대표 이미지"/>
-                        </div>
-                        <div className={style.img_wrap}>
-                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="대표 이미지"/>
-                        </div>
-                        <div className={style.img_wrap}>
-                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="대표 이미지"/>
                         </div>
                         <div className={style.img_wrap}>
                             <img className={style.img} src={"/img_section_3_290x290.png"} alt="대표 이미지"/>
@@ -150,11 +131,7 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
                     ))}
                 </div>
                 }
-                {location?.description &&
-                    <p className={style.desc}>{
-                        isEdit ? <textarea className={style.textarea} value={editedDescription} onChange={(e) => setEditedDescription(e.target.value)} placeholder={"사진과 함께, 이곳의 여행 이야기를 들려주세요"}></textarea> : location.description
-                    }</p>
-                }
+                {isEdit ? <textarea className={style.textarea} value={editedDescription} onChange={(e) => setEditedDescription(e.target.value)} placeholder={"사진과 함께, 이곳의 여행 이야기를 들려주세요"}></textarea> : <div className={style.desc_wrap}><p className={style.desc}>{location?.description}</p></div>}
                 {isEdit && <button type="button" className={style.save_btn} onClick={onClickSaveBtn}>저장</button>}
             </div>
         </div>

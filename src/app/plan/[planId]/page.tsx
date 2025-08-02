@@ -322,7 +322,10 @@ const PlanDetail: React.FC = () => {
             const data = await response.json();
             console.log(data);
             tempLocation = {lat: location.latitude, lng: location.longitude};
-            location.duration = data.routes[0].legs[0].duration.value;
+            if(data.routes[0]) {
+              location.duration = data.routes[0].legs[0].duration.value;
+            }
+            else {location.duration = 0;}
           } catch(e) {
             console.error(e);
             return [] ;
@@ -381,13 +384,13 @@ const PlanDetail: React.FC = () => {
 
       {/* Main Content */}
       <div className={classNames(style.contents, {[style.type_total]:selectedDay === "전체 일정"})}>
-        <div className={classNames(style.floating_wrap, {[style.is_show]:isShow})}>
+        <div className={classNames(style.floating_wrap, {[style.is_show]:isShow, [style.is_edit]:isEditing})}>
           {/* <EditSchedule day={selectedDay} planId={planId} /> */}
           <div className={classNames(style.floating_area,{[style.is_edit]:isEditing})}>
             <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
             <div className={style.content_wrap}>
               {
-                isEditing && <CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} selectedDay={selectedDay}/>
+                isEditing && <CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>
               }
               <div className={style.schedule_wrap}>
                 <div className={style.location_list_area}>

@@ -21,7 +21,6 @@ interface GoogleMapState {
   setGoogleMap?: (map: google.maps.Map | null) => void;
   setPlacesService?: (service: google.maps.places.PlacesService | null) => void;
   setMarkers?: (markers: google.maps.Marker[]) => void;
-  searchInput?: string;
   setSearchInput?: (input: string) => void;
   places?: Place[];
   setPlaces?: (places: Place[]) => void;
@@ -40,7 +39,6 @@ export const useGoogleMapService = (
     setPlacesService,
     markers,
     setMarkers,
-    searchInput,
     places,
     setPlaces,
   } = state;
@@ -119,9 +117,7 @@ export const useGoogleMapService = (
     document.head.appendChild(script);
   },[]);
 
-  const searchPlace = () => {
-    console.log(placesService);
-    console.log(searchInput);
+  const searchPlace = (searchInput: string) => {
     if (placesService && searchInput) {
       const request = {
         query: searchInput,
