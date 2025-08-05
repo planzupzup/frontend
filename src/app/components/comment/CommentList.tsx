@@ -106,7 +106,7 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
             setComments(prevComments => [...prevComments, ...data.result.content]);
             setPage(prevPage => prevPage + 1);
             // API 응답에 'hasMore' 속성이 있다고 가정하고 업데이트합니다.
-            if(parseInt(data.result.page, 10) >= parseInt(data.result.totalPages,10) )setHasMore(false);
+            if(parseInt(data.result.page, 10) >= parseInt(data.result.totalPages,10) -1 )setHasMore(false);
             if(!parentId){
                 setTotalElements(data.result.totalElements);
             }

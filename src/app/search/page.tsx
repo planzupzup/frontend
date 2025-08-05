@@ -22,20 +22,21 @@ const Search = () => {
         const [loading, setLoading] = useState(false);
         const [searchInput, setSearchInput] = useState("");
         const [plans, setPlans] = useState<TPlan[]>([]);
-        const [isSearchEnd , setIsSearchEnd] = useState(false);
         const [filter, setFilter] = useState("LATEST");
+        // useEffect 유발 트리거 
+        const [searchKeyword, setSearchKeyword] = useState("");
     
         // 무한 스크롤 감지를 위한 관찰 대상 요소
         const observerTarget = useRef<HTMLDivElement>(null);
     
-        const fetchSearchPlans = useCallback(async () => {
-            if (loading || !hasMore) return;
+        const fetchSearchPlans = useCallback(async (pageToFetch: number) => {
+            if (loading || !hasMore || searchKeyword.length === 0) return;
     
             setLoading(true);
             try {
                 let response;
                 
-                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchInput}/${filter}?page=${page}`);
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchKeyword}/${filter}?page=${pageToFetch}`);
     
                 if (!response.ok) {
                     throw new Error(`Error: ${response.statusText}`);
@@ -46,7 +47,7 @@ const Search = () => {
                 setPlans(prevPlans => [...prevPlans, ...data.result.content]);
                 setPage(prevPage => prevPage + 1);
 
-                if(parseInt(data.result.page, 10) >= parseInt(data.result.totalPages,10)) setHasMore(false);
+                if(parseInt(data.result.page, 10) >= parseInt(data.result.totalPages,10) - 1) setHasMore(false);
 
             } catch (error) {
                 console.error("플랜 검색 실패:", error);
@@ -54,46 +55,52 @@ const Search = () => {
             } finally {
                 setLoading(false);
             }
-        }, [page, loading, hasMore, searchInput]);
+        }, [loading, hasMore, searchKeyword, filter]);
 
         const onChangeSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
             setSearchInput(e.target.value);
         }
 
         const onKeyDownEnter = async (e: KeyboardEvent) => {
-            if(e.key === 'Enter') {    
-                try {
-                    setIsSearchEnd(true);
-                    setPage(0);
-                } catch(e) {
-                    console.log(e);
+            if(e.key === 'Enter') {
+                if(searchInput.length===0) {
+                    alert("검색어를 입력해주세요.");
+                } else {
+                    setSearchKeyword(searchInput);
                 }
             }
         }
     
         useEffect(() => {
-            if(isSearchEnd && searchInput.length>0) {
-                const observer = new IntersectionObserver((entries) => {
-                    if (entries[0].isIntersecting && hasMore && !loading) {
-                        fetchSearchPlans();
-                    }
-                }, {
-                    threshold: 1.0,
-                });
-        
-                const currentObserverTarget = observerTarget.current;
-        
-                if (currentObserverTarget) {
-                    observer.observe(currentObserverTarget);
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasMore && !loading) {
+                    fetchSearchPlans(page);
                 }
-        
-                return () => {
-                    if (currentObserverTarget) {
-                        observer.unobserve(currentObserverTarget);
-                    }
-                };
+            }, {
+                threshold: 1.0,
+            });
+    
+            const currentObserverTarget = observerTarget.current;
+    
+            if (currentObserverTarget) {
+                observer.observe(currentObserverTarget);
             }
+    
+            return () => {
+                if (currentObserverTarget) {
+                    observer.unobserve(currentObserverTarget);
+                }
+            };
         }, [fetchSearchPlans]);
+
+        useEffect(() => {
+            if(searchKeyword.length > 0) {
+                setPlans([]);
+                setPage(0);
+                setHasMore(true);
+                fetchSearchPlans(0);
+            }
+        }, [filter, searchKeyword]);
 
     return (
         <div className={style.search_wrap}>
@@ -104,7 +111,7 @@ const Search = () => {
                 <h1 className={style.main_title}>인기 여행 플랜을 나의 플랜으로 줍줍해보세요!</h1>
                 <a href="/create" className={style.make_plan_link}>플랜만들기</a>
             </div>
-            <Filter firstText="최신순" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={() => {setFilter('LATEST'); setPage(0);}} onClickSecondBtn={() => {setFilter('COMMENT'); setPage(0);}} onClickThirdBtn={() => {setFilter('BOOKMARK'); setPage(0);}} />
+            <Filter firstText="최신순" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={() => {setFilter('LATEST');}} onClickSecondBtn={() => {setFilter('COMMENT');}} onClickThirdBtn={() => {setFilter('BOOKMARK');}} />
             <ul className={style.list}>
                 {
                     plans.map((plan) => {
@@ -128,7 +135,11 @@ const Search = () => {
                     })
                 }
             </ul>
-            <div ref={observerTarget} style={{height: "100px"}}></div>
+            <div ref={observerTarget} style={{ height: "100px" }}>
+                {loading && <p>검색 결과 불러오는 중...</p>}
+                {!hasMore && plans.length > 0 && <p>모든 검색 결과를 불러왔습니다.</p>}
+                {!hasMore && plans.length === 0 && searchKeyword.length > 0 && <p>검색 결과가 없습니다.</p>}
+            </div>
         </div>
     )
 }
