@@ -3,6 +3,7 @@
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import style from "./search.module.scss";
 import axios from "axios";
+import Filter from "../components/Filter";
 
 export type TPlan = {
     planId: string,
@@ -22,6 +23,7 @@ const Search = () => {
         const [searchInput, setSearchInput] = useState("");
         const [plans, setPlans] = useState<TPlan[]>([]);
         const [isSearchEnd , setIsSearchEnd] = useState(false);
+        const [filter, setFilter] = useState("LATEST");
     
         // 무한 스크롤 감지를 위한 관찰 대상 요소
         const observerTarget = useRef<HTMLDivElement>(null);
@@ -33,7 +35,7 @@ const Search = () => {
             try {
                 let response;
                 
-                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchInput}/LATEST?page=${page}`);
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchInput}/${filter}?page=${page}`);
     
                 if (!response.ok) {
                     throw new Error(`Error: ${response.statusText}`);
@@ -61,10 +63,8 @@ const Search = () => {
         const onKeyDownEnter = async (e: KeyboardEvent) => {
             if(e.key === 'Enter') {    
                 try {
-                    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchInput}/LATEST?page=0}`);
-                    setPlans(response.data.result);
-                    console.log(plans);
                     setIsSearchEnd(true);
+                    setPage(0);
                 } catch(e) {
                     console.log(e);
                 }
@@ -104,6 +104,7 @@ const Search = () => {
                 <h1 className={style.main_title}>인기 여행 플랜을 나의 플랜으로 줍줍해보세요!</h1>
                 <a href="/create" className={style.make_plan_link}>플랜만들기</a>
             </div>
+            <Filter firstText="최신순" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={() => {setFilter('LATEST'); setPage(0);}} onClickSecondBtn={() => {setFilter('COMMENT'); setPage(0);}} onClickThirdBtn={() => {setFilter('BOOKMARK'); setPage(0);}} />
             <ul className={style.list}>
                 {
                     plans.map((plan) => {

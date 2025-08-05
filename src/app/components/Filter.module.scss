@@ -1,0 +1,25 @@
+@import "/src/app/scss/variables.scss";
+
+.btn_wrap {
+    display: flex;
+}
+
+.btn {
+    @include text-style('b2-2', 'white');
+
+    padding: 0 20px;
+    border-radius: 42px;
+    line-height: 42px;
+    background-color: #3c76f1;
+    pointer-events: none;
+
+    &[aria-selected=false] {
+        background-color: #f7f7fb;
+        color: #767676;
+        pointer-events: initial;
+    }
+
+    & + .btn {
+        margin-left: 8px;
+    }
+}

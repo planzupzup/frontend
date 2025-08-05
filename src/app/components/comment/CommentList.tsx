@@ -6,6 +6,7 @@ import CommentItem from "./CommentItem";
 import style from "./CommentList.module.scss";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import Filter from "../Filter";
 
 export type TComment = {
     commentId?: string;
@@ -35,6 +36,7 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
     const [loading, setLoading] = useState(false);
     const [totalElements, setTotalElements] = useState(0);
     const [createInputText, setCreateInputText] = useState("");
+    const [filter, setFilter] = useState("LATEST");
 
     // 무한 스크롤 감지를 위한 관찰 대상 요소
     const observerTarget = useRef<HTMLDivElement>(null);
@@ -81,17 +83,18 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
         }
     }
 
-    const fetchComments = useCallback(async () => {
+    const fetchComments = useCallback(async (pageToFetch: number) => {
         if (loading || !hasMore) return;
 
         setLoading(true);
+
         try {
             let response;
             
             if(!parentId) {
-                response = await fetch(`/api/comment/${planId}?page=${page}`);
+                response = await fetch(`/api/comment/${planId}/${filter}?page=${pageToFetch}`);
             }else {
-                response = await fetch(`/api/comment/${planId}/${parentId}?page=${page}`);
+                response = await fetch(`/api/comment/${planId}/${parentId}/${filter}?page=${pageToFetch}`);
             }
 
             if (!response.ok) {
@@ -113,14 +116,14 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
         } finally {
             setLoading(false);
         }
-    }, [page, loading, hasMore, parentId]); // page, loading, hasMore이 변경될 때마다 함수를 새로 생성합니다.
+    }, [page, loading, hasMore, parentId, filter]);
 
     // Intersection Observer를 설정하여 무한 스크롤을 구현합니다.
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             // 관찰 대상이 뷰포트에 들어왔고, 더 불러올 데이터가 있으며, 현재 로딩 중이 아닐 때
             if (entries[0].isIntersecting && hasMore && !loading) {
-                fetchComments(); // 댓글을 불러옵니다.
+                fetchComments(page); // 댓글을 불러옵니다.
             }
         }, {
             threshold: 1.0, // 대상이 100% 보일 때 트리거합니다.
@@ -141,17 +144,22 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
     }, [fetchComments]); // fetchComments, hasMore, loading이 변경될 때마다 이펙트를 다시 실행합니다.
 
     useEffect(() => {
-        console.log(parentId);
-        console.log(isCreateRecomment);
-        console.log(parentId && isCreateRecomment);
-    }, [isCreateRecomment]);
+        setComments([]);
+        setPage(0);
+        setHasMore(true);
+        fetchComments(0);
+    }, [filter]);
+    
     return (
         <div className={style.comment_list}>
             { !parentId &&
                 <>
                     <div className={style.count_wrap}>
-                        댓글&nbsp;
-                        <span className={style.count}>{totalElements}</span>
+                        <div className={style.count_area}>
+                            댓글&nbsp;
+                            <span className={style.count}>{totalElements}</span>
+                        </div>
+                        <Filter firstText="최신순" secondText="인기순" onClickFirstBtn={() => {setFilter('LATEST')}} onClickSecondBtn={() => {setFilter('POPULAR')}} />
                     </div>
                     <div className={style.textarea_wrap}>
                         <span className={style.thumb_wrap}>{thumbnailUrl && <img className={style.img} src="" alt="섬네일 이미지" />}</span>

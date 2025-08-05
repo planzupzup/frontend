@@ -6,6 +6,12 @@
 
 .count_wrap {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.count_area {
+    display: flex;
 
     @include text-style('s2','black');
 }
