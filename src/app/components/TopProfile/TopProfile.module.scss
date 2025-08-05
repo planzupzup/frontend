@@ -47,9 +47,14 @@
         display: inline-block;
         width: 24px;
         height: 24px;
-        margin: 3px 0 0 2px;
+        margin: 1px 0 0 2px;
         background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='25' fill='none'%3E%3Cpath fill='%23E2E2E2' d='M19 8.3c0-1.68 0-2.52-.327-3.162a3 3 0 0 0-1.311-1.311C16.72 3.5 15.88 3.5 14.2 3.5H9.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C5 5.78 5 6.62 5 8.3v13.2l7-4 7 4V8.3Z'/%3E%3C/svg%3E") no-repeat;
         vertical-align: top;
+        cursor: pointer;
+
+        &[aria-selected=true] {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='25' fill='none'%3E%3Cpath fill='%233C76F1' d='M19 8.3c0-1.68 0-2.52-.327-3.162a3 3 0 0 0-1.311-1.311C16.72 3.5 15.88 3.5 14.2 3.5H9.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C5 5.78 5 6.62 5 8.3v13.2l7-4 7 4V8.3Z'/%3E%3C/svg%3E") no-repeat;
+        }
     }
 }
 

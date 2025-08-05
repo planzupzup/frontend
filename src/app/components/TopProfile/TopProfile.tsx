@@ -1,4 +1,7 @@
 import style from "@/app/components/TopProfile/TopProfile.module.scss";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { SetStateAction, useEffect, useState } from "react";
 
 type TProps = {
     profile_img?: string,
@@ -6,10 +9,33 @@ type TProps = {
     title?: string,
     location: string,
     date: string,
-    isBookmark: boolean
+    isBookMarked?: boolean
 }
 /* eslint-disable */
-const TopProfile = ({profile_img, nickname, title, location, date, isBookmark}:TProps) => {
+const TopProfile = ({profile_img, nickname, title, location, date, isBookMarked}:TProps) => {
+
+    const { planId } = useParams<{ planId: string }>();
+    const [bookMarked, setBookMarked] = useState(false);
+
+    const onClickBookMark = async () => {
+        try {
+            if(bookMarked) {
+                await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/bookmark`)
+            } else {
+                await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/bookmark`)
+            }
+            setBookMarked(!bookMarked);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => {
+        if (isBookMarked !== undefined) {
+            setBookMarked(isBookMarked);
+        }
+    }, [isBookMarked]);
+
     return (    
        <div className={style.profile_wrap}>
             <a href="#" className={style.link}>
@@ -20,7 +46,7 @@ const TopProfile = ({profile_img, nickname, title, location, date, isBookmark}:T
             <div className={style.info_wrap}>
                 <p className={style.nickname}>{nickname}</p>
                 <h2 className={style.title_wrap}>
-                    {title}<span className={style.bookmark} aria-selected={isBookmark}><span className="blind">즐겨찾기</span></span>
+                    {title}<span className={style.bookmark} aria-selected={bookMarked} onClick={onClickBookMark}><span className="blind">즐겨찾기</span></span>
                 </h2>
                 <div className={style.date_wrap}>
                     <span className={style.location}>{location}</span>

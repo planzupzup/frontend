@@ -38,6 +38,7 @@ export interface Plan {
   destination: string;
   startDate: string;
   endDate: string;
+  isBookMarked: boolean;
 }
 
 export interface Day {
@@ -408,7 +409,7 @@ const PlanDetail: React.FC = () => {
         <div className={classNames(style.floating_wrap, {[style.is_show]:isShow, [style.is_edit]:isEditing})}>
           {/* <EditSchedule day={selectedDay} planId={planId} /> */}
           <div className={classNames(style.floating_area,{[style.is_edit]:isEditing})}>
-            <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
+            <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookMarked={plan?.isBookMarked} date={`${plan?.startDate} - ${plan?.endDate}`} />
             <div className={style.content_wrap}>
               {
                 (isEditing && totalLocationList.length > 0 )&&<CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>

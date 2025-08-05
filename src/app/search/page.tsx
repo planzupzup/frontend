@@ -13,7 +13,8 @@ export type TPlan = {
     destinationName: string,
     bookMarkCount: number,
     commentCount: number,
-    isBookMarked: boolean
+    isBookMarked: boolean,
+    days: number
 }
 
 const Search = () => {
@@ -111,18 +112,20 @@ const Search = () => {
                 <h1 className={style.main_title}>인기 여행 플랜을 나의 플랜으로 줍줍해보세요!</h1>
                 <a href="/create" className={style.make_plan_link}>플랜만들기</a>
             </div>
-            <Filter firstText="최신순" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={() => {setFilter('LATEST');}} onClickSecondBtn={() => {setFilter('COMMENT');}} onClickThirdBtn={() => {setFilter('BOOKMARK');}} />
+            <div className={style.filter_wrap}>
+                <Filter firstText="최신순" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={() => {setFilter('LATEST');}} onClickSecondBtn={() => {setFilter('COMMENT');}} onClickThirdBtn={() => {setFilter('BOOKMARK');}} />
+            </div>
             <ul className={style.list}>
                 {
                     plans.map((plan) => {
                         return (
                             <li className={style.item}>
-                                <a href="#" className={style.link}>
+                                <a href={`/plan/${plan.planId}`} className={style.link}>
                                     <span className={style.img_wrap}>
                                         <img className={style.img} src={plan.profileImage} alt="프로필 이미지"/>
                                     </span>
                                     <div className={style.info_area}>
-                                        <div className={style.days}>{plan.destinationName} - 1DAY</div>
+                                        <div className={style.days}>{plan.destinationName} - {plan.days}DAY</div>
                                         <strong className={style.title}>{plan.title}</strong>
                                         <div className={style.sub_info}>
                                             <span className={style.likes}>{plan.bookMarkCount}</span>
@@ -135,7 +138,7 @@ const Search = () => {
                     })
                 }
             </ul>
-            <div ref={observerTarget} style={{ height: "100px" }}>
+            <div ref={observerTarget} style={{ height: "50px" }}>
                 {loading && <p>검색 결과 불러오는 중...</p>}
                 {!hasMore && plans.length > 0 && <p>모든 검색 결과를 불러왔습니다.</p>}
                 {!hasMore && plans.length === 0 && searchKeyword.length > 0 && <p>검색 결과가 없습니다.</p>}
