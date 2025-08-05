@@ -30,7 +30,7 @@ const Header: React.FC = () => {
         <div className={styles.nav}>
           <button
             className={styles.customButton}
-            onClick={() => (window.location.href = "/destination")}
+            onClick={() => (window.location.href = "/create")}
           >
             플랜만들기
           </button>
@@ -38,7 +38,7 @@ const Header: React.FC = () => {
         <div className={styles.nav}>
           <button
             className={styles.customButton}
-            onClick={() => (window.location.href = "/destination")}
+            onClick={() => (window.location.href = "/search")}
           >
             플랜줍기
           </button>

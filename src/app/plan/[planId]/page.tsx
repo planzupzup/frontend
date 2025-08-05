@@ -276,7 +276,10 @@ const PlanDetail: React.FC = () => {
 
   const onClickEditBtn = () => {
     if(isEditing) {
-      console.log("@");
+      if(totalLocationList.flat().length===0) {
+        alert("가고싶은 장소 적어도 한 곳은 추가해주세요!");
+        return;
+      }
       fetch(`${BACKEND_URL}/api/location/${planId}`, {
         method: 'POST', 
         headers: {
