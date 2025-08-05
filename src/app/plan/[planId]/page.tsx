@@ -204,6 +204,15 @@ const PlanDetail: React.FC = () => {
     setMarkers(newMarkers);
 
     if(googleMap) {
+      if(selectedDay === '전체 일정') {
+        if(totalLocationList.flat().length ===0 ) {
+          return;
+        }
+      }else {
+        if(totalLocationList[parseInt(selectedDay) -1].length ===0 ) {
+          return;
+        }
+      }
       googleMap.fitBounds(bounds);
 
       const currentLocations = selectedDay === '전체 일정' ? totalLocationList.flat() : totalLocationList[parseInt(selectedDay) -1];
@@ -296,6 +305,8 @@ const PlanDetail: React.FC = () => {
   const loadTotalLocationList = async () => {
     try {
       var tempTotalLocationList:Location[][] = [];
+      let isFirst = true;
+
       for(const [index] of days.entries()) {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}/${index + 1}`);
 
@@ -331,12 +342,19 @@ const PlanDetail: React.FC = () => {
             return [] ;
           }
         }
-
+        if(tempLocationList.length > 0) {
+          isFirst = false;
+        }
         tempTotalLocationList[index] = tempLocationList;
       }
 
       setTotalLocationList(tempTotalLocationList);
       setOriginalTotalLocationList(tempTotalLocationList);
+      if(isFirst && days.length > 0) {
+        setIsEditing(true);
+        setSelectedDay("1");
+        setIsShow(true);
+      }
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
     }
@@ -390,7 +408,7 @@ const PlanDetail: React.FC = () => {
             <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookmark={false} date={`${plan?.startDate} - ${plan?.endDate}`}/>
             <div className={style.content_wrap}>
               {
-                isEditing && <CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>
+                (isEditing && totalLocationList.length > 0 )&&<CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>
               }
               <div className={style.schedule_wrap}>
                 <div className={style.location_list_area}>

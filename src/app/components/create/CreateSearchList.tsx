@@ -81,7 +81,7 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
             </div>
             <ul className={style.list}>
                 {
-                    totalLocationList[parseInt(selectedDay, 10) - 1].length > 0 ? places.map((place, index) => (
+                    totalLocationList[parseInt(selectedDay, 10) - 1].length > 0 || searchInput.length > 0 ? places.map((place, index) => (
                         <CreateSearchItem place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay} searchItemIndex={index}/>
                     )) : <CreateNoPlan />
                 }

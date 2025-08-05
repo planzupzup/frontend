@@ -21,7 +21,7 @@ export type TComment = {
 type TCommentList = {
     parentId?: string;
     isCreateRecomment?: boolean;
-    setIsCreateRecomment: React.Dispatch<SetStateAction<boolean>>;
+    setIsCreateRecomment?: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TCommentList) => {
@@ -76,7 +76,7 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
 
         setCreateInputText("");
 
-        if(parentId) {
+        if(parentId && setIsCreateRecomment) {
             setIsCreateRecomment(false);
         }
     }

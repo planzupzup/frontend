@@ -48,11 +48,6 @@ const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay, search
         );
     };
 
-    useEffect(() => {
-        console.log(place);
-        console.log(searchItemIndex);
-    },[])
-
     return (
         <li className={style.item}>
             <div className={style.content}>

@@ -135,10 +135,6 @@ export const useGoogleMapService = (
             if (setPlaces) {
               setPlaces(results as Place[]);
             }
-          } else {
-            alert(
-              "검색 결과가 존재하지 않거나 오류가 발생했습니다: " + status
-            );
           }
         }
       );
