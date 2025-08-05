@@ -15,6 +15,7 @@ const createPlan = () => {
     const [endCalendarMonth, setEndCalendarMonth] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1));
     const [inputText, setInputText] = useState("");
     const [isActivePlanTitle, setIsActivePlanTitle] = useState(false);
+    const [isPublic, setIsPublic] = useState(true);
 
     const initialMonth = new Date();
     const nextMonth = new Date(initialMonth.getFullYear(), initialMonth.getMonth() + 1, 1);
@@ -45,14 +46,20 @@ const createPlan = () => {
   }
 
   const onClickPlanTitleNextBtn = async () => {
+    if(startDate === null || endDate === null ) {
+      alert("날짜형식이 올바르지 않습니다.");
+      return ;
+    }
     const newPlan = {
-      isPublic: true,
+      isPublic,
       title: inputText,
       content: "내용",
-      startDate,
-      endDate,
+      startDate: getDTODateFormat(startDate),
+      endDate: getDTODateFormat(endDate),
       destinationName: "제주"
     };
+
+    console.log(newPlan);
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan`, newPlan);
@@ -158,6 +165,7 @@ const createPlan = () => {
           <p className={style.desc}>나만의 이름을 붙이면, 여행이 더 특별해져요</p>
           <div className={style.input_wrap}>
             <input className={style.input} type="text" placeholder="예) 엄마랑 둘이 떠나는 제주 밤바다 3박 4일" value={inputText} onChange={onChangeInput}/>
+            <button type="button" className={style.is_public_btn} aria-selected={!isPublic} onClick={() => setIsPublic(!isPublic)}>{ isPublic ? `플랜 공개` : `플랜 비공개`}</button>
           </div>
           <button type="button" className={classNames(style.next_btn, {[style.is_active]: inputText.length > 4})} onClick={onClickPlanTitleNextBtn}>다음</button>
         </div>

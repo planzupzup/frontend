@@ -103,6 +103,7 @@
 }
 
 .input_wrap {
+    position: relative;
     min-width: 664px;
     margin-top: 80px;
     background-color: #f7f7fb;
@@ -113,12 +114,38 @@
 .input {
     @include text-style('b1', 'black');
 
-    width: 100%;
+    width: calc(100% - 120px);
     line-height: 25px;
     text-align: center;
     background-color: #f7f7fb;
 
     &::placeholder {
         @include text-style('b1', 'gray1');
+    }
+}
+
+.is_public_btn {
+    @include text-style('b1','blue');
+
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 32px;
+    display: flex;
+    align-items: center;
+    line-height: 25px;
+
+    &::before {
+        width: 20px;
+        height: 20px;
+        margin-right: 4px;
+        background: url(/ico_unlock_40x40.png) 0 0/20px 20px no-repeat;
+        content: "";
+    }
+
+    &[aria-selected=true] {
+        &::before {
+            background: url(/ico_lock_40x40.png) 0 0/20px 20px no-repeat;
+        }
     }
 }
