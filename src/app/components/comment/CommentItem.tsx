@@ -31,9 +31,9 @@ const CommentItem = ({commentId, profileImage, nickName, content, likesCount, is
     const onClickLikeBtn = async () => {
         try {
             if(!isLiked) {
-                await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}/like`);
+                await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}/like`,{},{ withCredentials: true });
             } else {
-                await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}/like`);
+                await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}/like`,{ withCredentials: true });
             }
             
             setComments(prevComments => 
@@ -51,7 +51,7 @@ const CommentItem = ({commentId, profileImage, nickName, content, likesCount, is
 
     const onClickSaveEditBtn = async () => {
         try {
-            const response = await axios.put(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}`, {content: inputContent});
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${commentId}`, {content: inputContent},{ withCredentials: true });
             console.log("Comment Edited", response.data);
       
             setComments(prevComments => prevComments.map(comment => comment.commentId===commentId ? {

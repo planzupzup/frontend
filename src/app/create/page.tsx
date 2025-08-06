@@ -62,7 +62,7 @@ const createPlan = () => {
     console.log(newPlan);
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan`, newPlan);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan`, newPlan,{ withCredentials: true });
       window.location.href = `/plan/${response.data.result.planId}`;
     } catch (error) {
       console.error("Failed to create plan:", error);

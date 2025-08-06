@@ -37,7 +37,9 @@ const Search = () => {
             try {
                 let response;
                 
-                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchKeyword}/${filter}?page=${pageToFetch}`);
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchKeyword}/${filter}?page=${pageToFetch}`, {
+                    credentials: 'include', 
+                });
     
                 if (!response.ok) {
                     throw new Error(`Error: ${response.statusText}`);

@@ -47,7 +47,7 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
 
     const loadLocation = async () => {
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/location/${locationId}`);
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/location/${locationId}`,{ withCredentials: true });
           setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: response.data.result.description, googleImageUrl: response.data.result.googleImageUrl, images: ["/img_section_1_758x566.png","/img_section_3_290x290.png"]});
             setEditedDescription(response.data.result.description);
         } catch (e) {

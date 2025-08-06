@@ -52,13 +52,13 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
                     content: createInputText,
                     parentId,
                     planId : planId
-                })
+                },{ withCredentials: true })
             }else {
                 response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment`,{
                     content: createInputText,
                     parentId : null,
                     planId : planId
-                })
+                },{ withCredentials: true })
             }
 
             const result = response.data.result;
@@ -92,9 +92,13 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
             let response;
             
             if(!parentId) {
-                response = await fetch(`/api/comment/${planId}/${filter}?page=${pageToFetch}`);
+                response = await fetch(`/api/comment/${planId}/${filter}?page=${pageToFetch}`, {
+                    credentials: 'include', 
+                });
             }else {
-                response = await fetch(`/api/comment/${planId}/${parentId}/${filter}?page=${pageToFetch}`);
+                response = await fetch(`/api/comment/${planId}/${parentId}/${filter}?page=${pageToFetch}`, {
+                    credentials: 'include', 
+                });
             }
 
             if (!response.ok) {

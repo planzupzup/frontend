@@ -268,7 +268,7 @@ const PlanDetail: React.FC = () => {
 
   const loadPlan = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}`,{ withCredentials: true });
       setPlan(response.data.result);
     } catch (e) {
       alert('계획을 불러오는데 실패했습니다.');
@@ -312,7 +312,7 @@ const PlanDetail: React.FC = () => {
       let isFirst = true;
 
       for(const [index] of days.entries()) {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/${index + 1}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/${index + 1}`,{ withCredentials: true });
 
         var tempLocationList = response.data.result.locations;
 

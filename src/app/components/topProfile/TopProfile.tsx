@@ -22,7 +22,7 @@ const TopProfile = ({profile_img, nickname, title, location, date, isBookMarked}
             if(bookMarked) {
                 await axios.delete(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/bookmark`)
             } else {
-                await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/bookmark`)
+                await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/bookmark`,{},{ withCredentials: true })
             }
             setBookMarked(!bookMarked);
         } catch(e) {
