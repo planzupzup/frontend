@@ -1,0 +1,149 @@
+@use "/src/app/scss/variables" as variables;
+@use "/src/app/scss/mixins" as mixins;
+
+.create_search_wrap {
+    display: flex;
+    flex-direction: column;
+    width: 417px;
+    margin: 121px 0 0;
+
+    .search_wrap {
+        display: flex;
+        align-items: center;
+        width: 353px;
+        padding: 10px 20px;
+        border: 1px solid #e2e2e2;
+        border-radius: 40px;
+
+        &::before {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none'%3E%3Cpath stroke='%23767676' stroke-miterlimit='10' stroke-width='1.5' d='M9.286 15a5.714 5.714 0 1 0 0-11.428 5.714 5.714 0 0 0 0 11.429Z'/%3E%3Cpath fill='%23767676' d='M15.899 16.96a.75.75 0 0 0 1.06-1.062L15.9 16.96Zm-3.042-4.103-.53.53L15.9 16.96l.53-.53.53-.53-3.571-3.572-.53.53Z'/%3E%3C/svg%3E") no-repeat;
+            content: "";
+        }
+
+        .search_input {
+            flex: 1;
+            line-height: 20px;
+
+            &::placeholder {
+                @include variables.text-style('b3', 'gray1');
+            }
+        }
+    }
+
+    .list {
+        flex: 1;
+        display: flex;
+        margin: 20px 32px 0 0;
+        flex-direction: column;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        
+        .content {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .thumb_wrap {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            margin-right: 12px;
+            border-radius: 20px;
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        .info_area {
+            overflow: hidden;
+
+            .title {
+                @include mixins.ellipsis;
+                @include variables.text-style('b2-1', 'black');
+
+                display: block;
+            }
+
+            .highlight {
+                background-color: transparent;
+                color: #3c76f1;
+            }
+
+            .rating {
+                @include variables.text-style('b4', 'gray1');
+
+                display: flex;
+                margin-top: 2px;
+                align-items: center;
+                line-height: 14px;
+
+                &::before {
+                    width: 16px;
+                    height: 16px;
+                    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'%3E%3Cpath fill='%23FFE100' d='M8.696 2.05a.772.772 0 0 0-.698-.45.775.775 0 0 0-.698.45L5.74 5.357l-3.48.53a.781.781 0 0 0-.624.542.822.822 0 0 0 .192.817l2.526 2.578-.597 3.642c-.048.3.073.605.313.782.24.178.558.2.82.058L8 12.593l3.11 1.713c.261.142.579.122.819-.058a.816.816 0 0 0 .312-.782l-.599-3.642 2.526-2.578a.816.816 0 0 0 .192-.817.784.784 0 0 0-.623-.542l-3.483-.53L8.696 2.05Z'/%3E%3C/svg%3E") no-repeat;
+                    margin-right: 2px;
+                    content: "";
+                }
+            }
+
+            .category {
+                display: block;
+                margin-top: 20px;
+            }
+        }
+
+        .add_btn {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'%3E%3Cpath fill='%233C76F1' fill-opacity='.2' d='M14 25.667c6.443 0 11.666-5.223 11.666-11.666 0-6.444-5.223-11.667-11.666-11.667-6.444 0-11.667 5.223-11.667 11.667 0 6.443 5.223 11.666 11.667 11.666Z'/%3E%3Cpath stroke='%233C76F1' stroke-linecap='round' stroke-width='2' d='M14 9.5v9M18.505 13.994h-9'/%3E%3C/svg%3E") no-repeat;
+        }
+
+        & + .item {
+            margin-top: 20px;
+        }
+    }
+
+    .no_plan {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        &::before {
+            width: 145px;
+            height: 145px;
+            background: url(/img_no_plan_290x290.png) 0 0/145px 145px no-repeat;
+            content: "";
+        }
+
+        .title {
+            @include variables.text-style('b2-2', 'gray1');
+
+            line-height: 22px;
+        }
+
+        .desc {
+            @include variables.text-style('b3', 'gray1');
+
+            margin-top: 8px;
+            line-height: 20px;
+        }
+    }
+}
