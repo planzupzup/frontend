@@ -1,4 +1,4 @@
-@import "/src/app/scss/variables.scss";
+@use "/src/app/scss/variables" as *;
 
 .comment_list {
     margin-top: 145px;

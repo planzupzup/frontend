@@ -1,4 +1,4 @@
-@import "/src/app/scss/variables.scss";
+@use "/src/app/scss/variables" as *;
 
 .footer_wrap {
     box-sizing: border-box;

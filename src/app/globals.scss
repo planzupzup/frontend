@@ -1,5 +1,5 @@
 // blind 
-@import "/src/app/scss/variables.scss";
+@use "/src/app/scss/variables" as *;
 
 .blind {
 position: absolute;
