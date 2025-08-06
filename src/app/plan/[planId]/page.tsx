@@ -327,7 +327,7 @@ const PlanDetail: React.FC = () => {
     
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_BACK_HOST}/api/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
+              `/api/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
             );
       
             if (!response.ok) {
