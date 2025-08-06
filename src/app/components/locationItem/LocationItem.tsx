@@ -15,9 +15,9 @@ type TProps = {
     setLocation?: React.Dispatch<React.SetStateAction<Location | undefined>>;
     orderColor: string;
     isEdit?: boolean;
-    day: number;
+    day?: number;
     deleteEditItem?: (locationIndex: number) => void;
-    setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
+    setTotalLocationList? : React.Dispatch<React.SetStateAction<Location[][]>>;
 }
 
 const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit=false, deleteEditItem , day, setTotalLocationList}:TProps) => {
