@@ -1,4 +1,4 @@
-import style from "@/app/components/TopProfile/TopProfile.module.scss";
+import style from "@/app/components/topProfile/TopProfile.module.scss";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
@@ -15,7 +15,7 @@ type TProps = {
 const TopProfile = ({profile_img, nickname, title, location, date, isBookMarked}:TProps) => {
 
     const { planId } = useParams<{ planId: string }>();
-    const [bookMarked, setBookMarked] = useState(false);
+    const [bookMarked, setBookMarked] = useState(false); 
 
     const onClickBookMark = async () => {
         try {

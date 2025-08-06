@@ -1,5 +1,5 @@
-@use "/src/app/scss/variables" as *;
-@use "/src/app/scss/mixins" as *;
+@use "/src/app/scss/variables" as variables;
+@use "/src/app/scss/mixins" as mixins;
 
 .create_search_wrap {
     display: flex;
@@ -29,7 +29,7 @@
             line-height: 20px;
 
             &::placeholder {
-                @include text-style('b3', 'gray1');
+                @include variables.text-style('b3', 'gray1');
             }
         }
     }
@@ -72,8 +72,8 @@
             overflow: hidden;
 
             .title {
-                @include ellipsis;
-                @include text-style('b2-1', 'black');
+                @include mixins.ellipsis;
+                @include variables.text-style('b2-1', 'black');
 
                 display: block;
             }
@@ -84,7 +84,7 @@
             }
 
             .rating {
-                @include text-style('b4', 'gray1');
+                @include variables.text-style('b4', 'gray1');
 
                 display: flex;
                 margin-top: 2px;
@@ -134,13 +134,13 @@
         }
 
         .title {
-            @include text-style('b2-2', 'gray1');
+            @include variables.text-style('b2-2', 'gray1');
 
             line-height: 22px;
         }
 
         .desc {
-            @include text-style('b3', 'gray1');
+            @include variables.text-style('b3', 'gray1');
 
             margin-top: 8px;
             line-height: 20px;
