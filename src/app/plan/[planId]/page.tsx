@@ -268,7 +268,7 @@ const PlanDetail: React.FC = () => {
 
   const loadPlan = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}`);
       setPlan(response.data.result);
     } catch (e) {
       alert('계획을 불러오는데 실패했습니다.');
@@ -312,7 +312,7 @@ const PlanDetail: React.FC = () => {
       let isFirst = true;
 
       for(const [index] of days.entries()) {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/plan/${planId}/${index + 1}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/${index + 1}`);
 
         var tempLocationList = response.data.result.locations;
 
@@ -327,7 +327,7 @@ const PlanDetail: React.FC = () => {
     
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
+              `${process.env.NEXT_PUBLIC_BACK_HOST}/api/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
             );
       
             if (!response.ok) {
