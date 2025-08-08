@@ -92,11 +92,11 @@ const CommentList = ({parentId, isCreateRecomment, setIsCreateRecomment}: TComme
             let response;
             
             if(!parentId) {
-                response = await fetch(`/api/comment/${planId}/${filter}?page=${pageToFetch}`, {
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${planId}/${filter}?page=${pageToFetch}`, {
                     credentials: 'include', 
                 });
             }else {
-                response = await fetch(`/api/comment/${planId}/${parentId}/${filter}?page=${pageToFetch}`, {
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/comment/${planId}/${parentId}/${filter}?page=${pageToFetch}`, {
                     credentials: 'include', 
                 });
             }
