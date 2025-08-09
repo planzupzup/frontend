@@ -20,7 +20,7 @@ const My = () => {
     const [totalElementsMyPlan, setTotalElementsMyPlan] = useState(0);
     const [filterMyPlan, setFilterMyPlan] = useState("ALL");
     const [plansMyPlan, setPlansMyPlan] = useState<TPlan[]>([]);
-    const [isClickMoreBtnMyPlan, setIsClickMoreBtnMyPlan] = useState(false);
+    const [isMoreBtnMyPlan, setIsMoreBtnMyPlan] = useState(false);
 
     const [pageBookmark, setPageBookmark] = useState(0);
     const [hasMoreBookmark, setHasMoreBookmark] = useState(true);
@@ -28,7 +28,7 @@ const My = () => {
     const [totalElementsBookmark, setTotalElementsBookmark] = useState(0);
     const [filterBookmark, setFilterBookmark] = useState("LATEST");
     const [plansBookmark, setPlansBookmark] = useState<TPlan[]>([]);
-    const [isClickMoreBtnBookmark, setIsClickMoreBtnBookmark] = useState(false);
+    const [isMoreBtnBookmark, setIsMoreBtnBookmark] = useState(false);
 
     useEffect(() => {
         document.body.style.height = 'auto';
@@ -41,31 +41,37 @@ const My = () => {
             const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page/plans?visibility=${filterMyPlan}&size=3&page=${pageToFetch}`, {withCredentials: true});
             setPlansMyPlan((prev) => [...prev, ...data.data.result.content]);
             setPageMyPlan(prev => prev+1);
-            console.log(pageMyPlan);
 
-            if(parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages,10) -1 ) setHasMoreMyPlan(false);
+            if(parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages,10) -2 ){setIsMoreBtnMyPlan(false);}
+            else {
+                setIsMoreBtnMyPlan(true);
+            }
             setTotalElementsMyPlan(data.data.result.totalElements);
         } catch(e) {
             console.log(e);
         }
         setLoadingMyPlan(false);
-    },[loadingMyPlan, filterMyPlan, hasMoreMyPlan])
+    },[loadingMyPlan, filterMyPlan, hasMoreMyPlan, pageMyPlan])
 
     const fetchPlansBookmark = useCallback(async (pageToFetch: number) => {
-        if (loadingBookmark || !hasMoreBookmark) return;
+        if (loadingBookmark) return;
+
         setLoadingBookmark(true);
         try {
             const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page/bookmark/${filterBookmark}?size=6&page=${pageToFetch}`, {withCredentials: true});
             setPlansBookmark((prev) => [...prev, ...data.data.result.content]);
             setPageBookmark(prev => prev+1);
 
-            if(parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages,10) -1 ) setHasMoreBookmark(false);
+            if(parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages,10) -2 ){setIsMoreBtnBookmark(false);}
+            else {
+                setIsMoreBtnBookmark(true);
+            }
             setTotalElementsBookmark(data.data.result.totalElements);
         } catch(e) {
             console.log(e);
         }
         setLoadingBookmark(false);
-    },[loadingBookmark, filterBookmark, hasMoreBookmark]);
+    },[loadingBookmark, filterBookmark, hasMoreBookmark, pageBookmark]);
 
     const fetchProfile = async () => {
         try {
@@ -77,29 +83,21 @@ const My = () => {
     }
 
     useEffect(() => {
-        if(isClickMoreBtnMyPlan) {
-            fetchPlansMyPlan(pageMyPlan);
-            setIsClickMoreBtnMyPlan(false);
-        }
-        else if(isClickMoreBtnBookmark) {
-            fetchPlansBookmark(pageBookmark);
-            setIsClickMoreBtnBookmark(false);
-        }
-    }, [isClickMoreBtnMyPlan, isClickMoreBtnBookmark]);
-
-    useEffect(() => {
         setPlansMyPlan([]);
         setPageMyPlan(0);
-        setHasMoreMyPlan(true);
         fetchPlansMyPlan(0);
     }, [filterMyPlan]);
 
     useEffect(() => {
         setPlansBookmark([]);
         setPageBookmark(0);
-        setHasMoreBookmark(true);
         fetchPlansBookmark(0);
     }, [filterBookmark]);
+
+
+    useEffect(() => {
+        console.log(hasMoreBookmark + "!@#!@#!@");
+    },[hasMoreBookmark]);
 
     useEffect(() => {
         fetchProfile();
@@ -127,6 +125,7 @@ const My = () => {
                             <strong className={style.title}>내가 만든 플랜</strong>
                             <span className={style.count}>{totalElementsMyPlan}</span>
                         </span>
+                        <Filter firstText="전체" secondText="공개" thirdText="비공개" onClickFirstBtn={()=>setFilterMyPlan("ALL")} onClickSecondBtn={() => setFilterMyPlan("PUBLIC")} onClickThirdBtn={() => setFilterMyPlan("PRIVATE")} />
                     </div>
                     <ul className={style.list}>
                         {
@@ -151,7 +150,7 @@ const My = () => {
                             })
                         }
                     </ul>
-                    {hasMoreMyPlan && <button type="button" className={style.more_btn} onClick={() => setIsClickMoreBtnMyPlan(true)}>더보기</button>}
+                    {isMoreBtnMyPlan && <button type="button" className={style.more_btn} onClick={() => fetchPlansMyPlan(pageMyPlan)}>더보기</button>}
                 </div>
                 <div className={style.plans_area}>
                     <div className={style.title_wrap}>
@@ -159,6 +158,7 @@ const My = () => {
                             <strong className={style.title}>찜한 플랜</strong>
                             <span className={style.count}>{totalElementsBookmark}</span>
                         </span>
+                        <Filter firstText="전체" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={()=>setFilterBookmark("LATEST")} onClickSecondBtn={() => setFilterBookmark("COMMENT")} onClickThirdBtn={() => setFilterBookmark("BOOKMARK")} />
                     </div>
                     <ul className={style.list}>
                         {
@@ -183,7 +183,7 @@ const My = () => {
                             })
                         }
                     </ul>
-                    {hasMoreBookmark && <button type="button" className={style.more_btn} onClick={() => setIsClickMoreBtnMyPlan(true)}>더보기</button>}
+                    {isMoreBtnBookmark && <button type="button" className={style.more_btn} onClick={() => fetchPlansBookmark(pageBookmark)}>더보기</button>}
                 </div>
             </div>
         </div>
