@@ -1,7 +1,7 @@
 /* eslint-disable */
 "use client";
 
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { ChangeEvent, SetStateAction, useEffect, useRef, useState } from "react";
 import style from "./LocationDetail.module.scss";
 import axios from "axios";
 import classNames from "classnames";
@@ -31,6 +31,55 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
     const [location, setLocation] = useState<TLocation | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [editedDescription, setEditedDescription] = useState<string>("");
+    const [file, setFile] = useState<File | null>(null);
+    const [imageUrl, setImageUrl] = useState(null);
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if(e.target.files) setFile(e.target.files[0]);
+      };
+
+    const handleUpload = async () => {
+    if (!file) {
+        alert('파일을 선택해주세요.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type,
+        }),
+        });
+
+        if (!response.ok) {
+        throw new Error('Failed to get pre-signed URL');
+        }
+
+        const { url } = await response.json();
+
+        await fetch(url, {
+        method: 'PUT',
+        body: file,
+        headers: {
+            'Content-Type': file.type,
+        },
+        });
+
+        const uploadedImageUrl = url.split('?')[0];
+        setImageUrl(uploadedImageUrl);
+        alert('이미지 업로드 성공!');
+    } catch (error) {
+        console.error('Upload failed:', error);
+        alert('이미지 업로드 실패.');
+    } finally {
+        setFile(null);
+    }
+    };
 
     const flickingRef = useRef<Flicking>(null);
 
@@ -88,6 +137,10 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
 
     const totalImages = getTotalImageCount();
 
+    useEffect(() => {
+        handleUpload();
+    }, [file]);
+
     return (
         <div className={style.dimmed_layer} onClick={() => {setIsShowModal(false);}}>
             <div className={style.modal} onClick={(e) => {e.stopPropagation();}}>
@@ -106,11 +159,17 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
                             easing={easing}
                             duration={600}
                         >
-                        <div className={style.img_wrap}>
-                            <img className={style.img} src={"/img_section_1_758x566.png"} alt="대표 이미지"/>
+                        <div className={classNames(style.img_wrap, {[style.is_edit] : isEdit})}>
+                            {isEdit && <><input type="file" className="blind" id="upload_image_1" onChange={handleFileChange}/><label className={style.upload_btn} htmlFor="upload_image_1"></label></>}
+                            <img className={style.img} src={"/img_section_1_758x566.png"} alt="업로드 이미지"/>
                         </div>
-                        <div className={style.img_wrap}>
-                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="대표 이미지"/>
+                        <div className={classNames(style.img_wrap, {[style.is_edit] : isEdit})}>
+                            {isEdit && <><input type="file" className="blind" id="upload_image_2" onChange={handleFileChange} /><label className={style.upload_btn} htmlFor="upload_image_2"></label></>}
+                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="업로드 이미지2"/>
+                        </div>
+                        <div className={classNames(style.img_wrap, {[style.is_edit] : isEdit})}>
+                            {isEdit && <><input type="file" className="blind" id="upload_image_3"  onChange={handleFileChange}/><label className={style.upload_btn} htmlFor="upload_image_3"></label></>}
+                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="업로드 이미지3"/>
                         </div>
                     </Flicking>
                     { getTotalImageCount() > 1 && 
