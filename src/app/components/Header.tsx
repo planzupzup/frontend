@@ -1,27 +1,54 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "@/app/components/Header.module.scss";
 import LoginModal from "./modal/LoginModal";
+import axios from "axios";
+import { BACK_HOST } from "@/app/components/modal/Login";
+import { useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await axios.get(`${BACK_HOST}/auth`, { withCredentials: true });
+
+        if (response.data.result === "로그인 성공") {
+          setIsLogin(true);
+          setProfileMenuOpen(true)
+        } else {
+          setIsLogin(false);
+        }
+      } catch (error) {
+        console.error("Failed to check login status:", error);
+        setIsLogin(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
 
   const handleLogin = () => {
     setLoginModal(true);
   };
 
-  const handleLogout = () => {
-    setIsLogin(false);
-    setProfileMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${BACK_HOST}/api/auth/logout`, {}, { withCredentials: true });
+      setIsLogin(false);
+      setProfileMenuOpen(false);
+    } catch (error) {
+      console.error("Failed to logout:", error);
+      setIsLogin(false);
+      setProfileMenuOpen(false);
+    }
   };
 
-  const toggleProfileMenu = () => {
-    setProfileMenuOpen((prev) => !prev);
-  };
-/* eslint-disable */
   return (
     <header className={styles.header_wrap}>
       <a href="/" className={styles.logo}>
@@ -44,38 +71,33 @@ const Header: React.FC = () => {
           </button>
         </div>
 
-        <div className={styles.nav}>
-          {!isLogin ? (
+        {!isLogin ? (
+          <div className={styles.nav}>
             <button className={styles.customButton} onClick={handleLogin}>
               로그인
             </button>
-          ) : (
-            <div className={styles.profileSection} onClick={toggleProfileMenu}>
-              <div className={styles.avatar}>
-                <img
-                  src="https://travel1030.s3.ap-southeast-2.amazonaws.com/paris.png"
-                  alt="Profile"
-                  className={styles.avatarImg}
-                />
-              </div>
-              <span>김용이</span>
-
-              {profileMenuOpen && (
-                <div className={styles.profileMenu}>
-                  <a href="/mypage" className={styles.menuItem}>
+          </div>
+        ) : (
+          <>
+            {profileMenuOpen && (
+              <>
+                <div className={styles.nav}>
+                  <button onClick={() => router.push('/my')} className={styles.customButton}>
                     마이페이지
-                  </a>
-                  <button className={styles.menuItem} onClick={handleLogout}>
+                  </button>
+                </div>
+                <div className={styles.nav}>
+                  <button className={styles.customButton} onClick={handleLogout}>
                     로그아웃
                   </button>
                 </div>
-              )}
-            </div>
-          )}
-        </div>
+              </>
+            )}
+          </>
+        )}
       </div>
       {
-        loginModal && <LoginModal isShowModal={loginModal} onClickCloseBtn={() => {setLoginModal(false)}} />
+        loginModal && <LoginModal isShowModal={loginModal} onClickCloseBtn={() => { setLoginModal(false) }} />
       }
     </header>
   );
