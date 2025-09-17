@@ -8,6 +8,7 @@ import MasonryGridItem from "./components/main/MasonryGridItem";
 import Flicking from "@egjs/react-flicking";
 import { AutoPlay } from "@egjs/flicking-plugins";
 import classNames from "classnames";
+import LottieAnimation from "./components/Lottie";
 
 const getColumnSize = () => {
   if (typeof window !== 'undefined') {
@@ -75,7 +76,6 @@ const Home: React.FC = () => {
 
   return (
     <>  
-
       <section className={styles.section_1_2}>
         <Flicking
           align="prev"

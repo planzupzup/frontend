@@ -7,6 +7,7 @@ import axios from "axios";
 import classNames from "classnames";
 import Flicking from "@egjs/react-flicking";
 import { Location } from "@/app/plan/[planId]/page";
+import AWS from "aws-sdk";
 
 type TProps = {
     locationId: string;
@@ -26,59 +27,39 @@ type TLocation = {
     images?: string[];
 }   
 
-const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTotalLocationList, locationIndex}:TProps) => {
+const LocationDetail = ({ locationId, setIsShowModal, isEdit, day, setTotalLocationList, locationIndex}:TProps) => {
 
     const [location, setLocation] = useState<TLocation | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [editedDescription, setEditedDescription] = useState<string>("");
-    const [file, setFile] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState(null);
+    const [inputImages, setInputImages] = useState<string[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<(File | null)[]>([]);
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if(e.target.files) setFile(e.target.files[0]);
-      };
+      const handleFileChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+        if (e.target.files && e.target.files.length > 0) {
+            if(e.target.files[0].size > (10 * 1024 * 1024)) {
+                alert("10MB 미만 크기의 파일만 업로드 가능합니다.");
+                return;
+            }
 
-    const handleUpload = async () => {
-    if (!file) {
-        alert('파일을 선택해주세요.');
-        return;
-    }
+            const selectedFile = e.target.files[0];
 
-    try {
-        const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            fileName: file.name,
-            fileType: file.type,
-        }),
-        });
-
-        if (!response.ok) {
-        throw new Error('Failed to get pre-signed URL');
+            setSelectedFiles(prevFiles => {
+                const newFiles = [...prevFiles];
+                newFiles[index] = selectedFile;
+                return newFiles;
+            });
+            
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setInputImages((prevInputImages) => {
+                    const newInputImages = [...prevInputImages];
+                    newInputImages[index] = reader.result as string;
+                    return newInputImages;
+                });
+            };
+            reader.readAsDataURL(selectedFile);
         }
-
-        const { url } = await response.json();
-
-        await fetch(url, {
-        method: 'PUT',
-        body: file,
-        headers: {
-            'Content-Type': file.type,
-        },
-        });
-
-        const uploadedImageUrl = url.split('?')[0];
-        setImageUrl(uploadedImageUrl);
-        alert('이미지 업로드 성공!');
-    } catch (error) {
-        console.error('Upload failed:', error);
-        alert('이미지 업로드 실패.');
-    } finally {
-        setFile(null);
-    }
     };
 
     const flickingRef = useRef<Flicking>(null);
@@ -97,7 +78,7 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
     const loadLocation = async () => {
         try {
           const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/location/${locationId}`,{ withCredentials: true });
-          setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: response.data.result.description, googleImageUrl: response.data.result.googleImageUrl, images: ["/img_section_1_758x566.png","/img_section_3_290x290.png"]});
+          setLocation({scheduleOrder: response.data.result.scheduleOrder, locationName: response.data.result.locationName, category: response.data.result.category, description: response.data.result.description, googleImageUrl: response.data.result.googleImageUrl, images: response.data.result.images});
             setEditedDescription(response.data.result.description);
         } catch (e) {
           alert('지역을 불러오는데 실패했습니다.');
@@ -105,26 +86,53 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
       };
 
     useEffect(() => {
+        console.log(location?.images);
         loadLocation();
     },[]);
 
-    const onClickSaveBtn = () => {
-        if(setTotalLocationList) {
-            setTotalLocationList(prevTotalLocationList => {
-            const newTotalLocationList = prevTotalLocationList.map(dayLocations => [...dayLocations]);
-            
-            if (day !== undefined && day >= 0 && day < newTotalLocationList.length) {
-                const targetLocation = { ...newTotalLocationList[day][locationIndex]};
-                // 3. 복사본의 description만 수정
-                targetLocation.description = editedDescription;
+    const onClickSaveBtn = async () => {
+        try {
+            if(setTotalLocationList) {
+                setTotalLocationList(prevTotalLocationList => {
+                const newTotalLocationList = prevTotalLocationList.map(dayLocations => [...dayLocations]);
+                
+                if (day !== undefined && day >= 0 && day < newTotalLocationList.length) {
 
-                // 4. 원래 위치에 수정된 새로운 객체로 교체
-                newTotalLocationList[day][locationIndex] = targetLocation;
-            }
-            console.log(newTotalLocationList);
-            return newTotalLocationList
-        });}
-        setIsShowModal(false);
+                    const targetLocation = { ...newTotalLocationList[day][locationIndex]};
+                    
+                    const formData = new FormData();
+                    const uploadImagesList = [];
+                    selectedFiles.forEach(async (file,index) => {
+                        if (file) {
+                            formData.append('file', file);
+                            const uploadResponse = await fetch('/api/upload', {
+                                method: 'POST',
+                                body: formData,
+                            });
+                
+                            if (!uploadResponse.ok) {
+                                throw new Error('Image upload failed.');
+                            }
+                
+                            targetLocation?.images?[index] = await uploadResponse.json();
+
+                        }
+                    });
+
+                    targetLocation.description = editedDescription;
+
+                    // 4. 원래 위치에 수정된 새로운 객체로 교체
+                    newTotalLocationList[day][locationIndex] = targetLocation;
+                }
+                console.log(newTotalLocationList);
+                return newTotalLocationList
+            });}
+            setIsShowModal(false);
+
+        } catch (error) {
+            console.error("저장 실패:", error);
+            alert("저장에 실패했습니다.");
+        }
     }
 
     const getTotalImageCount = () => {
@@ -136,10 +144,6 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
     };
 
     const totalImages = getTotalImageCount();
-
-    useEffect(() => {
-        handleUpload();
-    }, [file]);
 
     return (
         <div className={style.dimmed_layer} onClick={() => {setIsShowModal(false);}}>
@@ -160,16 +164,16 @@ const LocationDetail = ({ locationId, setIsShowModal, isEdit=false, day, setTota
                             duration={600}
                         >
                         <div className={classNames(style.img_wrap, {[style.is_edit] : isEdit})}>
-                            {isEdit && <><input type="file" className="blind" id="upload_image_1" onChange={handleFileChange}/><label className={style.upload_btn} htmlFor="upload_image_1"></label></>}
-                            <img className={style.img} src={"/img_section_1_758x566.png"} alt="업로드 이미지"/>
+                            {isEdit && <><span className={style.badge_editable}><span className="blind">이미지 수정</span></span><input type="file" className="blind" id="upload_image_1" onChange={(e)=> handleFileChange(e, 0)} accept="image/*"/><label className={style.upload_btn} htmlFor="upload_image_1"></label></>}
+                            <img className={style.img} src={inputImages[0]} alt="업로드 이미지"/>
                         </div>
                         <div className={classNames(style.img_wrap, {[style.is_edit] : isEdit})}>
-                            {isEdit && <><input type="file" className="blind" id="upload_image_2" onChange={handleFileChange} /><label className={style.upload_btn} htmlFor="upload_image_2"></label></>}
-                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="업로드 이미지2"/>
+                            {isEdit && <><span className={style.badge_editable}><span className="blind">이미지 수정</span></span><input type="file" className="blind" id="upload_image_2" onChange={(e) => handleFileChange(e, 1)} accept="image/*" /><label className={style.upload_btn} htmlFor="upload_image_2"></label></>}
+                            <img className={style.img} src={inputImages[1]} alt="업로드 이미지2"/>
                         </div>
                         <div className={classNames(style.img_wrap, {[style.is_edit] : isEdit})}>
-                            {isEdit && <><input type="file" className="blind" id="upload_image_3"  onChange={handleFileChange}/><label className={style.upload_btn} htmlFor="upload_image_3"></label></>}
-                            <img className={style.img} src={"/img_section_3_290x290.png"} alt="업로드 이미지3"/>
+                            {isEdit && <><span className={style.badge_editable}><span className="blind">이미지 수정</span></span><input type="file" className="blind" id="upload_image_3"  onChange={(e) => handleFileChange(e,2)} accept="image/*"/><label className={style.upload_btn} htmlFor="upload_image_3"></label></>}
+                            <img className={style.img} src={inputImages[2]} alt="업로드 이미지3"/>
                         </div>
                     </Flicking>
                     { getTotalImageCount() > 1 && 

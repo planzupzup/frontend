@@ -16,12 +16,16 @@
     "@egjs/react-infinitegrid": "^4.12.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@types/react-datepicker": "^7.0.0",
+    "@types/react-lottie": "^1.2.10",
+    "aws-sdk": "^2.1692.0",
     "axios": "^1.9.0",
     "classnames": "^2.5.1",
+    "formidable": "^3.5.4",
     "next": "15.3.1",
     "react": "^19.0.0",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.0.0",
+    "react-lottie": "^1.2.10",
     "react-router-dom": "^7.5.3"
   },
   "devDependencies": {

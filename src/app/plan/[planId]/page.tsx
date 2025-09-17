@@ -18,10 +18,10 @@ export interface Location {
   locationName: string;
   category?: string;
   scheduleOrder?: number;
-  image?: {
+  images?: {
     imageId: number,
     imageUrl: string
-  }
+  }[];
   latitude: number;
   longitude: number;
   address?: string;

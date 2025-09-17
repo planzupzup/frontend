@@ -20,7 +20,7 @@ type TProps = {
     setTotalLocationList? : React.Dispatch<React.SetStateAction<Location[][]>>;
 }
 
-const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit=false, deleteEditItem , day, setTotalLocationList}:TProps) => {
+const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit, deleteEditItem , day, setTotalLocationList}:TProps) => {
 
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
     const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
