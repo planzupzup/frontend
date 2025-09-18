@@ -2,25 +2,22 @@
 
 import React, { useState, useEffect } from "react";
 import styles from "@/app/components/Header.module.scss";
-import LoginModal from "./modal/LoginModal";
 import axios from "axios";
-import { BACK_HOST } from "@/app/components/modal/Login";
 import { useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState<boolean>(false);
-  const [loginModal, setLoginModal] = useState<boolean>(false);
   const router = useRouter()
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await axios.get(`${BACK_HOST}/auth`, { withCredentials: true });
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/auth`, { withCredentials: true });
 
         if (response.data.result === "로그인 성공") {
           setIsLogin(true);
-          setProfileMenuOpen(true)
+          setProfileMenuOpen(true);
         } else {
           setIsLogin(false);
         }
@@ -33,19 +30,14 @@ const Header: React.FC = () => {
     checkLoginStatus();
   }, []);
 
-  const handleLogin = () => {
-    setLoginModal(true);
-  };
-
   const handleLogout = async () => {
     try {
-      await axios.post(`${BACK_HOST}/api/auth/logout`, {}, { withCredentials: true });
+      await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/auth/logout`, {}, { withCredentials: true });
       setIsLogin(false);
       setProfileMenuOpen(false);
     } catch (error) {
       console.error("Failed to logout:", error);
-      setIsLogin(false);
-      setProfileMenuOpen(false);
+      alert('로그아웃 중 오류가 발생했습니다.');
     }
   };
 
@@ -73,7 +65,7 @@ const Header: React.FC = () => {
 
         {!isLogin ? (
           <div className={styles.nav}>
-            <button className={styles.customButton} onClick={handleLogin}>
+            <button className={styles.customButton} onClick={() => router.replace('/login')}>
               로그인
             </button>
           </div>
@@ -96,9 +88,6 @@ const Header: React.FC = () => {
           </>
         )}
       </div>
-      {
-        loginModal && <LoginModal isShowModal={loginModal} onClickCloseBtn={() => { setLoginModal(false) }} />
-      }
     </header>
   );
 };
