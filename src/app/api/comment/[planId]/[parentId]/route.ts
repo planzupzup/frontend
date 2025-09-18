@@ -1,6 +1,5 @@
 /* eslint-disable */
 
-import { BACK_HOST } from '@/app/components/modal/Login';
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 

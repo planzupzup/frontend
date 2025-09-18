@@ -85,7 +85,7 @@ const LocationListEditWrapper = ({ totalLocationList, setTotalLocationList, sele
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 className={style.drag_item_wrap}>
-                                    <LocationItem location={location} locationIndex={index + 1} orderColor={getOrderColor(index)} isEdit={true} deleteEditItem={deleteEditItem} day={columnIndex} setTotalLocationList={setTotalLocationList}/>
+                                    <LocationItem location={location} locationIndex={index + 1} orderColor={getOrderColor(index)} isEdit={true} deleteEditItem={deleteEditItem} day={columnIndex} totalLocationList={totalLocationList} setTotalLocationList={setTotalLocationList}/>
                                 </div>
                             )}
                             </Draggable>}

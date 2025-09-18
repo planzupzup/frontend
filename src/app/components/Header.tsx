@@ -2,16 +2,10 @@
 
 import React, { useState } from "react";
 import styles from "@/app/components/Header.module.scss";
-import LoginModal from "./modal/LoginModal";
 
 const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState<boolean>(false);
-  const [loginModal, setLoginModal] = useState<boolean>(false);
-
-  const handleLogin = () => {
-    setLoginModal(true);
-  };
 
   const handleLogout = () => {
     setIsLogin(false);
@@ -46,7 +40,7 @@ const Header: React.FC = () => {
 
         <div className={styles.nav}>
           {!isLogin ? (
-            <button className={styles.customButton} onClick={handleLogin}>
+            <button className={styles.customButton} onClick={() => (window.location.href = "/login")}>
               로그인
             </button>
           ) : (
@@ -74,9 +68,6 @@ const Header: React.FC = () => {
           )}
         </div>
       </div>
-      {
-        loginModal && <LoginModal isShowModal={loginModal} onClickCloseBtn={() => {setLoginModal(false)}} />
-      }
     </header>
   );
 };
