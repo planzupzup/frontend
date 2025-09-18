@@ -54,29 +54,70 @@
         width: 20px;
         height: 20px;
         background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none'%3E%3Cpath stroke='%23111' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m13 15-5-5 5-5'/%3E%3C/svg%3E") no-repeat;
-        
+
         &:last-child {
             transform: rotate(180deg);
         }
     }
 }
 
-.calendar {
-    &+ .calendar {
-        margin-left: 100px;
+.nav_arrow_btn_left,
+.nav_arrow_btn_right {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 32px;
+        height: 48px;
+        background-color: rgba($color: #000000, $alpha: .4);
+
+        &::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+        }
+    }
+}
+
+.nav_arrow_btn_left {
+    margin-right: 42px;
+
+    button {
+        &::before {
+            transform: rotate(-45deg);
+            margin-left: 5px;
+        }
+    }
+}
+
+.nav_arrow_btn_right {
+    margin-left: 42px;
+
+    button {
+        &::before {
+            transform: rotate(135deg);
+            margin-right: 5px;
+        }
     }
 }
 
 .next_btn {
     @include text-style('b2-2', 'gray5');
-    
+
     width: 68px;
     margin-top: 32px;
     background-color: #f1f3f5;
     border-radius: 50px;
     line-height: 42px;
     pointer-events: none;
-    cursor: pointer;
 
     &.is_active {
         pointer-events: initial;
@@ -125,7 +166,7 @@
 }
 
 .is_public_btn {
-    @include text-style('b1','blue');
+    @include text-style('b1', 'blue');
 
     position: absolute;
     top: 50%;
@@ -146,6 +187,64 @@
     &[aria-selected=true] {
         &::before {
             background: url(/ico_lock_40x40.png) 0 0/20px 20px no-repeat;
+        }
+    }
+}
+
+.calendar {
+    min-height: 404px;
+
+    :global {
+        .react-datepicker__navigation {
+            display: none;
+        }
+
+        .react-datepicker {
+            display: flex;
+            gap: 100px;
+        }
+
+        .react-datepicker__week:not(:last-child) {
+            margin-bottom: 8px;
+        }
+
+        .react-datepicker__day {
+
+            // 기본 hover 스타일
+            &:hover {
+                border-radius: 50%;
+                background: #3c76f1 !important;
+                color: #fff;
+            }
+
+            // 상태별 스타일
+            &--disabled {
+                opacity: 0.3;
+            }
+
+            &--today {
+                background: transparent;
+            }
+
+            &--keyboard-selected,
+            &--selected,
+            &--range-end,
+            &--in-range,
+            &--in-selecting-range {
+                border-radius: 50%;
+            }
+
+            &--in-range,
+            &--in-selecting-range {
+                background: rgba(#3c76f1, 0.1);
+            }
+
+            &--selecting-range-start,
+            &--selected,
+            &--range-end {
+                background: #3c76f1 !important;
+                color: #fff !important;
+            }
         }
     }
 }
