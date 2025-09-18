@@ -42,9 +42,36 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
     setPlaces,
   }, mapRef);
 
-  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-    googleMapService?.searchPlace(e.target.value);
+  const onChangeInput = async (e: ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    setSearchInput(keyword);
+
+    if (!keyword) {
+      setPlaces([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/place/2?keyword=${keyword}`);
+      const data = await res.json();
+      
+      if (data.content) {
+        const newPlaces: Place[] = data.content.map((item: any) => ({
+          name: item.placeName,
+          formatted_address: item.address,
+          geometry: {
+            location: {
+              lat: () => item.latitude,
+              lng: () => item.longitude,
+            },
+          },
+        }));
+        setPlaces(newPlaces);
+      }
+    } catch (error) {
+      console.error("Failed to fetch places:", error);
+      setPlaces([]);
+    }
   }
 
   const addSearchItem = (location: Location) => {
