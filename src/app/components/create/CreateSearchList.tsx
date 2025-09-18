@@ -57,14 +57,20 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
       
       if (data.content) {
         const newPlaces: Place[] = data.content.map((item: any) => ({
-          name: item.placeName,
-          formatted_address: item.address,
+          name: item.name,
+          formatted_address: item.formatted_address,
           geometry: {
-            location: {
-              lat: () => item.latitude,
-              lng: () => item.longitude,
-            },
+            location: new google.maps.LatLng(item.latitude, item.longitude),
           },
+          rating: item.rating || 0,
+          types: item.types || [],
+          photos: item.photoUrl ? [{
+            getUrl: () => item.photoUrl,
+            height: 500,
+            width: 500,
+            html_attributions: [''],
+          }] as google.maps.places.PlacePhoto[] : [],
+          place_id: item.place_id,
         }));
         setPlaces(newPlaces);
       }
