@@ -49,6 +49,15 @@ const createPlan = () => {
 
 
   const onClickDatePickNextBtn = () => {
+    if (startDate && endDate) {
+      const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      if (diffDays > 12) {
+        alert("여행 기간은 최대 12일까지 선택 가능합니다.");
+        return;
+      }
+    }
     console.log(startDate, endDate);
     setIsActivePlanTitle(true);
   }
