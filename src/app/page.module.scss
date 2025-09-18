@@ -2,14 +2,6 @@
 
 .section_1 {
   height: 764px;
-  background: linear-gradient(to bottom, rgba(#bedeff,100%), rgba(#bedeff,14%)) 0 0/100% 100% no-repeat;
-
-  .title {
-    padding-top: 145px;
-    text-align: right;
-  
-    @include text-style('h2','black');
-  }
 }
 
 .section_1_2 {

@@ -15,12 +15,13 @@ type TProps = {
     setLocation?: React.Dispatch<React.SetStateAction<Location | undefined>>;
     orderColor: string;
     isEdit?: boolean;
-    day?: number;
+    day: number;
     deleteEditItem?: (locationIndex: number) => void;
     setTotalLocationList? : React.Dispatch<React.SetStateAction<Location[][]>>;
+    totalLocationList : Location[][];
 }
 
-const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit=false, deleteEditItem , day, setTotalLocationList}:TProps) => {
+const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColor, isEdit, deleteEditItem , day, setTotalLocationList, totalLocationList}:TProps) => {
 
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
     const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
@@ -47,7 +48,7 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColo
     return (
         <>
         {isShowModal && portalRoot && createPortal(
-            <LocationDetail locationId={`${location.locationId}`} setIsShowModal={setIsShowModal} isEdit={isEdit} {...(isEdit && {day: day})} {...(isEdit && {setTotalLocationList: setTotalLocationList})} locationIndex={locationIndex}/>,
+            <LocationDetail day={day} locationId={`${location.locationId}`} setIsShowModal={setIsShowModal} isEdit={isEdit} {...(isEdit && {day: day})} {...(isEdit && {setTotalLocationList: setTotalLocationList})} totalLocationList={totalLocationList} locationIndex={locationIndex}/>,
             portalRoot
         )}
         {isTotal ? <div key={location.locationId} className={style.location_total_item} onClick={() => setLocation && setLocation(location)}>
