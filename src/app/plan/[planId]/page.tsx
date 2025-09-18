@@ -250,7 +250,9 @@ const PlanDetail: React.FC = () => {
   },[isEditing]);
 
   useEffect(() => {
-    loadTotalLocationList();
+    if(days.length>0){
+      loadTotalLocationList();
+    }
   }, [days, isEditing]);
 
   useEffect(() => {
@@ -313,45 +315,51 @@ const PlanDetail: React.FC = () => {
 
         var tempLocationList = response.data.result.locations;
 
+        console.log(tempLocationList);
         var tempLocation: {lat: number; lng: number} | null = null;
     
-        for(const [index, location] of tempLocationList.entries()) {
-          if(index == 0) {
-            tempLocation = {lat: location.latitude, lng: location.longitude};
-            location.duration = 0;
-            continue;
-          }
-    
-          try {
-            const response = await fetch(
-              `/api/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
-            );
-      
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+        if(tempLocationList) {
+          for(const [index, location] of tempLocationList.entries()) {
+            if(index == 0) {
+              tempLocation = {lat: location.latitude, lng: location.longitude};
+              location.duration = 0;
+              continue;
             }
       
-            const data = await response.json();
-            console.log(data);
-            tempLocation = {lat: location.latitude, lng: location.longitude};
-            if(data.routes[0]) {
-              location.duration = data.routes[0].legs[0].duration.value;
+            try {
+              const response = await fetch(
+                `/api/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
+              );
+        
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+        
+              const data = await response.json();
+              console.log(data);
+              tempLocation = {lat: location.latitude, lng: location.longitude};
+              if(data.routes[0]) {
+                location.duration = data.routes[0].legs[0].duration.value;
+              }
+              else {location.duration = 0;}
+            } catch(e) {
+              console.error(e);
+              return [] ;
             }
-            else {location.duration = 0;}
-          } catch(e) {
-            console.error(e);
-            return [] ;
           }
-        }
-        if(tempLocationList.length > 0) {
+        } 
+        
+        if(tempLocationList && tempLocationList.length > 0) {
           isFirst = false;
+        } else {
+          tempLocationList=[];
         }
         tempTotalLocationList[index] = tempLocationList;
       }
 
       setTotalLocationList(tempTotalLocationList);
       setOriginalTotalLocationList(tempTotalLocationList);
-      if(isFirst && days.length > 0) {
+      if(isFirst && days && days.length > 0) {
         setIsEditing(true);
         setSelectedDay("1");
         setIsShow(true);
