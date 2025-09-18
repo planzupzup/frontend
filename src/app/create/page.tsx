@@ -47,30 +47,27 @@ const createPlan = () => {
     setInputText(e.target.value);
   }
 
-    const onClickPlanTitleNextBtn = async () => {
-        if(startDate === null || endDate === null ) {
-            alert("날짜 형식이 올바르지 않습니다.");
-            return;
-        }
-        const newPlan = {
-            isPublic,
-            title: inputText,
-            content: "내용",
-            startDate: getDTODateFormat(startDate),
-            endDate: getDTODateFormat(endDate),
-            destinationName: "제주"
-        };
+
+  const onClickDatePickNextBtn = () => {
+    console.log(startDate, endDate);
+    setIsActivePlanTitle(true);
+  }
 
   const onClickPlanTitleNextBtn = async () => {
     if (startDate === null || endDate === null) {
       alert("날짜형식이 올바르지 않습니다.");
       return;
     }
+    const newPlan = {
+      isPublic,
+      title: inputText,
+      content: "내용",
+      startDate: getDTODateFormat(startDate),
+      endDate: getDTODateFormat(endDate),
+      destinationName: "제주"
+    };
 
-    const getDTODateFormat = (date: Date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+    console.log(newPlan);
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan`, newPlan, { withCredentials: true });
@@ -78,31 +75,13 @@ const createPlan = () => {
     } catch (error) {
       console.error("Failed to create plan:", error);
     }
+  }
 
-    const handleDateChange = (dates: [Date | null, Date | null]) => {
-        const [start, end] = dates;
-        
-        // 14일 초과 선택 방지
-        if (start && end) {
-            const diffTime = Math.abs(end.getTime() - start.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays > 13) { // 14일 초과 선택은 14일째 되는 날 선택 가능
-                alert("여행기간은 최대 14일 선택 가능합니다.");
-                setStartDate(null);
-                setEndDate(null);
-                return;
-            }
-        }
-        
-        setStartDate(start);
-        setEndDate(end);
+  const getDTODateFormat = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
-        // 시작일과 종료일이 모두 선택된 상태에서 다시 클릭하면 시작일을 초기화
-        if (startDate && endDate && start && !end) {
-            setStartDate(start);
-            setEndDate(null);
-        }
-    };
     const formattedDate = `${year}-${month}-${day}`;
     return formattedDate;
   }
@@ -168,4 +147,4 @@ const createPlan = () => {
   )
 }
 
-export default CreatePlan;
+export default createPlan;
