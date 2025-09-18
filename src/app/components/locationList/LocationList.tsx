@@ -11,20 +11,22 @@ type TProps = {
     locationList: Location[];
     setLocation: React.Dispatch<React.SetStateAction<Location | undefined>>;
     orderColor: string;
+    totalLocationList: Location[][];
+    day: number;
 }
 
-const LocationList = ({ isTotal , locationList, setLocation, orderColor }:TProps) => {
+const LocationList = ({ isTotal , locationList, setLocation, orderColor, totalLocationList, day }:TProps) => {
 
     return (
         isTotal ? <div className={style.total_location_list}>
         {locationList.map((location, idx) => (
-        <LocationItem isTotal={true} locationIndex={idx+1} location={location} setLocation={setLocation} orderColor={orderColor}/>
+        <LocationItem day={day} isTotal={true} locationIndex={idx+1} location={location} totalLocationList={totalLocationList} setLocation={setLocation} orderColor={orderColor}/>
         ))}
     </div> : <div className={style.location_list}>
     {locationList.map((location, idx) => (
-        <div className={style.duration_wrap}>
+        <div className={style.duration_wrap} key={idx}>
              {idx>0 && <div className={style.duration}>{getTimeUnit(location.duration)}</div>}
-            <LocationItem isTotal={false} locationIndex={idx+1} location={location} setLocation={setLocation} orderColor={orderColor}/>
+            <LocationItem day={day} isTotal={false} locationIndex={idx+1} location={location} setLocation={setLocation} totalLocationList={totalLocationList} orderColor={orderColor}/>
         </div>
         ))}
         <span className={style.line} />

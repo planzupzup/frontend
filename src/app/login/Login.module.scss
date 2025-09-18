@@ -1,0 +1,61 @@
+@import "/src/app/scss/variables.scss";
+
+.login {
+    display: flex;
+    min-height: 100%;
+    align-items: center;
+    justify-content: center;
+    background: url(/img_login_bg.png) 519px center/395px 522px no-repeat;
+    width: 980px;
+    margin: 0 auto;
+}
+
+.login_wrap {
+    position: relative;
+    text-align: center;
+    margin-right: 490px;
+}
+
+.top_text {
+    @include text-style('s3-2' , 'black');
+
+    line-height: 28px;
+}
+
+.desc {
+    @include text-style('b3', 'gray1');
+
+    line-height: 20px;
+}
+
+.login_btn {
+    @include text-style('b2-2', 'black');
+
+    position: relative;
+    margin-top: 32px;
+    padding: 0 33px 0 66px;
+    background-color: #fee500;
+    border-radius: 46px;
+    line-height: 46px;
+    cursor: pointer;
+
+    &::before {
+        position: absolute;
+        top: 50%;
+        left: 32px;
+        width: 22px;
+        height: 22px;
+        transform: translateY(-50%);
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='none'%3E%3Cg clip-path='url(%23a)'%3E%3Cpath fill='%23111' fill-rule='evenodd' d='M11 .732C4.925.732 0 4.537 0 9.23c0 2.918 1.905 5.49 4.805 7.02l-1.22 4.459c-.108.394.343.708.688.48l5.35-3.531c.452.044.91.069 1.377.069 6.075 0 11-3.805 11-8.497C22 4.537 17.075.732 11 .732Z' clip-rule='evenodd'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Cpath fill='%23fff' d='M0 0h22v22H0z'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E") no-repeat;
+        content: "";
+    }
+}
+
+.speech_bubble {
+    position: absolute;
+    left: 35px;
+    bottom: -55px;
+    width: 144px;
+    height: 46px;
+    background: url(/img_speech_pubble.png) 0 0/144px 46px no-repeat;
+}
