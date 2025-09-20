@@ -51,33 +51,35 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
       return;
     }
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/place/2?keyword=${keyword}`);
-      const data = await res.json();
+    googleMapService?.searchPlace(keyword);
+
+    // try {
+    //   const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/place/2?keyword=${keyword}`);
+    //   const data = await res.json();
       
-      if (data.content) {
-        const newPlaces: Place[] = data.content.map((item: any) => ({
-          name: item.name,
-          formatted_address: item.formatted_address,
-          geometry: {
-            location: new google.maps.LatLng(item.latitude, item.longitude),
-          },
-          rating: item.rating || 0,
-          types: item.types || [],
-          photos: item.photoUrl ? [{
-            getUrl: () => item.photoUrl,
-            height: 500,
-            width: 500,
-            html_attributions: [''],
-          }] as google.maps.places.PlacePhoto[] : [],
-          place_id: item.place_id,
-        }));
-        setPlaces(newPlaces);
-      }
-    } catch (error) {
-      console.error("Failed to fetch places:", error);
-      setPlaces([]);
-    }
+    //   if (data.content) {
+    //     const newPlaces: Place[] = data.content.map((item: any) => ({
+    //       name: item.name,
+    //       formatted_address: item.formatted_address,
+    //       geometry: {
+    //         location: new google.maps.LatLng(item.latitude, item.longitude),
+    //       },
+    //       rating: item.rating || 0,
+    //       types: item.types || [],
+    //       photos: item.photoUrl ? [{
+    //         getUrl: () => item.photoUrl,
+    //         height: 500,
+    //         width: 500,
+    //         html_attributions: [''],
+    //       }] as google.maps.places.PlacePhoto[] : [],
+    //       place_id: item.place_id,
+    //     }));
+    //     setPlaces(newPlaces);
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to fetch places:", error);
+    //   setPlaces([]);
+    // }
   }
 
   const addSearchItem = (location: Location) => {

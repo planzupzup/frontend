@@ -6,6 +6,7 @@ import style from "./CreateSearchList.module.scss";
 import { Place } from "@/app/hooks/useGoogleMapService";
 import { Location } from "@/app/plan/[planId]/page";
 import { getKoreanCategory } from "@/app/utils/getKoreanCategory";
+import { getKoreanKeyword } from "@/app/utils/getKoreanKeyword";
 
 type TCreateSearchItem = {
     place: Place;
@@ -18,8 +19,29 @@ type TCreateSearchItem = {
 const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay, searchItemIndex}:TCreateSearchItem) => {
 
     const {name, formatted_address, photos, types, rating} = place;
+    const [imageUrl, setImageUrl] = useState(place.photos && place.photos[0].getUrl());
 
-    const tempLocation:Location={locationName: name, googleImgUrl: place.photos && place.photos[0].getUrl() ,latitude: place.geometry.location.lat(), longitude: place.geometry.location.lng(), rating:place.rating, category:"관광 명소", description: "설명"};
+    useEffect(() => {
+        const fetchImage = async () => {
+            if (searchInput) {
+                const koreanImageUrl = await getKoreanKeyword(searchInput);
+                if (koreanImageUrl) {
+                    setImageUrl(koreanImageUrl);
+                    return; // Found image, so exit
+                }
+            }
+            // Fallback to Google image if no searchInput or no Korean image found
+            if (photos && photos.length > 0) {
+                setImageUrl(photos[0].getUrl());
+            } else {
+                setImageUrl("");
+            }
+        };
+        fetchImage();
+    }, [searchInput, photos]);
+
+
+    const tempLocation:Location={locationName: name, googleImgUrl: imageUrl ,latitude: place.geometry.location.lat(), longitude: place.geometry.location.lng(), rating:place.rating, category:"관광 명소", description: "설명"};
 
     const highlightText = (text: string, highlight: string) => {
         // 검색어가 없거나 공백만 있다면 하이라이트 없이 원본 텍스트 반환
@@ -28,7 +50,7 @@ const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay, search
         }
         
         // 검색어에 정규식 특수 문자가 포함될 경우를 대비하여 이스케이프 처리
-        const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapedHighlight = (highlight ?? "").replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         // 정규식 생성: `g`는 전역 검색, `i`는 대소문자 구분 없음
         const regex = new RegExp(`(${escapedHighlight})`, 'gi');
         // 정규식을 사용하여 텍스트를 분할 (캡처 그룹이 있으면 일치하는 부분도 배열에 포함)
@@ -52,7 +74,7 @@ const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay, search
         <li className={style.item}>
             <div className={style.content}>
                 <div className={style.thumb_wrap}>
-                    <img src={photos?.length > 0 ? tempLocation.googleImgUrl : ""} alt="섬네일"/>
+                    <img src={imageUrl || ""} alt="섬네일"/>
                 </div>
                 <div className={style.info_area}>
                     <strong className={style.title}>{highlightText(name, searchInput)}</strong>
