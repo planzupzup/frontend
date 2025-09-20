@@ -6,7 +6,6 @@ import style from "./CreateSearchList.module.scss";
 import { Place } from "./CreateSearchList";
 import { Location } from "@/app/plan/[planId]/page";
 import { getKoreanCategory } from "@/app/utils/getKoreanCategory";
-import { getKoreanKeyword } from "@/app/utils/getKoreanKeyword";
 
 type TCreateSearchItem = {
     place: Place;
@@ -19,26 +18,9 @@ type TCreateSearchItem = {
 const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay, searchItemIndex}:TCreateSearchItem) => {
 
     const {name, formatted_address, photos, types, rating} = place;
-    const [imageUrl, setImageUrl] = useState(place.photos && place.photos[0].getUrl());
-
-    useEffect(() => {
-        const fetchImage = async () => {
-            if (searchInput) {
-                const koreanImageUrl = await getKoreanKeyword(searchInput);
-                if (koreanImageUrl) {
-                    setImageUrl(koreanImageUrl);
-                    return; // Found image, so exit
-                }
-            }
-            // Fallback to Google image if no searchInput or no Korean image found
-            if (photos && photos.length > 0) {
-                setImageUrl(photos[0].getUrl());
-            } else {
-                setImageUrl("");
-            }
-        };
-        fetchImage();
-    }, [searchInput, photos]);
+    const [imageUrl, setImageUrl] = useState(
+    place.photos && place.photos.length > 0 ? place.photos[0].getUrl() : "",
+  );
 
 
     const tempLocation:Location={locationName: name, googleImgUrl: imageUrl ,latitude: place.geometry.location.lat(), longitude: place.geometry.location.lng(), rating:place.rating, category:"관광 명소", description: "설명"};
@@ -74,7 +56,11 @@ const CreateSearchItem = ({place, searchInput, addSearchItem,selectedDay, search
         <li className={style.item}>
             <div className={style.content}>
                 <div className={style.thumb_wrap}>
-                    <img src={imageUrl || ""} alt="섬네일"/>
+                    {imageUrl ? (
+                        <img src={imageUrl} alt="섬네일" />
+                    ) : (
+                        <div className={style.no_image_placeholder} />
+                    )}
                 </div>
                 <div className={style.info_area}>
                     <strong className={style.title}>{highlightText(name, searchInput)}</strong>
