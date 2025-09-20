@@ -1,22 +1,31 @@
 /* eslint-disable */
 "use client";
 
-import { ChangeEvent, RefObject, forwardRef, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import style from "./CreateSearchList.module.scss";
 import CreateSearchItem from "./CreateSearchItem";
-import { Place, useGoogleMapService } from "@/app/hooks/useGoogleMapService";
 import { Location } from "@/app/plan/[planId]/page";
 
-type TCreateSearchList = {
-  googleMap: google.maps.Map | null;
-  setGoogleMap: (map: google.maps.Map | null) => void;
-  mapRef: RefObject<HTMLDivElement | null> | undefined;
-  placesService: any;
-  setPlacesService: any;
-  setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
-  selectedDay: string;
-  totalLocationList : Location[][];
+export interface Place {
+  name: string;
+  formatted_address: string;
+  geometry: {
+    location: {
+      lat: () => number;
+      lng: () => number;
+    };
+  };
+  photos: { getUrl: () => string }[];
+  types: string[];
+  place_id?: string;
+  rating: number;
 }
+
+type TCreateSearchList = {
+  setTotalLocationList: React.Dispatch<React.SetStateAction<Location[][]>>;
+  selectedDay: string;
+  totalLocationList: Location[][];
+};
 
 const CreateNoPlan = () => {
   return (
@@ -24,28 +33,65 @@ const CreateNoPlan = () => {
       <h2 className={style.title}>아직 플랜이 없어요</h2>
       <p className={style.desc}>가고 싶은 곳을 적고 첫 플랜을 만들어보세요!</p>
     </div>
-  )
-}
+  );
+};
 
-const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesService, mapRef, setTotalLocationList, selectedDay, totalLocationList}:TCreateSearchList ) => {
-
+const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList }: TCreateSearchList) => {
   const [places, setPlaces] = useState<Place[]>([]);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
 
-  const googleMapService = useGoogleMapService({
-    googleMap,
-    setGoogleMap,
-    placesService,
-    setPlacesService,
-    setSearchInput,
-    places,
-    setPlaces,
-  }, mapRef);
+  const onChangeInput = async (e: ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    setSearchInput(keyword);
 
-  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-    googleMapService?.searchPlace(e.target.value);
-  }
+    if (!keyword) {
+      setPlaces([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/search?keyword=${keyword}`);
+      if (!res.ok) {
+        console.error("Search API proxy error:", await res.text());
+        setPlaces([]);
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.response?.body?.totalCount > 0) {
+        const items = data.response.body.items.item;
+        const results = Array.isArray(items) ? items : [items];
+
+        const newPlaces: Place[] = results.map((item: any) => ({
+          name: item.title,
+          formatted_address: item.addr1,
+          geometry: {
+            location: {
+              lat: () => parseFloat(item.mapy),
+              lng: () => parseFloat(item.mapx),
+            },
+          },
+          rating: 0,
+          types: item.contenttypeid ? [item.contenttypeid.toString()] : [],
+          photos: (item.firstimage || item.firstimage2)
+            ? [
+                {
+                  getUrl: () => (item.firstimage || item.firstimage2) as string,
+                },
+              ]
+            : [],
+          place_id: item.contentid,
+        }));
+        setPlaces(newPlaces);
+      } else {
+        setPlaces([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch places:", error);
+      setPlaces([]);
+    }
+  };
 
   const addSearchItem = (location: Location) => {
     const dayIndex = parseInt(selectedDay, 10) - 1;
@@ -82,7 +128,7 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
             <ul className={style.list}>
                 {
                     totalLocationList[parseInt(selectedDay, 10) - 1].length > 0 || searchInput.length > 0 ? places.map((place, index) => (
-                        <CreateSearchItem place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay} searchItemIndex={index}/>
+                        <CreateSearchItem key={place.place_id} place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay} searchItemIndex={index}/>
                     )) : <CreateNoPlan />
                 }
             </ul>
