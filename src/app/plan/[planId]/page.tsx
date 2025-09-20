@@ -417,7 +417,7 @@ const PlanDetail: React.FC = () => {
             <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookMarked={plan?.isBookMarked} date={`${plan?.startDate} - ${plan?.endDate}`} />
             <div className={style.content_wrap}>
               {
-                (isEditing && totalLocationList.length > 0 )&&<CreateSearchList googleMap={googleMap} setGoogleMap={setGoogleMap} mapRef={mapRef} placesService={placesService} setPlacesService={setPlacesService} setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>
+                (isEditing && totalLocationList.length > 0 )&&<CreateSearchList setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>
               }
               <div className={style.schedule_wrap}>
                 <div className={style.location_list_area}>

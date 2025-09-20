@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import style from "./CreateSearchList.module.scss";
-import { Place } from "@/app/hooks/useGoogleMapService";
+import { Place } from "./CreateSearchList";
 import { Location } from "@/app/plan/[planId]/page";
 import { getKoreanCategory } from "@/app/utils/getKoreanCategory";
 import { getKoreanKeyword } from "@/app/utils/getKoreanKeyword";

@@ -4,15 +4,24 @@
 import { ChangeEvent, RefObject, forwardRef, useEffect, useState } from "react";
 import style from "./CreateSearchList.module.scss";
 import CreateSearchItem from "./CreateSearchItem";
-import { Place, useGoogleMapService } from "@/app/hooks/useGoogleMapService";
 import { Location } from "@/app/plan/[planId]/page";
 
+export interface Place {
+  name: string;
+  formatted_address: string;
+  geometry: {
+    location: {
+      lat: () => number;
+      lng: () => number;
+    };
+  };
+  photos: { getUrl: () => string }[];
+  types: string[];
+  place_id?: string;
+  rating: number;
+}
+
 type TCreateSearchList = {
-  googleMap: google.maps.Map | null;
-  setGoogleMap: (map: google.maps.Map | null) => void;
-  mapRef: RefObject<HTMLDivElement | null> | undefined;
-  placesService: any;
-  setPlacesService: any;
   setTotalLocationList : React.Dispatch<React.SetStateAction<Location[][]>>;
   selectedDay: string;
   totalLocationList : Location[][];
@@ -27,20 +36,10 @@ const CreateNoPlan = () => {
   )
 }
 
-const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesService, mapRef, setTotalLocationList, selectedDay, totalLocationList}:TCreateSearchList ) => {
+const CreateSearchList = ({setTotalLocationList, selectedDay, totalLocationList}:TCreateSearchList ) => {
 
   const [places, setPlaces] = useState<Place[]>([]);
   const [searchInput, setSearchInput] = useState('');
-
-  const googleMapService = useGoogleMapService({
-    googleMap,
-    setGoogleMap,
-    placesService,
-    setPlacesService,
-    setSearchInput,
-    places,
-    setPlaces,
-  }, mapRef);
 
   const onChangeInput = async (e: ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
@@ -51,35 +50,33 @@ const CreateSearchList = ({googleMap, setGoogleMap, placesService, setPlacesServ
       return;
     }
 
-    googleMapService?.searchPlace(keyword);
-
-    // try {
-    //   const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/place/2?keyword=${keyword}`);
-    //   const data = await res.json();
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/place/2?keyword=${keyword}`);
+      const data = await res.json();
       
-    //   if (data.content) {
-    //     const newPlaces: Place[] = data.content.map((item: any) => ({
-    //       name: item.name,
-    //       formatted_address: item.formatted_address,
-    //       geometry: {
-    //         location: new google.maps.LatLng(item.latitude, item.longitude),
-    //       },
-    //       rating: item.rating || 0,
-    //       types: item.types || [],
-    //       photos: item.photoUrl ? [{
-    //         getUrl: () => item.photoUrl,
-    //         height: 500,
-    //         width: 500,
-    //         html_attributions: [''],
-    //       }] as google.maps.places.PlacePhoto[] : [],
-    //       place_id: item.place_id,
-    //     }));
-    //     setPlaces(newPlaces);
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to fetch places:", error);
-    //   setPlaces([]);
-    // }
+      if (data.content) {
+        const newPlaces: Place[] = data.content.map((item: any) => ({
+          name: item.name,
+          formatted_address: item.formatted_address,
+          geometry: {
+            location: {
+              lat: () => item.latitude,
+              lng: () => item.longitude,
+            }
+          },
+          rating: item.rating || 0,
+          types: item.types || [],
+          photos: item.photoUrl ? [{
+            getUrl: () => item.photoUrl,
+          }] : [],
+          place_id: item.place_id,
+        }));
+        setPlaces(newPlaces);
+      }
+    } catch (error) {
+      console.error("Failed to fetch places:", error);
+      setPlaces([]);
+    }
   }
 
   const addSearchItem = (location: Location) => {
