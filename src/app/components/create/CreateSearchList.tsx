@@ -43,17 +43,27 @@ const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const loader = useRef(null);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchPlaces = async (keyword: string, pageNum: number) => {
-    if (loading) return;
+    if (pageNum === 1) {
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = new AbortController();
+    }
+    
+    const signal = abortControllerRef.current?.signal;
+
+    if (loading && pageNum > 1) {
+      return;
+    }
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/search?keyword=${keyword}&page=${pageNum}`);
+      const res = await fetch(`/api/search?keyword=${keyword}&page=${pageNum}`, { signal });
       if (!res.ok) {
         console.error("Search API proxy error:", await res.text());
         setHasMore(false);
-        setLoading(false);
         return;
       }
 
@@ -92,26 +102,38 @@ const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList
         }
         setHasMore(false);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        return;
+      }
       console.error("Failed to fetch places:", error);
       setHasMore(false);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   };
 
-  const onChangeInput = async (e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setSearchInput(keyword);
-    setPlaces([]);
-    setPage(1);
-    setHasMore(true);
 
-    if (!keyword) {
-      return;
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
     }
 
-    fetchPlaces(keyword, 1);
+    debounceTimer.current = setTimeout(() => {
+      setPlaces([]);
+      setPage(1);
+      setHasMore(true);
+  
+      if (!keyword) {
+        return;
+      }
+  
+      fetchPlaces(keyword, 1);
+    }, 300);
   };
 
   useEffect(() => {

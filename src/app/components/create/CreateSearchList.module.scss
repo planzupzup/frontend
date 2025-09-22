@@ -37,8 +37,9 @@
     .list {
         flex: 1;
         display: flex;
-        margin: 20px 32px 0 0;
+        margin: 20px 32px 20px 0;
         flex-direction: column;
+        overflow-y: auto;
 
         .loading {
             margin: 20px 0;
