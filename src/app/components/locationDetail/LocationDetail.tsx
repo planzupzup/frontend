@@ -26,32 +26,32 @@ const LocationDetail = ({ locationId, totalLocationList, setIsShowModal, isEdit,
     const [inputImages, setInputImages] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<(File | null)[]>([]);
 
-      const handleFileChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-        if (e.target.files && e.target.files.length > 0) {
-            if(e.target.files[0].size > (10 * 1024 * 1024)) {
-                alert("10MB 미만 크기의 파일만 업로드 가능합니다.");
-                return;
-            }
-
-            const selectedFile = e.target.files[0];
-
-            setSelectedFiles(prevFiles => {
-                const newFiles = [...prevFiles];
-                newFiles[index] = selectedFile;
-                return newFiles;
-            });
-            
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setInputImages((prevInputImages) => {
-                    const newInputImages = [...prevInputImages];
-                    newInputImages[index] = reader.result as string;
-                    return newInputImages;
-                });
-            };
-            reader.readAsDataURL(selectedFile);
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    if (e.target.files && e.target.files.length > 0) {
+        if(e.target.files[0].size > (10 * 1024 * 1024)) {
+            alert("10MB 미만 크기의 파일만 업로드 가능합니다.");
+            return;
         }
-    };
+
+        const selectedFile = e.target.files[0];
+
+        setSelectedFiles(prevFiles => {
+            const newFiles = [...prevFiles];
+            newFiles[index] = selectedFile;
+            return newFiles;
+        });
+        
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setInputImages((prevInputImages) => {
+                const newInputImages = [...prevInputImages];
+                newInputImages[index] = reader.result as string;
+                return newInputImages;
+            });
+        };
+        reader.readAsDataURL(selectedFile);
+    }
+};
 
     const flickingRef = useRef<Flicking>(null);
 

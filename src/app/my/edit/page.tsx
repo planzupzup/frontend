@@ -8,6 +8,8 @@ import { TProfile } from "../page";
 const Edit = () => {
 
     const [profile, setProfile] = useState<TProfile|null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const [inputImage, setInputImage] = useState("");
 
     const fetchProfile = async () => {
         try {
@@ -18,6 +20,48 @@ const Edit = () => {
         }
     }
 
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            if(e.target.files[0].size > (10 * 1024 * 1024)) {
+                alert("10MB 미만 크기의 파일만 업로드 가능합니다.");
+                return;
+            }
+    
+            const selectedFile = e.target.files[0];
+    
+            console.log(selectedFile);
+            setFile(selectedFile);
+            
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                setInputImage(reader.result as string);
+            };
+
+            reader.readAsDataURL(selectedFile);
+        }
+    };
+
+    const onClickSaveBtn = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('nickname', profile ? profile.nickName : "" );
+            formData.append('description', profile?.description ? profile.description : "" );
+
+            if (file) {
+                formData.append('file', file);
+            }
+
+            await fetch(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page`, {
+                method: 'PUT',
+                body: formData,
+            });
+        } catch (error) {
+            console.error("마이페이지 수정 실패:", error);
+            alert("수정에 실패했습니다.");
+        }
+    };
+
     useEffect(() => {
         fetchProfile();
         document.body.style.height = 'auto';
@@ -27,10 +71,13 @@ const Edit = () => {
         <div className={style.my_edit}>
             <div className={style.image_area}>
                 <span className={style.thumb_wrap}>
-                    {profile?.image && <img className={style.img} src={profile?.image} alt="프로필이미지" />}
+                    {(inputImage || profile?.image) && <img className={style.img} src={inputImage || profile?.image} alt="업로드 프로필이미지" />}
                 </span>
                 <div className={style.btn_wrap}>
-                    <button type="button" className={style.edit_btn}>사진 변경</button>
+                    <label htmlFor="image_input">
+                    프로필 수정
+                    </label>
+                    <input className="blind" id="image_input" type="file" accept="image/*" onChange={handleFileChange} />
                     <button type="button" className={style.delete_btn}>삭제</button>
                 </div>
             </div>
@@ -45,7 +92,7 @@ const Edit = () => {
                     <p className={style.description}>{profile?.description ?  profile.description : "소개가 없습니다."}</p>
                 </div>
                 <div className={style.btn_area}>
-                    <button type="button" >저장</button>
+                    <button type="button" onClick={onClickSaveBtn} >저장</button>
                     <button type="button" >취소</button>
                 </div>
             </div>
