@@ -1,7 +1,7 @@
 /* eslint-disable */
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import style from "./CreateSearchList.module.scss";
 import CreateSearchItem from "./CreateSearchItem";
 import { Location } from "@/app/plan/[planId]/page";
@@ -39,21 +39,21 @@ const CreateNoPlan = () => {
 const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList }: TCreateSearchList) => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const loader = useRef(null);
 
-  const onChangeInput = async (e: ChangeEvent<HTMLInputElement>) => {
-    const keyword = e.target.value;
-    setSearchInput(keyword);
-
-    if (!keyword) {
-      setPlaces([]);
-      return;
-    }
+  const fetchPlaces = async (keyword: string, pageNum: number) => {
+    if (loading) return;
+    setLoading(true);
 
     try {
-      const res = await fetch(`/api/search?keyword=${keyword}`);
+      const res = await fetch(`/api/search?keyword=${keyword}&page=${pageNum}`);
       if (!res.ok) {
         console.error("Search API proxy error:", await res.text());
-        setPlaces([]);
+        setHasMore(false);
+        setLoading(false);
         return;
       }
 
@@ -83,15 +83,63 @@ const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList
             : [],
           place_id: item.contentid,
         }));
-        setPlaces(newPlaces);
+
+        setPlaces(prevPlaces => (pageNum === 1 ? newPlaces : [...prevPlaces, ...newPlaces]));
+        setHasMore(data.response.body.totalCount > pageNum * 10);
       } else {
-        setPlaces([]);
+        if (pageNum === 1) {
+          setPlaces([]);
+        }
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Failed to fetch places:", error);
-      setPlaces([]);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const onChangeInput = async (e: ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    setSearchInput(keyword);
+    setPlaces([]);
+    setPage(1);
+    setHasMore(true);
+
+    if (!keyword) {
+      return;
+    }
+
+    fetchPlaces(keyword, 1);
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage(prevPage => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => {
+      if (loader.current) {
+        observer.unobserve(loader.current);
+      }
+    };
+  }, [hasMore, loading]);
+
+  useEffect(() => {
+    if (page > 1 && searchInput) {
+      fetchPlaces(searchInput, page);
+    }
+  }, [page]);
 
   const addSearchItem = (location: Location) => {
     const dayIndex = parseInt(selectedDay, 10) - 1;
@@ -110,6 +158,9 @@ const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList
 
   useEffect(() => {
     setSearchInput("");
+    setPlaces([]);
+    setPage(1);
+    setHasMore(true);
   },[selectedDay]);
 
   const isFirst = (totalLocationList: Location[][]) => {
@@ -131,6 +182,8 @@ const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList
                         <CreateSearchItem key={place.place_id} place={place} searchInput={searchInput} addSearchItem={addSearchItem} selectedDay={selectedDay} searchItemIndex={index}/>
                     )) : <CreateNoPlan />
                 }
+                {loading && <div className={style.loading}>Loading...</div>}
+                <div ref={loader} />
             </ul>
         </div>
     )
