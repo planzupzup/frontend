@@ -9,7 +9,7 @@ import { TPlan } from "../search/page";
 export type TProfile = {
     nickName: string,
     description?: string,
-    image: string
+    image: string | null
 }
 
 const My = () => {

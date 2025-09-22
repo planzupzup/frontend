@@ -82,6 +82,7 @@
         @include text-style('s3-2', 'black');
         @include ellipsis;
     
+        flex: 1;
         line-height: 28px;
     }
 
