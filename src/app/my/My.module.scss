@@ -33,17 +33,13 @@
         display: flex;
         margin-top: 32px;
 
-        button {
+        .edit_btn {
             @include text-style('b2-2', 'black');
             
             padding: 0 20px;
             background-color: #fff;
             border-radius: 42px;
             line-height: 42px;
-
-            & + button {
-                margin-left: 8px;
-            }
         }
     }
 
