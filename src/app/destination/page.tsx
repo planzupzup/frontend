@@ -1,50 +1,46 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 interface Destination {
   id: number;
   image: string;
   name: string;
 }
-/* eslint-disable */
 
 const DestinationSelector: React.FC = () => {
   const [search, setSearch] = useState<string>("");
-  const [destonationList] = useState<Destination[]>([
-    {
-      id: 1,
-      image: "https://travel1030.s3.ap-southeast-2.amazonaws.com/4.png",
-      name: "제주",
-    },
-    {
-      id: 2,
-      image: "https://travel1030.s3.ap-southeast-2.amazonaws.com/3%5C.png",
-      name: "뉴욕",
-    },
-    {
-      id: 3,
-      image: "https://travel1030.s3.ap-southeast-2.amazonaws.com/paris.png",
-      name: "파리",
-    },
-    {
-      id: 4,
-      image: "https://travel1030.s3.ap-southeast-2.amazonaws.com/seoul.png",
-      name: "서울",
-    },
-    {
-      id: 5,
-      image: "https://travel1030.s3.ap-southeast-2.amazonaws.com/4.png",
-      name: "오사카",
-    },
-  ]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
 
-  const filteredList = destonationList.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchDestinations = async () => {
+      if (!search.trim()) {
+        setDestinations([]);
+        return;
+      }
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/destination/${search}`, { withCredentials: true });
+        setDestinations(response.data.result || []);
+      } catch (error) {
+        console.error("Error fetching destinations:", error);
+        setDestinations([]);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      fetchDestinations();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const handleNavigate = (name: string) => {
-    window.location.href = `/plans/${name}`;
+    window.location.href = `/create?destinationName=${name}`;
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
@@ -79,7 +75,6 @@ const DestinationSelector: React.FC = () => {
     },
     item: {
       cursor: "pointer",
-      textAlign: "center",
     },
     imageBox: {
       width: "220px",
@@ -87,6 +82,7 @@ const DestinationSelector: React.FC = () => {
       borderRadius: "10px",
       overflow: "hidden",
       objectFit: "cover",
+      backgroundColor: "#eee",
     },
     image: {
       width: "100%",
@@ -111,12 +107,16 @@ const DestinationSelector: React.FC = () => {
           placeholder="국가명이나 도시명으로 검색해보세요"
           style={styles.searchInput}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleSearchChange}
         />
       </div>
-
-      <div style={styles.grid}>
-        {filteredList.map((destination) => (
+        <ul style={styles.searchContainer}>
+          {destinations.map((destination) => (
+            <li style={{...styles.searchInput, ...styles.item}} key={destination.id} onClick={() => handleNavigate(destination.name)}>{destination.name}</li>
+          ))}
+        </ul>
+      {/* <div style={styles.grid}>
+        {destinations.map((destination) => (
           <div
             key={destination.id}
             style={styles.item}
@@ -135,7 +135,7 @@ const DestinationSelector: React.FC = () => {
             <div style={styles.name}>{destination.name}</div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

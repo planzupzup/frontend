@@ -5,9 +5,9 @@ import { SetStateAction, useEffect, useState } from "react";
 
 type TProps = {
     profile_img?: string,
-    nickname: string,
+    nickname?: string,
     title?: string,
-    location: string,
+    location?: string,
     date: string,
     isBookMarked?: boolean
 }
