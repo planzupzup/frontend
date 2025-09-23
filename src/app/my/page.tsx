@@ -7,9 +7,9 @@ import Filter from "@/app/components/Filter";
 import { TPlan } from "../search/page";
 
 export type TProfile = {
-    nickname: string,
-    description: string,
-    image: string
+    nickName: string,
+    description?: string,
+    image: string | null
 }
 
 const My = () => {
@@ -94,11 +94,6 @@ const My = () => {
         fetchPlansBookmark(0);
     }, [filterBookmark]);
 
-
-    useEffect(() => {
-        console.log(hasMoreBookmark + "!@#!@#!@");
-    },[hasMoreBookmark]);
-
     useEffect(() => {
         fetchProfile();
     },[])
@@ -107,14 +102,13 @@ const My = () => {
         <div className={style.my}>
             <div className={style.profile_wrap}>
                 <div className={style.profile_area}>
-                    <strong className={style.nickname}>{profile?.nickname}</strong>
-                    <p className={style.desc}>{profile?.description}</p>
+                    <strong className={style.nickname}>{profile?.nickName}</strong>
+                    <p className={style.desc}>{profile?.description ?  profile.description : "소개가 없습니다."}</p>
                     <div className={style.btn_wrap}>
-                        <button type="button" className={style.edit_btn}>프로필 수정</button>
-                        <button type="button" className={style.setting_btn}>설정</button>
+                        <a href="/my/edit" type="button" className={style.edit_btn}>프로필 수정</a>
                     </div>
                     <span className={style.thumb_wrap}>
-                        <img className={style.img} src={profile?.image} alt="프로필이미지" />
+                        {profile?.image && <img className={style.img} src={profile?.image} alt="프로필이미지" />}
                     </span>
                 </div>
             </div>

@@ -1,0 +1,110 @@
+@import "/src/app/scss/variables.scss";
+.my_edit {
+    margin: 0 32px;
+}
+
+.image_area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn_wrap {
+    display: flex;
+    margin-top: 20px;
+
+    button, label {
+        @include text-style('b2-2', 'black');
+        
+        padding: 0 20px;
+        background-color: #fff;
+        border: 1px solid black;
+        border-radius: 42px;
+        line-height: 42px;
+        cursor: pointer;
+    }
+
+    button {
+        margin-left: 8px;
+    }
+}
+
+.thumb_wrap {
+    width: 175px;
+    height: 175px;
+    margin-top: 121px;
+    background: #f1f3f5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='71' height='71' fill='none'%3E%3Cpath fill='%239CA3AF' d='M35.5 44.18c9.173 0 17.33 4.428 22.523 11.301 1.118 1.48 1.677 2.22 1.659 3.219-.014.772-.5 1.746-1.107 2.223-.787.617-1.877.617-4.056.617H16.482c-2.18 0-3.27 0-4.056-.617-.608-.477-1.093-1.451-1.107-2.223-.019-1 .54-1.74 1.658-3.219C18.17 48.608 26.327 44.18 35.5 44.18ZM35.5 35.499c-7.191 0-13.02-5.83-13.02-13.021 0-7.191 5.829-13.021 13.02-13.021s13.021 5.83 13.021 13.02c0 7.192-5.83 13.022-13.02 13.022Z'/%3E%3C/svg%3E") center/70px 70px no-repeat;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.info_area {
+    margin-top: 73px;
+
+    .head_title {
+        @include text-style('s1', 'black');
+    
+        line-height: 38px;
+    }
+    
+    .nickname_wrap {
+        display: flex;
+        margin-top: 32px;
+        padding: 32px 20px;
+        border: 1px solid #e2e2e2;
+        border-width: 1px 0;
+    }
+    
+    .description_wrap {
+        display: flex;
+        padding: 32px 20px;
+        border-bottom: 1px solid #e2e2e2;
+    }
+    
+    .sub_title {
+        @include text-style('s3-2', 'gray1');
+    
+        width: 250px;
+        margin-right: 50px;
+        flex-shrink: 0;
+        line-height: 28px;
+    }
+    
+    .nickname, .description {
+        @include text-style('s3-2', 'black');
+        @include ellipsis;
+    
+        flex: 1;
+        line-height: 28px;
+    }
+
+    .btn_area {
+        display: flex;
+        justify-content: center;
+        margin: 40px auto 105px;
+
+        button {
+            @include text-style('b2-2', 'white');
+            
+            padding: 0 20px;
+            background-color: #3c76f1;
+            border-radius: 42px;
+            line-height: 42px;
+    
+            & + button {
+                @include text-style('b2-2', 'black');
+
+                background-color: #f7f7fb;
+                margin-left: 12px;
+            }
+        }
+    }
+}
