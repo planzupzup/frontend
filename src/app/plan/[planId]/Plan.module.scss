@@ -469,7 +469,7 @@
         transform: translateX(0);
 
         .floating_area {
-            overflow: auto;
+            overflow: hidden;
         }
 
         .handle {
