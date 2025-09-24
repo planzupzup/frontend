@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import style from "./destination.module.scss";
 import classNames from "classnames";
+import PlanCreateModal from "@/app/components/modal/PlanCreateModal"; // New import
 
 interface Destination {
   id?: number;
@@ -25,6 +26,9 @@ const DestinationSelector: React.FC = () => {
   const [search, setSearch] = useState<string>("");
   const [relatedSearchTerms, setRelatedSearchTerms] = useState<Destination[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>(defaultDestinations);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDestinationName, setSelectedDestinationName] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     document.body.style.height = 'auto';
@@ -52,8 +56,20 @@ const DestinationSelector: React.FC = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const handleNavigate = (name: string) => {
+  const handleItemClick = (name: string, image:string) => {
+    setSelectedDestinationName(name);
+    setSelectedImage(image)
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmNavigation = (name: string) => { 
     window.location.href = `/create?destinationName=${name}`;
+    setIsModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedDestinationName("");
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +100,7 @@ const DestinationSelector: React.FC = () => {
             <li
               className={style.searchTerm}
               key={term.id}
-              onClick={() => handleNavigate(term.name)}
+              onClick={() => handleItemClick(term.name, term.image)} // Changed onClick
             >
               {term.name}
             </li>
@@ -98,7 +114,7 @@ const DestinationSelector: React.FC = () => {
             <div
               key={destination.id || `${destination.name}-${index}`}
               className={style.item}
-              onClick={() => handleNavigate(destination.name)}
+              onClick={() => handleItemClick(destination.name, destination.image)}
             >
               <img
                 src={destination.image}
@@ -114,7 +130,7 @@ const DestinationSelector: React.FC = () => {
             <div
               key={destination.id || `${destination.name}-${index + 3}`}
               className={style.item}
-              onClick={() => handleNavigate(destination.name)}
+              onClick={() => handleItemClick(destination.name, destination.image)}
             >
               <img
                 src={destination.image}
@@ -127,6 +143,16 @@ const DestinationSelector: React.FC = () => {
         </div>
         <div className={style.spacer} />
       </div>
+
+      {isModalOpen && ( // New modal rendering
+        <PlanCreateModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          destinationName={selectedDestinationName}
+          onConfirm={handleConfirmNavigation}
+          image={selectedImage}
+        />
+      )}
     </div>
   );
 };

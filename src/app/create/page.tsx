@@ -11,7 +11,7 @@ import { useSearchParams } from 'next/navigation';
 
 const createPlan = () => {
   const searchParams = useSearchParams();
-  const [destinationName, setDestinationName] = useState(searchParams.get('destinationName'));
+  const destinationName = searchParams.get('destinationName');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());

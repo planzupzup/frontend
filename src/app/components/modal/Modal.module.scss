@@ -1,42 +1,70 @@
-.modal_wrap {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.modal_area {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 500px;
-    background-color: #fff;
-    border-radius: 6px;
-    text-align: center;
+.modal {
+  background-color: white;
+  padding: 0 32px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  max-width: 653px;
+  max-height: 456px;
 }
 
-.header {
-    line-height: 50px;
-    border-bottom: #e6e6e6;
-    font-size: 15sx;
+.spacer {
+  height: 10px;
 }
 
-.close_btn {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    left: 5px;
-    top: 5px;
-    width: 40px;
-    height: 40px;
-    color: #222;
+.title {
+  font-size: 30px;
+  font-weight: 600;
+  text-align: center;
+}
 
-    .svg {
-        display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3; overflow: visible;
-    }
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.button {
+  padding: 10px 16px;
+  border-radius: 42px;
+  font-size: 16px;
+  font-weight: 500;
+  height: 42px;
+  box-sizing: border-box;
+}
+
+.image {
+  width: 100%;
+  height: 248px;
+  border-radius: 12px;
+  object-fit: cover;
 }

@@ -103,7 +103,7 @@ const PlanList: React.FC = () => {
     <div style={styles.container}>
       <div style={styles.row}>
         <div style={styles.title}>
-          {destination}을 다녀온 사람들의 여행 계획 ✈️
+          {decodeURIComponent(destination)}을 다녀온 사람들의 여행 계획 ✈️
         </div>
         <div style={styles.button} onClick={() => setPlanCreateModal(true)}>
           내 일정 만들기
@@ -124,8 +124,8 @@ const PlanList: React.FC = () => {
       </div>
 
       <PlanCreateModal
-        open={planCreateModal}
-        destination={destination || ""}
+        isOpen={planCreateModal}
+        destinationName={destination || ""}
         onClose={() => setPlanCreateModal(false)}
       />
     </div>
