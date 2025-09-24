@@ -2,29 +2,46 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import style from "./destination.module.scss";
+import classNames from "classnames";
 
 interface Destination {
-  id: number;
+  id?: number;
   image: string;
   name: string;
 }
 
+const defaultDestinations: Destination[] = [
+  { name: "부산", image: "/destination/busan.jpg" },
+  { name: "강릉", image: "/destination/gangneung.avif" },
+  { name: "제주도", image: "/destination/jeju.webp" },
+  { name: "전주", image: "/destination/jeonju.png" },
+  { name: "서울", image: "/destination/seoul.avif" },
+  { name: "속초", image: "/destination/sokcho.avif" },
+  { name: "속초", image: "/destination/sokcho.jpg" },
+];
+
 const DestinationSelector: React.FC = () => {
   const [search, setSearch] = useState<string>("");
-  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [relatedSearchTerms, setRelatedSearchTerms] = useState<Destination[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>(defaultDestinations);
+
+  useEffect(() => {
+    document.body.style.height = 'auto';
+  }, []);
 
   useEffect(() => {
     const fetchDestinations = async () => {
       if (!search.trim()) {
-        setDestinations([]);
+        setRelatedSearchTerms([]);
         return;
       }
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/destination/${search}`, { withCredentials: true });
-        setDestinations(response.data.result || []);
+        setRelatedSearchTerms(response.data.result || []);
       } catch (error) {
         console.error("Error fetching destinations:", error);
-        setDestinations([]);
+        setRelatedSearchTerms([]);
       }
     };
 
@@ -43,99 +60,73 @@ const DestinationSelector: React.FC = () => {
     setSearch(e.target.value);
   };
 
-  const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-      padding: "40px 20px",
-    },
-    title: {
-      textAlign: "center",
-      fontSize: "28px",
-      fontWeight: 800,
-    },
-    spacer: {
-      height: "50px",
-    },
-    searchContainer: {
-      display: "flex",
-      justifyContent: "center",
-      marginBottom: "30px",
-    },
-    searchInput: {
-      width: "60%",
-      padding: "10px 16px",
-      fontSize: "16px",
-      borderRadius: "6px",
-      border: "1px solid #ccc",
-    },
-    grid: {
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      gap: "30px",
-    },
-    item: {
-      cursor: "pointer",
-    },
-    imageBox: {
-      width: "220px",
-      height: "220px",
-      borderRadius: "10px",
-      overflow: "hidden",
-      objectFit: "cover",
-      backgroundColor: "#eee",
-    },
-    image: {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-    },
-    name: {
-      marginTop: "10px",
-      fontSize: "20px",
-      fontWeight: 600,
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.title}>어디로 여행을 떠나시나요?</div>
-      <div style={styles.spacer} />
-
-      <div style={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="국가명이나 도시명으로 검색해보세요"
-          style={styles.searchInput}
-          value={search}
-          onChange={handleSearchChange}
-        />
+    <div className={style.container}>
+      <div>
+        <h2 className={style.title}>지금 어디로 떠나고 싶으신가요?</h2>
+        <p className={style.subTitle}>여행지를 검색해보세요</p>
       </div>
-        <ul style={styles.searchContainer}>
-          {destinations.map((destination) => (
-            <li style={{...styles.searchInput, ...styles.item}} key={destination.id} onClick={() => handleNavigate(destination.name)}>{destination.name}</li>
+      <div className={style.spacer} />
+
+      <div className={style.searchContainer}>
+        <div style={{ display: "flex", gap: "8px", }}>
+          <img style={{ paddingLeft: "20px" }} src="/search.svg" alt="search-icon" />
+          <input
+            type="text"
+            placeholder="검색어를 입력하세요"
+            className={style.searchInput}
+            value={search}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <ul className={classNames(style.relatedSearchTherms, { [style.hidden]: relatedSearchTerms.length === 0 })}>
+          {relatedSearchTerms.map((term) => (
+            <li
+              className={style.searchTerm}
+              key={term.id}
+              onClick={() => handleNavigate(term.name)}
+            >
+              {term.name}
+            </li>
           ))}
         </ul>
-      {/* <div style={styles.grid}>
-        {destinations.map((destination) => (
-          <div
-            key={destination.id}
-            style={styles.item}
-            onClick={() => handleNavigate(destination.name)}
-          >
-            <div style={styles.imageBox}>
+      </div>
+
+      <div className={style.listContainer}>
+        <div className={style.list}>
+          {destinations.slice(0, 3).map((destination, index) => (
+            <div
+              key={destination.id || `${destination.name}-${index}`}
+              className={style.item}
+              onClick={() => handleNavigate(destination.name)}
+            >
               <img
-                src={
-                  destination.image ||
-                  "https://todak-file.s3.ap-northeast-2.amazonaws.com/default-images/no-image.png"
-                }
+                src={destination.image}
                 alt={destination.name}
-                style={styles.image}
+                className={style.image}
               />
+              <div className={style.name}>{destination.name}</div>
             </div>
-            <div style={styles.name}>{destination.name}</div>
-          </div>
-        ))}
-      </div> */}
+          ))}
+        </div>
+        <div className={style.list}>
+          {destinations.slice(3, 7).map((destination, index) => (
+            <div
+              key={destination.id || `${destination.name}-${index + 3}`}
+              className={style.item}
+              onClick={() => handleNavigate(destination.name)}
+            >
+              <img
+                src={destination.image}
+                alt={destination.name}
+                className={style.image}
+              />
+              <div className={style.name}>{destination.name}</div>
+            </div>
+          ))}
+        </div>
+        <div className={style.spacer} />
+      </div>
     </div>
   );
 };
