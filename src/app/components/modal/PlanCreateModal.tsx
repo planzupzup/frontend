@@ -2,25 +2,25 @@
 "use client";
 /* eslint-disable */
 
-import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useRef } from "react";
+import style from "./Modal.module.scss"
+import { useRouter } from "next/navigation";
 
 interface PlanCreateModalProps {
-  open: boolean;
-  destination: string;
+  isOpen: boolean;
+  destinationName: string;
+  image?: string;
   onClose: () => void;
   onCreatePlan?: (plan: any) => void;
+  onConfirm?: (name: string) => void
 }
-const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ open, destination, onClose, onCreatePlan }) => {
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
-
+const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ isOpen, destinationName, image, onClose, onConfirm }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    if(open) {
-      const handleClickOutside = (event : MouseEvent) => {
+    if (isOpen) {
+      const handleClickOutside = (event: MouseEvent) => {
         if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
           onClose();
         }
@@ -32,128 +32,39 @@ const PlanCreateModal: React.FC<PlanCreateModalProps> = ({ open, destination, on
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [open, onClose]);
+  }, [isOpen, onClose]);
 
-  const createPlan = async () => {
-    const newPlan = {
-      startDate,
-      endDate,
-      title,
-      destinationName: destination,
-    };
+  if (!isOpen) return null;
 
-    try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKHOST}/api/plan`, newPlan,{ withCredentials: true });
-      console.log("Plan created:", response.data);
-
-      onCreatePlan?.(newPlan);
-      onClose();
-      window.location.href = `/plan/${response.data.result.planId}`;
-    } catch (error) {
-      console.error("Failed to create plan:", error);
-    }
-  };
-
-  if (!open) return null;
+  const plansPageRouter = () => {
+    router.push(`/plans/${destinationName}`);
+    onClose();
+  }
 
   return (
-    <div style={styles.overlay} onClick={(e) => {
+    <div className={style.overlay} onClick={(e) => {
       e.stopPropagation();
     }}>
-      <div style={styles.modal} ref={modalRef}>
-        <div style={styles.spacer} />
-        <div style={styles.title}>여행 기간이 어떻게 되시나요?</div>
-
-        <div style={styles.row}>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            style={styles.input}
-            placeholder="시작 날짜"
-          />
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            style={styles.input}
-            placeholder="종료 날짜"
-          />
-        </div>
-
-        <div style={styles.row}>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={styles.input}
-            placeholder="여행 주제"
-          />
-        </div>
-
-        <div style={styles.button} onClick={createPlan}>
-          일정 생성하기
-        </div>
-        <div style={styles.spacer} />
+      <div className={style.modal} ref={modalRef}>
+        <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", textAlign: "end" }}><button onClick={() => onClose()}><img src="/x.svg" alt="" /></button></div>
+        <h3 className={style.title}><span style={{ color: "#3C76F1" }}>{destinationName}</span>(으)로 플랜 줍줍하러가볼까?</h3>
       </div>
+      <img className={style.image} src={image} alt={destinationName} />
+      <div style={{ display: "flex", justifyContent: "end", width: "100%", gap: "11px" }}>
+        <button onClick={plansPageRouter} className={style.button} style={{ border: "1px solid #E2E2E2" }} >
+          플랜줍기
+        </button>
+        {onConfirm &&
+          <button className={style.button} style={{ background: "#3C76F1", color: "#fff" }} onClick={() => onConfirm(destinationName)}>
+            플랜만들기
+          </button>
+        }
+      </div>
+      <div className={style.spacer} />
     </div>
+    </div >
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  overlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100vw",
-    height: "100vh",
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  modal: {
-    backgroundColor: "white",
-    width: "700px",
-    padding: "30px 20px",
-    borderRadius: "8px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  spacer: { height: "10px" },
-  title: {
-    fontSize: "30px",
-    fontWeight: 500,
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  row: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "16px",
-    width: "100%",
-    maxWidth: "600px",
-    marginBottom: "20px",
-  },
-  input: {
-    flex: 1,
-    padding: "10px",
-    fontSize: "16px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-  },
-  button: {
-    backgroundColor: "black",
-    color: "white",
-    padding: "10px 16px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: 500,
-    marginTop: "10px",
-  },
 };
 
 export default PlanCreateModal;

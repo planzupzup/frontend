@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import style from "@/app/plan/[planId]/Plan.module.scss";
@@ -32,7 +31,7 @@ export interface Location {
 export interface Plan {
   id: number;
   title: string;
-  destination: string;
+  destinationName: string;
   startDate: string;
   endDate: string;
   isBookMarked: boolean;
@@ -43,11 +42,18 @@ export interface Day {
   index: string;
 }
 
+export type TProfile = {
+  nickName?: string,
+  description?: string,
+  image?: string
+}
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACK_HOST;
 
 const PlanDetail: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
   const [plan, setPlan] = useState<Plan | null>(null);
+  const [profile, setProfile] = useState<TProfile | null>(null);
   const [location, setLocation] = useState<Location>();
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>('전체 일정');
@@ -58,7 +64,6 @@ const PlanDetail: React.FC = () => {
   const [placesService, setPlacesService] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
   const [polyline, setPolyline] = useState<google.maps.Polyline | google.maps.Polyline[] | null>(null);
-  const [durations, setDurations] = useState<number[]>([]);
   const [totalLocationList, setTotalLocationList] = useState<Location[][]>([]); // 편집되어 저장될 수있는 원본 전체 지역 리스트
   const [originalTotalLocationList, setOriginalTotalLocationList] = useState<Location[][]>([]); // 편집되지 않은 원본 전체 지역 리스트
 
@@ -69,7 +74,16 @@ const PlanDetail: React.FC = () => {
     setMarkers,
     placesService,
     setPlacesService
-  },mapRef);
+  }, mapRef);
+
+  const getProfile = async () => {
+    try {
+      const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page`, { withCredentials: true });
+      setProfile(data.data.result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   const createCustomIconWithColor = (text: string, color: string) => {
     const canvas = document.createElement('canvas');
@@ -100,7 +114,7 @@ const PlanDetail: React.FC = () => {
   const createPolyLine = () => {
     const newMarkers: any[] = [];
     const pathCoordinates: google.maps.LatLng[] = [];
-    const bounds = new window.google.maps.LatLngBounds(); 
+    const bounds = new window.google.maps.LatLngBounds();
 
     var lineSymbol = {
       path: 'M 0,-1 0,1',
@@ -120,51 +134,51 @@ const PlanDetail: React.FC = () => {
 
     markers.forEach((marker) => marker.setMap(null));
 
-    if(selectedDay === '전체 일정') {
+    if (selectedDay === '전체 일정') {
       const allPaths: google.maps.LatLng[][] = [];
 
       totalLocationList.forEach((locationList, dayIndex) => {
         const dayPath: google.maps.LatLng[] = [];
         locationList.forEach((location, locationIndex) => {
-        const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
-        dayPath.push(latLng);
-        bounds.extend(latLng);
+          const latLng = new window.google.maps.LatLng(location.latitude, location.longitude);
+          dayPath.push(latLng);
+          bounds.extend(latLng);
 
-        console.log(dayIndex)
+          console.log(dayIndex)
 
-        newMarkers.push(new window.google.maps.Marker({
-          position: latLng,
-          map: googleMap,
-          icon: createCustomIconWithColor((locationIndex + 1).toString(), colorPalette[dayIndex % colorPalette.length]),
-        }))
-      })
-      
-      if (dayPath.length > 0) {
-        allPaths.push(dayPath);
-      }
-    });
-
-    const polylinesToSet: google.maps.Polyline[] = [];
-    allPaths.forEach((path, index) => {
-      if(path.length > 0 && googleMap) {
-        polylinesToSet.push(
-          new window.google.maps.Polyline({
-            path: path,
-            strokeOpacity: 0,
-            icons: [
-              {
-                icon: { ...lineSymbol, strokeColor: colorPalette[index % colorPalette.length] }, // Polyline 색상 적용
-                offset: '0',
-                repeat: '20px',
-              },
-            ],
+          newMarkers.push(new window.google.maps.Marker({
+            position: latLng,
             map: googleMap,
-          })
-        )
-      }
-    })
+            icon: createCustomIconWithColor((locationIndex + 1).toString(), colorPalette[dayIndex % colorPalette.length]),
+          }))
+        })
 
-    setPolyline(polylinesToSet);
+        if (dayPath.length > 0) {
+          allPaths.push(dayPath);
+        }
+      });
+
+      const polylinesToSet: google.maps.Polyline[] = [];
+      allPaths.forEach((path, index) => {
+        if (path.length > 0 && googleMap) {
+          polylinesToSet.push(
+            new window.google.maps.Polyline({
+              path: path,
+              strokeOpacity: 0,
+              icons: [
+                {
+                  icon: { ...lineSymbol, strokeColor: colorPalette[index % colorPalette.length] }, // Polyline 색상 적용
+                  offset: '0',
+                  repeat: '20px',
+                },
+              ],
+              map: googleMap,
+            })
+          )
+        }
+      })
+
+      setPolyline(polylinesToSet);
 
     } else {
       const locationList = totalLocationList[parseInt(selectedDay, 10) - 1];
@@ -179,7 +193,7 @@ const PlanDetail: React.FC = () => {
         }))
       })
 
-      if(pathCoordinates.length > 0 && googleMap) {
+      if (pathCoordinates.length > 0 && googleMap) {
         setPolyline(
           new window.google.maps.Polyline({
             path: pathCoordinates,
@@ -201,19 +215,19 @@ const PlanDetail: React.FC = () => {
 
     setMarkers(newMarkers);
 
-    if(googleMap) {
-      if(selectedDay === '전체 일정') {
-        if(totalLocationList.flat().length ===0 ) {
+    if (googleMap) {
+      if (selectedDay === '전체 일정') {
+        if (totalLocationList.flat().length === 0) {
           return;
         }
-      }else {
-        if(totalLocationList[parseInt(selectedDay) -1].length ===0 ) {
+      } else {
+        if (totalLocationList[parseInt(selectedDay) - 1].length === 0) {
           return;
         }
       }
       googleMap.fitBounds(bounds);
 
-      const currentLocations = selectedDay === '전체 일정' ? totalLocationList.flat() : totalLocationList[parseInt(selectedDay) -1];
+      const currentLocations = selectedDay === '전체 일정' ? totalLocationList.flat() : totalLocationList[parseInt(selectedDay) - 1];
 
       if (currentLocations.length === 1) {
         googleMap.setZoom(15);
@@ -223,34 +237,34 @@ const PlanDetail: React.FC = () => {
   }
 
   useEffect(() => {
-    if(mapRef.current){
+    if (mapRef.current) {
       googleMapService?.loadGoogleMapScript();
     }
-  },[mapRef]);
+  }, [mapRef]);
 
   useEffect(() => {
-    if(location && googleMap) {
+    if (location && googleMap) {
       const lat = location.latitude;
       const lng = location.longitude;
-  
+
       googleMap.panTo({ lat, lng });
     }
-  },[location]);
+  }, [location]);
 
   useEffect(() => {
-    if(googleMap){
+    if (googleMap) {
       createPolyLine();
     }
-  },[totalLocationList, selectedDay]);
+  }, [totalLocationList, selectedDay]);
 
   useEffect(() => {
-    if(totalLocationList && !isEditing) {
+    if (totalLocationList && !isEditing) {
       setTotalLocationList(originalTotalLocationList);
     } // 편집 종료시 원본 전체 지역 리스트로 복구
-  },[isEditing]);
+  }, [isEditing]);
 
   useEffect(() => {
-    if(days.length>0){
+    if (days.length > 0) {
       loadTotalLocationList();
     }
   }, [days, isEditing]);
@@ -265,9 +279,13 @@ const PlanDetail: React.FC = () => {
     loadPlan();
   }, [planId]);
 
+  useEffect(() => {
+    getProfile()
+  }, [])
+
   const loadPlan = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}`,{ withCredentials: true });
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}`, { withCredentials: true });
       setPlan(response.data.result);
     } catch (e) {
       alert('계획을 불러오는데 실패했습니다.');
@@ -275,31 +293,31 @@ const PlanDetail: React.FC = () => {
   };
 
   const onClickEditBtn = () => {
-    if(isEditing) {
-      if(totalLocationList.flat().length===0) {
+    if (isEditing) {
+      if (totalLocationList.flat().length === 0) {
         alert("가고싶은 장소 적어도 한 곳은 추가해주세요!");
         return;
       }
       fetch(`${BACKEND_URL}/api/location/${planId}`, {
-        method: 'POST', 
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(totalLocationList)
       })
-      .then(response => {
-        if (!response.ok) {
-          // If the server response was not ok (e.g., 404, 500), throw an error
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json(); // Parse the JSON response body
-      })
-      .then((responseData: any) => { 
-        console.log('Success:', responseData); 
-      })
-      .catch((error: Error) => {
-        console.error('Error:', error);
-      });
+        .then(response => {
+          if (!response.ok) {
+            // If the server response was not ok (e.g., 404, 500), throw an error
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json(); // Parse the JSON response body
+        })
+        .then((responseData: any) => {
+          console.log('Success:', responseData);
+        })
+        .catch((error: Error) => {
+          console.error('Error:', error);
+        });
       loadTotalLocationList();
     }
     setIsEditing(prev => !prev);
@@ -307,59 +325,59 @@ const PlanDetail: React.FC = () => {
 
   const loadTotalLocationList = async () => {
     try {
-      var tempTotalLocationList:Location[][] = [];
+      var tempTotalLocationList: Location[][] = [];
       let isFirst = true;
 
-      for(const [index] of days.entries()) {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/${index + 1}`,{ withCredentials: true });
+      for (const [index] of days.entries()) {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/${index + 1}`, { withCredentials: true });
 
         var tempLocationList = response.data.result.locations;
 
         console.log(tempLocationList);
-        var tempLocation: {lat: number; lng: number} | null = null;
-    
-        if(tempLocationList) {
-          for(const [index, location] of tempLocationList.entries()) {
-            if(index == 0) {
-              tempLocation = {lat: location.latitude, lng: location.longitude};
+        var tempLocation: { lat: number; lng: number } | null = null;
+
+        if (tempLocationList) {
+          for (const [index, location] of tempLocationList.entries()) {
+            if (index == 0) {
+              tempLocation = { lat: location.latitude, lng: location.longitude };
               location.duration = 0;
               continue;
             }
-      
+
             try {
               const response = await fetch(
                 `/api/google/direction?origin=${tempLocation?.lat},${tempLocation?.lng}&destination=${location.latitude},${location.longitude}&mode=walking`
               );
-        
+
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
-        
+
               const data = await response.json();
               console.log(data);
-              tempLocation = {lat: location.latitude, lng: location.longitude};
-              if(data.routes[0]) {
+              tempLocation = { lat: location.latitude, lng: location.longitude };
+              if (data.routes[0]) {
                 location.duration = data.routes[0].legs[0].duration.value;
               }
-              else {location.duration = 0;}
-            } catch(e) {
+              else { location.duration = 0; }
+            } catch (e) {
               console.error(e);
-              return [] ;
+              return [];
             }
           }
-        } 
-        
-        if(tempLocationList && tempLocationList.length > 0) {
+        }
+
+        if (tempLocationList && tempLocationList.length > 0) {
           isFirst = false;
         } else {
-          tempLocationList=[];
+          tempLocationList = [];
         }
         tempTotalLocationList[index] = tempLocationList;
       }
 
       setTotalLocationList(tempTotalLocationList);
       setOriginalTotalLocationList(tempTotalLocationList);
-      if(isFirst && days && days.length > 0) {
+      if (isFirst && days && days.length > 0) {
         setIsEditing(true);
         setSelectedDay("1");
         setIsShow(true);
@@ -394,12 +412,12 @@ const PlanDetail: React.FC = () => {
     <div style={{ display: 'flex' }} className={style.list_wrap}>
       {/* Sidebar */}
       <div className={style.list}>
-        <button onClick={() => setSelectedDay('전체 일정')} aria-selected={ selectedDay === '전체 일정' ? true : false } className={style.total_btn}>
+        <button onClick={() => setSelectedDay('전체 일정')} aria-selected={selectedDay === '전체 일정' ? true : false} className={style.total_btn}>
           <span className="blind">전체 일정</span>
         </button>
         <div className={style.scroll_area}>
-          {Array.from({length:totalLocationList.length}, (_, index) => index +1).map(day => (
-            <div key={day} onClick={() => {setSelectedDay(`${day}`)}} aria-selected={ selectedDay === `${day}` ? true : false } className={style.item}>
+          {Array.from({ length: totalLocationList.length }, (_, index) => index + 1).map(day => (
+            <div key={day} onClick={() => { setSelectedDay(`${day}`) }} aria-selected={selectedDay === `${day}` ? true : false} className={style.item}>
               {day}<span className="blind">일차</span>
             </div>
           ))}
@@ -410,25 +428,25 @@ const PlanDetail: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className={classNames(style.contents, {[style.type_total]:selectedDay === "전체 일정"})}>
-        <div className={classNames(style.floating_wrap, {[style.is_show]:isShow, [style.is_edit]:isEditing})}>
+      <div className={classNames(style.contents, { [style.type_total]: selectedDay === "전체 일정" })}>
+        <div className={classNames(style.floating_wrap, { [style.is_show]: isShow, [style.is_edit]: isEditing })}>
           {/* <EditSchedule day={selectedDay} planId={planId} /> */}
-          <div className={classNames(style.floating_area,{[style.is_edit]:isEditing})}>
-            <TopProfile location={"제주도"} nickname={"닉네임"} title={plan?.title} isBookMarked={plan?.isBookMarked} date={`${plan?.startDate} - ${plan?.endDate}`} />
+          <div className={classNames(style.floating_area, { [style.is_edit]: isEditing })}>
+            <TopProfile location={plan?.destinationName} profile_img={profile?.image} nickname={profile?.nickName} title={plan?.title} isBookMarked={plan?.isBookMarked} date={`${plan?.startDate} - ${plan?.endDate}`} />
             <div className={style.content_wrap}>
               {
-                (isEditing && totalLocationList.length > 0 )&&<CreateSearchList setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay}/>
+                (isEditing && totalLocationList.length > 0) && <CreateSearchList setTotalLocationList={setTotalLocationList} totalLocationList={totalLocationList} selectedDay={selectedDay} />
               }
               <div className={style.schedule_wrap}>
                 <div className={style.location_list_area}>
                   {
-                    isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={totalLocationList} setTotalLocationList={setTotalLocationList} selectedDay={selectedDay}/> :
-                    <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
+                    isEditing && totalLocationList ? <LocationListEditWrapper totalLocationList={totalLocationList} setTotalLocationList={setTotalLocationList} selectedDay={selectedDay} /> :
+                      <LocationListWrapper selectedDay={selectedDay} totalLocationList={totalLocationList} setLocation={setLocation} />
                   }
                 </div>
               </div>
             </div>
-            {selectedDay==="전체 일정" && <CommentList />}
+            {selectedDay === "전체 일정" && <CommentList />}
           </div>
           <span className={style.handle} onClick={handleShowButton}></span>
         </div>
@@ -439,5 +457,3 @@ const PlanDetail: React.FC = () => {
 };
 
 export default PlanDetail;
-
-export const runtime = 'edge';

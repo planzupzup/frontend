@@ -7,8 +7,11 @@ import style from "./Create.module.scss";
 import { ko } from 'date-fns/locale';
 import classNames from 'classnames';
 import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
 
 const createPlan = () => {
+  const searchParams = useSearchParams();
+  const destinationName = searchParams.get('destinationName');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -34,7 +37,7 @@ const createPlan = () => {
         return;
       }
     }
-    
+
     setStartDate(start);
     setEndDate(end);
   };
@@ -73,7 +76,7 @@ const createPlan = () => {
       content: "내용",
       startDate: getDTODateFormat(startDate),
       endDate: getDTODateFormat(endDate),
-      destinationName: "제주"
+      destinationName: destinationName
     };
 
     console.log(newPlan);
