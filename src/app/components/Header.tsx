@@ -49,7 +49,7 @@ const Header: React.FC = () => {
         <div className={styles.nav}>
           <button
             className={styles.customButton}
-            onClick={() => (window.location.href = "/create")}
+            onClick={() => (window.location.href = "/destination")}
           >
             플랜만들기
           </button>
