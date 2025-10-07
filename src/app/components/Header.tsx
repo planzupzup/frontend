@@ -41,11 +41,11 @@ const Header: React.FC = () => {
     }
   };
 
-  const clickCreatePlanButton = () => {
+  const clickCreatePlanOrMyPageButton = (location: string) => {
     if (isLogin) {
-      router.push('/destination');
+      router.push(`/${location}`);
     } else {
-      window.location.href = `${process.env.NEXT_PUBLIC_BACK_HOST}/oauth2/authorization/kakao`;
+      router.push('/login')
     }
   }
 
@@ -57,7 +57,7 @@ const Header: React.FC = () => {
         <div className={styles.nav}>
           <button
             className={styles.customButton}
-            onClick={clickCreatePlanButton}
+            onClick={() => clickCreatePlanOrMyPageButton('destination')}
           >
             플랜만들기
           </button>
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
             {profileMenuOpen && (
               <>
                 <div className={styles.nav}>
-                  <button onClick={() => router.push('/my')} className={styles.customButton}>
+                  <button onClick={() => clickCreatePlanOrMyPageButton('my')} className={styles.customButton}>
                     마이페이지
                   </button>
                 </div>
