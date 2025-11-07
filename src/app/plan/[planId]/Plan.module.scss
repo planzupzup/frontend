@@ -423,6 +423,10 @@
         padding: 40px 10px;
     }
 
+    @media (max-width: 769px) {
+        padding: 40px 10px;
+    }
+
     &.is_edit {
         height: 100%;
         padding-top: 0;
@@ -483,6 +487,10 @@
         transform: translateY(-50%);
         cursor: pointer;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+
+        @media (max-width: 769px) {
+            right: 0;
+        }
 
         &::after {
             position: absolute;
