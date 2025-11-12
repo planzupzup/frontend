@@ -1,8 +1,8 @@
 "use client";
 
-import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import style from "./My.module.scss";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import Filter from "@/app/components/Filter";
 import { TPlan } from "../search/page";
 import { NoResult } from "../components/create/CreateSearchList";
@@ -14,7 +14,7 @@ export type TProfile = {
 }
 
 const My = () => {
-    const [profile, setProfile] = useState<TProfile|null>(null);
+    const [profile, setProfile] = useState<TProfile | null>(null);
     const [pageMyPlan, setPageMyPlan] = useState(0);
     const [hasMoreMyPlan, setHasMoreMyPlan] = useState(true);
     const [loadingMyPlan, setLoadingMyPlan] = useState(false);
@@ -39,46 +39,46 @@ const My = () => {
         if (loadingMyPlan || !hasMoreMyPlan) return;
         setLoadingMyPlan(true);
         try {
-            const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page/plans?visibility=${filterMyPlan}&size=3&page=${pageToFetch}`, {withCredentials: true});
+            const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page/plans?visibility=${filterMyPlan}&size=3&page=${pageToFetch}`, { withCredentials: true });
             setPlansMyPlan((prev) => [...prev, ...data.data.result.content]);
-            setPageMyPlan(prev => prev+1);
+            setPageMyPlan(prev => prev + 1);
 
-            if(parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages,10) -2 ){setIsMoreBtnMyPlan(false);}
+            if (parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages, 10) - 2) { setIsMoreBtnMyPlan(false); }
             else {
                 setIsMoreBtnMyPlan(true);
             }
             setTotalElementsMyPlan(data.data.result.totalElements);
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
         setLoadingMyPlan(false);
-    },[loadingMyPlan, filterMyPlan, hasMoreMyPlan, pageMyPlan])
+    }, [loadingMyPlan, filterMyPlan, hasMoreMyPlan, pageMyPlan])
 
     const fetchPlansBookmark = useCallback(async (pageToFetch: number) => {
         if (loadingBookmark) return;
 
         setLoadingBookmark(true);
         try {
-            const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page/bookmark/${filterBookmark}?size=6&page=${pageToFetch}`, {withCredentials: true});
+            const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page/bookmark/${filterBookmark}?size=6&page=${pageToFetch}`, { withCredentials: true });
             setPlansBookmark((prev) => [...prev, ...data.data.result.content]);
-            setPageBookmark(prev => prev+1);
+            setPageBookmark(prev => prev + 1);
 
-            if(parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages,10) -2 ){setIsMoreBtnBookmark(false);}
+            if (parseInt(data.data.result.page, 10) >= parseInt(data.data.result.totalPages, 10) - 2) { setIsMoreBtnBookmark(false); }
             else {
                 setIsMoreBtnBookmark(true);
             }
             setTotalElementsBookmark(data.data.result.totalElements);
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
         setLoadingBookmark(false);
-    },[loadingBookmark, filterBookmark, hasMoreBookmark, pageBookmark]);
+    }, [loadingBookmark, filterBookmark, hasMoreBookmark, pageBookmark]);
 
     const fetchProfile = async () => {
         try {
-            const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page`, {withCredentials: true});
+            const data = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/my-page`, { withCredentials: true });
             setProfile(data.data.result);
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
     }
@@ -87,24 +87,21 @@ const My = () => {
         setPlansMyPlan([]);
         setPageMyPlan(0);
         fetchPlansMyPlan(0);
-    }, [filterMyPlan]);
-
-    useEffect(() => {
         setPlansBookmark([]);
         setPageBookmark(0);
         fetchPlansBookmark(0);
-    }, [filterBookmark]);
+    }, [filterMyPlan, filterBookmark]);
 
     useEffect(() => {
         fetchProfile();
-    },[])
+    }, [])
 
     return (
         <div className={style.my}>
             <div className={style.profile_wrap}>
                 <div className={style.profile_area}>
                     <strong className={style.nickname}>{profile?.nickName}</strong>
-                    <p className={style.desc}>{profile?.description ?  profile.description : "소개가 없습니다."}</p>
+                    <p className={style.desc}>{profile?.description ? profile.description : "소개가 없습니다."}</p>
                     <div className={style.btn_wrap}>
                         <a href="/my/edit" type="button" className={style.edit_btn}>프로필 수정</a>
                     </div>
@@ -120,7 +117,7 @@ const My = () => {
                             <strong className={style.title}>내가 만든 플랜</strong>
                             <span className={style.count}>{totalElementsMyPlan}</span>
                         </span>
-                        <Filter firstText="전체" secondText="공개" thirdText="비공개" onClickFirstBtn={()=>setFilterMyPlan("ALL")} onClickSecondBtn={() => setFilterMyPlan("PUBLIC")} onClickThirdBtn={() => setFilterMyPlan("PRIVATE")} />
+                        <Filter firstText="전체" secondText="공개" thirdText="비공개" onClickFirstBtn={() => setFilterMyPlan("ALL")} onClickSecondBtn={() => setFilterMyPlan("PUBLIC")} onClickThirdBtn={() => setFilterMyPlan("PRIVATE")} />
                     </div>
                     <ul className={style.list}>
                         {
@@ -129,7 +126,7 @@ const My = () => {
                                     <li className={style.item} key={`${plan.title}-${plan.nickName}-${plan.planId}`}>
                                         <a href={`/plan/${plan.planId}`} className={style.link}>
                                             <span className={style.img_wrap}>
-                                                <img className={style.img} src={plan.profileImage} alt="프로필 이미지"/>
+                                                <img className={style.img} src={plan.profileImage} alt="프로필 이미지" />
                                             </span>
                                             <div className={style.info_area}>
                                                 <div className={style.days}>{plan.destinationName} - {plan.days}DAY</div>
@@ -153,7 +150,7 @@ const My = () => {
                             <strong className={style.title}>찜한 플랜</strong>
                             <span className={style.count}>{totalElementsBookmark}</span>
                         </span>
-                        <Filter firstText="전체" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={()=>setFilterBookmark("LATEST")} onClickSecondBtn={() => setFilterBookmark("COMMENT")} onClickThirdBtn={() => setFilterBookmark("BOOKMARK")} />
+                        <Filter firstText="전체" secondText="댓글순" thirdText="북마크순" onClickFirstBtn={() => setFilterBookmark("LATEST")} onClickSecondBtn={() => setFilterBookmark("COMMENT")} onClickThirdBtn={() => setFilterBookmark("BOOKMARK")} />
                     </div>
                     <ul className={style.list}>
                         {
@@ -162,7 +159,7 @@ const My = () => {
                                     <li className={style.item} key={`${plan.title}-${plan.nickName}-${plan.planId}`}>
                                         <a href={`/plan/${plan.planId}`} className={style.link}>
                                             <span className={style.img_wrap}>
-                                                <img className={style.img} src={plan.profileImage} alt="프로필 이미지"/>
+                                                <img className={style.img} src={plan.profileImage} alt="프로필 이미지" />
                                             </span>
                                             <div className={style.info_area}>
                                                 <div className={style.days}>{plan.destinationName} - {plan.days}DAY</div>
