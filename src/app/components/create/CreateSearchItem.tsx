@@ -28,7 +28,7 @@ const CreateSearchItem = ({ place, searchInput, addSearchItem, selectedDay, sear
         latitude: place.geometry.location.lat(),
         longitude: place.geometry.location.lng(),
         rating: place.rating,
-        description: "설명"
+        description: ""
     };
 
     const highlightText = (text: string, highlight: string) => {

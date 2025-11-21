@@ -27,7 +27,11 @@ const LocationItem = ({ isTotal, location, locationIndex, setLocation, orderColo
     const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
     const onClickItemImg = () => {
-        setIsShowModal(true);
+        if(!isEdit && location.images && location.images.length < 1 && location.description.length < 1) {
+            setIsShowModal(false);
+        } else {
+            setIsShowModal(true);
+        }
     }
 
     useEffect(() => {

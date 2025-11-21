@@ -19,11 +19,12 @@ const TopProfile = ({profile_img, nickName, title, location, date, isBookMarkedO
 
     const { planId } = useParams<{ planId: string }>();
     const [bookMarked, setBookMarked] = useState(false);
-    const [isPublic, setIsPublic] = useState(false);
+    const [isPublic, setIsPublic] = useState(true);
 
     useEffect (() => {
         if(isBookMarkedOrPublic) {
             setBookMarked(isBookMarkedOrPublic);
+            console.log(isBookMarkedOrPublic);
             setIsPublic(isBookMarkedOrPublic);
         }
     }, [isBookMarkedOrPublic]);
