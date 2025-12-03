@@ -191,10 +191,6 @@ const CreateSearchList = ({ setTotalLocationList, selectedDay, totalLocationList
     setHasMore(true);
   },[selectedDay]);
 
-  const isFirst = (totalLocationList: Location[][]) => {
-    return totalLocationList.every(location => location.length === 0);
-  }
-
     return (
         <div className={style.create_search_wrap}>
             <div className={style.search_wrap}>
