@@ -126,7 +126,7 @@ const My = () => {
                                     <li className={style.item} key={`${plan.title}-${plan.nickName}-${plan.planId}`}>
                                         <a href={`/plan/${plan.planId}`} className={style.link}>
                                             <span className={style.img_wrap}>
-                                                <img className={style.img} src={plan.profileImage} alt="프로필 이미지" />
+                                                {plan.profileImage && <img className={style.img} src={plan.profileImage} alt="프로필 이미지" />}
                                             </span>
                                             <div className={style.info_area}>
                                                 <div className={style.days}>{plan.destinationName} - {plan.days}DAY</div>
@@ -159,7 +159,7 @@ const My = () => {
                                     <li className={style.item} key={`${plan.title}-${plan.nickName}-${plan.planId}`}>
                                         <a href={`/plan/${plan.planId}`} className={style.link}>
                                             <span className={style.img_wrap}>
-                                                <img className={style.img} src={plan.profileImage} alt="프로필 이미지" />
+                                                {plan.profileImage && <img className={style.img} src={plan.profileImage} alt="프로필 이미지" />}
                                             </span>
                                             <div className={style.info_area}>
                                                 <div className={style.days}>{plan.destinationName} - {plan.days}DAY</div>

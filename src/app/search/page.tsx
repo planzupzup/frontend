@@ -53,7 +53,7 @@ const Search = () => {
             if (isCurrentlySearching) {
                 url = `${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/search/${searchKeyword}/${filter}?page=${pageToFetch}`;
             } else {
-                url = `${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan?page=${pageToFetch}`;
+                url = `${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan?type=${filter}&page=${pageToFetch}`;
             }
 
             const response = await fetch(url, {
@@ -156,7 +156,7 @@ const Search = () => {
                             <li className={style.item} key={plan.planId}>
                                 <a href={`/plan/${plan.planId}`} className={style.link}>
                                     <span className={style.img_wrap}>
-                                        <img className={style.img} src={plan.profileImage} alt={`${plan.nickName} profile image`} />
+                                        {plan.profileImage && <img className={style.img} src={plan.profileImage} alt={`${plan.nickName} profile image`} />}
                                     </span>
                                     <div className={style.info_area}>
                                         <div className={style.days}>{plan.destinationName} - {plan.days}DAY</div>

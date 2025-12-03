@@ -83,7 +83,7 @@ const PlanDetail: React.FC = () => {
     const pathCoordinates: google.maps.LatLng[] = [];
     const bounds = new window.google.maps.LatLngBounds();
 
-    var lineSymbol = {
+    const lineSymbol = {
       path: 'M 0,-1 0,1',
       strokeOpacity: 1,
       scale: 4
@@ -281,15 +281,13 @@ const PlanDetail: React.FC = () => {
 
   const loadTotalLocationList = async () => {
     try {
-      var tempTotalLocationList: Location[][] = [];
-      let isFirst = true;
+      const tempTotalLocationList: Location[][] = [];
 
       for (const [index] of days.entries()) {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/api/plan/${planId}/${index + 1}`, { withCredentials: true });
         let tempLocationList = response.data.result.locations;
 
         if (tempLocationList && tempLocationList.length > 0) {
-          isFirst = false;
           // 누락된 이미지를 병렬로 가져오기 위해 Promise.all 사용
           const enrichedLocationList = await Promise.all(
             tempLocationList.map(async (loc: Location) => {
@@ -332,11 +330,6 @@ const PlanDetail: React.FC = () => {
 
       setTotalLocationList(tempTotalLocationList);
       setOriginalTotalLocationList(tempTotalLocationList);
-      if (isFirst && days && days.length > 0) {
-        if (plan?.planType === "MINE") setIsEditing(true);
-        setSelectedDay("1");
-        setIsShow(true);
-      }
     } catch (e) {
       alert('일정 정보를 불러오는데 실패했습니다.');
     }

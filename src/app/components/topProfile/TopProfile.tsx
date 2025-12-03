@@ -22,10 +22,9 @@ const TopProfile = ({profile_img, nickName, title, location, date, isBookMarkedO
     const [isPublic, setIsPublic] = useState(true);
 
     useEffect (() => {
-        if(isBookMarkedOrPublic) {
-            setBookMarked(isBookMarkedOrPublic);
-            console.log(isBookMarkedOrPublic);
-            setIsPublic(isBookMarkedOrPublic);
+        if(!isBookMarkedOrPublic) {
+            setBookMarked(false);
+            setIsPublic(false);
         }
     }, [isBookMarkedOrPublic]);
 
