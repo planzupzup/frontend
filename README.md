@@ -2,7 +2,7 @@
 
 ## 프로젝트 소개
 
-- 프로젝트 기간: 2025.4.22 ~ 
+- 프로젝트 기간: 2025.4.22 ~ 2025.12.4
 
 ## 디자인가이드
 - [figma](https://www.figma.com/design/QaQYHAoKfJDS6X6fCn2y5Y/Planzupzup?node-id=193-1647&t=RF6zFCgFFsk978dD-0)
@@ -32,5 +32,6 @@ npm run dev
 - 플랜 수정
 - 마이페이지
 - 댓글
-- 다른 플랜 좋아요
-- 채팅 (보류)
+- 댓글 좋아요, 대댓글
+- 유저 이미지 업로드 및 관광정보 api 연동
+- 모바일 반응형
